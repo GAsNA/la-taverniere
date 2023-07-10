@@ -5,6 +5,8 @@ Simple discord bot for moderation (and more).
 Made in Go - my first project in this programming language.
 
 ## Actions
+Each command sent deletes the initial message.
+
 - [ ]  Announcement for newly posted youtube videos and youtube live (for one youtube channel)
 - [ ]  Blacklist command to add a person's id and a reason (with date) to a chan
 - [ ]  Message when a kick or ban is detected + add in blacklist when ban
