@@ -7,6 +7,8 @@ import (
 )
 
 func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate, data discordgo.ApplicationCommandInteractionData) {
+	//author := "<@" + i.User.ID + ">"
+
 	// GET OPTIONS AND MAP
 	options := i.ApplicationCommandData().Options
 	optionMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))
@@ -19,11 +21,29 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate, 
 
 	// SEND BLACKLIST MESSAGE IN APPROPRIATE CHANNEL
 	blacklist_chan_id := get_env_var("BLACKLIST_CHAN_ID")
-	message := "Blacklist:\n- user: " + user_to_blacklist + "\n- reason: " + reason
-	sess.ChannelMessageSend(blacklist_chan_id, message)
+	embed := discordgo.MessageEmbed{
+		Title:       "Blacklisted user",
+		Description: "This user has been blacklisted",
+		Fields: []*discordgo.MessageEmbedField {
+			{
+				Name:  "User",
+				Value: user_to_blacklist,
+			},
+			{
+				Name:  "Reason",
+				Value: reason,
+			},
+		},
+		Footer: &discordgo.MessageEmbedFooter {
+			Text: "If you think this is an error, please contact the admins.\nRequested by ",
+		},
+	}
+
+	_, err := sess.ChannelMessageSendEmbed(blacklist_chan_id, &embed)
+	if err != nil { log.Fatal(err) }
 
 	// RESPOND TO USER WITH EPHEMERAL MESSAGE
-	err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
+	err = sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData {
 				Flags:		discordgo.MessageFlagsEphemeral,
