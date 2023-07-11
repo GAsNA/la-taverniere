@@ -16,8 +16,26 @@ func list_slash_commands(sess *discordgo.Session) {
 	
 	_, err := sess.ApplicationCommandBulkOverwrite(appID, guildID, []*discordgo.ApplicationCommand{
 		{
-			Name:        "hello-world",
-			Description: "Showcase of a basic slash command",
+			Name:			"hello-world",
+			Description:	"Showcase of a basic slash command",
+		},
+		{
+			Name:			"blacklist",
+			Description:	"Add a blacklist message in the appropriate channel",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionUser,
+					Name:        "user_to_blacklist",
+					Description: "User option",
+					Required:    true,
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "reason",
+					Description: "String option",
+					Required:    true,
+				},
+			},
 		},
 	})
 	if err != nil { log.Fatal(err) }
@@ -46,6 +64,8 @@ func main() {
 		switch data.Name {
 			case "hello-world":
 				slash_command_hello_world(sess, i, data)
+			case "blacklist":
+				blacklist_command(sess, i, data)
 		}
 	})
 
