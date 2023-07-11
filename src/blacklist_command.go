@@ -7,7 +7,7 @@ import (
 )
 
 func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate, data discordgo.ApplicationCommandInteractionData) {
-	//author := "<@" + i.User.ID + ">"
+	author := i.Member.User
 
 	// GET OPTIONS AND MAP
 	options := i.ApplicationCommandData().Options
@@ -24,6 +24,7 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate, 
 	embed := discordgo.MessageEmbed{
 		Title:       "Blacklisted user",
 		Description: "This user has been blacklisted",
+		/*Color: 16711680,*/
 		Fields: []*discordgo.MessageEmbedField {
 			{
 				Name:  "User",
@@ -35,7 +36,8 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate, 
 			},
 		},
 		Footer: &discordgo.MessageEmbedFooter {
-			Text: "If you think this is an error, please contact the admins.\nRequested by ",
+			Text: "Requested by " + author.Username,
+			IconURL: author.AvatarURL(""),
 		},
 	}
 
