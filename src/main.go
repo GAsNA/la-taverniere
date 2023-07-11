@@ -9,9 +9,10 @@ import (
   
 	"github.com/bwmarrin/discordgo"
 )
+
 func list_slash_commands(sess *discordgo.Session) {
-	appID := getEnvVar("DISCORD_APP_ID")
-	guildID := getEnvVar("DISCORD_GUILD_ID")
+	appID := get_env_var("DISCORD_APP_ID")
+	guildID := get_env_var("DISCORD_GUILD_ID")
 	
 	_, err := sess.ApplicationCommandBulkOverwrite(appID, guildID, []*discordgo.ApplicationCommand{
 		{
@@ -22,10 +23,15 @@ func list_slash_commands(sess *discordgo.Session) {
 	if err != nil { log.Fatal(err) }
 }
 
+func set_activity(sess *discordgo.Session, idle int, name string) {
+	err := sess.UpdateGameStatus(idle, name)
+	if err != nil { log.Fatal(err) }
+}
+
 func main() {
 
 	// INIT BOT
-	token := getEnvVar("DISCORD_BOT_TOKEN")
+	token := get_env_var("DISCORD_BOT_TOKEN")
 
 	sess, err := discordgo.New("Bot " + token)
 	if err != nil { log.Fatal(err) }
@@ -45,9 +51,12 @@ func main() {
 
 	// TURN ON
 	error_open := sess.Open()
-	if error_open != nil { log.Fatal(err) }
+	if error_open != nil { log.Fatal(error_open) }
 
 	fmt.Println("The bot is online!")
+
+	// SET ACTIVITY
+	set_activity(sess, 0, "Running the tavern")
 
 	// CHECK SIGNAL TO STOP
 	stop := make(chan os.Signal, 1)
