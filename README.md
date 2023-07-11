@@ -10,7 +10,7 @@ Go to ```src``` directory and run with ```go run .```.
 For commands, the bot uses interactions (slash commands).
 
 - [ ]  Announcement for newly posted youtube videos and youtube live (for one youtube channel)
-- [ ]  Blacklist command to add a person's id and a reason (with date) to a chan
+- [x]  Blacklist command to add a person's id and a reason (with date) to a chan
 - [ ]  Message when a kick or ban is detected + add in blacklist when ban
 - [ ]  Log message for each bot action 
 
