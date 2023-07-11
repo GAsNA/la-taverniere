@@ -7,7 +7,7 @@ Made in Go - my first project in this programming language.
 Go to ```src``` directory and run with ```go run .```.
 
 ## Actions
-Each command sent deletes the initial message.
+For commands, the bot uses interactions (slash commands).
 
 - [ ]  Announcement for newly posted youtube videos and youtube live (for one youtube channel)
 - [ ]  Blacklist command to add a person's id and a reason (with date) to a chan
