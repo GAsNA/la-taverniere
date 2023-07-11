@@ -8,27 +8,27 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func getEnvVar(key string) string {
+func get_env_var(key string) string {
 	err := godotenv.Load("../.env")
 	if err != nil { log.Fatal(err) }
 
 	return os.Getenv(key)
 }
 
-func isTheBot(idAuthorMessage string, idBot string) bool {
+func is_the_bot(idAuthorMessage string, idBot string) bool {
 	if idAuthorMessage == idBot { return true }
 	return false
 }
 
-func beginWithPrefix(str string) bool {
-	prefix := getEnvVar("PREFIX_BOT")
+func begin_with_prefix(str string) bool {
+	prefix := get_env_var("PREFIX_BOT")
 
 	if strings.HasPrefix(str, prefix) { return true }
 	return false
 }
 
-func trimPrefix(str string) string {
-	prefix := getEnvVar("PREFIX_BOT")
+func trim_prefix(str string) string {
+	prefix := get_env_var("PREFIX_BOT")
 
 	return strings.TrimPrefix(str, prefix)
 }
