@@ -4,7 +4,7 @@ Simple discord bot for moderation (and more).
 <br />
 Made in Go - my first project in this programming language.
 <br /><br />
-Run with ```go run [path to directory]```
+Go to ```src``` directory and run with ```go run .```.
 
 ## Actions
 Each command sent deletes the initial message.
