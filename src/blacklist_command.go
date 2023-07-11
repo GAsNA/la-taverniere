@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -24,6 +25,7 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate, 
 	embed := discordgo.MessageEmbed{
 		Title:       "Blacklisted user",
 		Description: "This user has been blacklisted",
+		Timestamp: time.Now().Format(time.RFC3339),
 		/*Color: 16711680,*/
 		Fields: []*discordgo.MessageEmbedField {
 			{
