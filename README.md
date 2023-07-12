@@ -11,6 +11,7 @@ For commands, the bot uses interactions (slash commands).
 
 - [ ]  Announcement for newly posted youtube videos and youtube live (for one youtube channel)
 - [x]  Blacklist command to add a person's id and a reason (with date) to a chan
+    - Miss pivileged
 - [ ]  Message when a kick or ban is detected + add in blacklist when ban
 - [ ]  Log message for each bot action 
 
