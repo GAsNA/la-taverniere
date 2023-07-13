@@ -9,6 +9,31 @@ import (
 
 func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate, data discordgo.ApplicationCommandInteractionData) {
 	author := i.Member.User
+	
+	roles := i.Member.Roles
+	is_admin := false
+	for i := 0; i < len(roles); i++ {
+		if is_role_admin(roles[i]) {
+			is_admin = true
+			break
+		}
+	}
+
+	// CAN'T USE THIS COMMAND
+	if !is_admin {
+		err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData {
+					Flags:		discordgo.MessageFlagsEphemeral,
+					Content:	"You do not have the right to use this command.",
+				},
+			},)
+		if err != nil { log.Fatal(err) }
+
+		log_message(sess, "tried to add someone to the blacklist, but <@" + author.ID + "> to not have the right.")
+
+		return
+	}
 
 	// GET OPTIONS AND MAP
 	options := i.ApplicationCommandData().Options
