@@ -48,6 +48,8 @@ func set_activity(sess *discordgo.Session, idle int, name string) {
 
 func main() {
 
+	youtube_announcements()
+
 	// INIT BOT
 	token := get_env_var("DISCORD_BOT_TOKEN")
 
