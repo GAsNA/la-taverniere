@@ -55,4 +55,7 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate, 
 			},
 		},)
 	if err != nil { log.Fatal(err) }
+
+	// ADD LOG IN LOGS CHANNEL
+	log_message(sess, "added someone to the blacklist.")
 }
