@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 	"google.golang.org/api/googleapi/transport"
@@ -15,13 +16,24 @@ func send_youtube_video_announcement(sess *discordgo.Session, video *youtube.Sea
 	message := ""
 	channel_id := get_env_var("VIDEO_CHAN_ID")
 
+	ping_role_ids_env := get_env_var("PING_YOUTUBE_VIDEO_ROLE_IDS")
+	ping_role_ids := strings.Split(ping_role_ids_env, ",")
+
+	for i := 0; i < len(ping_role_ids); i++ {
+		message += "<@&" + ping_role_ids[i] + ">"
+	}
+
+	if len(ping_role_ids) > 0 {
+		message += "\n"
+	}
+
 	switch video.Snippet.LiveBroadcastContent {
 		case "upcoming":
-			message = "A video is brewing on the channel of " + video.Snippet.ChannelTitle + "...\n"
+			message += "A video is brewing on the channel of " + video.Snippet.ChannelTitle + "...\n"
 		case "live":
-			message = "A video of " + video.Snippet.ChannelTitle + " is live !\n"
+			message += "A video of " + video.Snippet.ChannelTitle + " is live!\n"
 		default:
-			message = video.Snippet.ChannelTitle + " posted a new video.\n"
+			message += video.Snippet.ChannelTitle + " posted a new video. Enjoy!\n"
 	}
 
 	message += "https://www.youtube.com/watch?v=" + video.Id.VideoId
