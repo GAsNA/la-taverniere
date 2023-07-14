@@ -15,7 +15,7 @@ For commands, the bot uses interactions (slash commands).
 - [x]  Log message for each bot action 
 
 ### Optionnels
-- [ ]  Commands for Ray, Agash, Sarah, Kiki st germain, (me)
+- [x]  Commands for Ray, Feitan, Ukyim, Kentaro, GAsNa
 - [ ]  Levels for conversation and messages
 
 ## Author
