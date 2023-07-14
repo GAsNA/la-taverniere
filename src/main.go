@@ -48,8 +48,6 @@ func set_activity(sess *discordgo.Session, idle int, name string) {
 
 func main() {
 
-	youtube_announcements()
-
 	// INIT BOT
 	token := get_env_var("DISCORD_BOT_TOKEN")
 
@@ -79,6 +77,9 @@ func main() {
 
 	// SET ACTIVITY
 	set_activity(sess, 0, "Running the tavern")
+
+	// CHECK FOR YOUTUBE ACTIVITY 
+	youtube_announcements(sess)
 
 	// CHECK SIGNAL TO STOP
 	stop := make(chan os.Signal, 1)
