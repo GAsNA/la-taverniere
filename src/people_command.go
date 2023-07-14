@@ -16,19 +16,19 @@ func people_command(sess *discordgo.Session, i *discordgo.InteractionCreate, dat
 
 	people_name := optionsMap["people"].StringValue()
 
-	message := ""
+	message := people_name + " : "
 
 	switch people_name {
 		case "Ray":
-			message = "Ray, c'est le dark sasuke du serv"
+			message += "c'est le dark sasuke du serv"
 		case "Feitan":
-			message = "Feitan, c'est la petite chienne de GAsNa"
+			message += "c'est la petite chienne de GAsNa"
 		case "Ukyim":
-			message = "Ukyim, ca va elle est gentille, vous pouvez lui faire confiance"
+			message += "ca va elle est gentille, vous pouvez lui faire confiance"
 		case "Kentaro":
-			message = "Kentaro, c'est le casse-couille du serv"
+			message += "c'est le casse-couille du serv"
 		case "GAsNa":
-			message = "C'est moi qui ait code le bot, tu penses bien que je vais rien dire de mal sur moi"
+			message += "c'est moi qui ait code le bot, tu penses bien que je vais rien dire de mal sur moi"
 	}
 
 	err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {

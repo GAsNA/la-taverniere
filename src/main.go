@@ -67,6 +67,10 @@ func list_slash_commands(sess *discordgo.Session) {
 				},
 			},
 		},
+		{
+			Name:			"salope",
+			Description:	"Suprise!",
+		},
 	})
 	if err != nil { log.Fatal(err) }
 }
@@ -96,6 +100,8 @@ func main() {
 				blacklist_command(sess, i, data)
 			case "who-are-this-people":
 				people_command(sess, i, data)
+			case "salope":
+				salope_command(sess, i, data)
 		}
 	})
 
