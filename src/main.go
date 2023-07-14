@@ -73,7 +73,7 @@ func main() {
 	set_activity(sess, 0, "Running the tavern")
 
 	// CHECK FOR YOUTUBE ACTIVITY 
-	youtube_announcements(sess)
+	youtube_live_announcements(sess)
 
 	// CHECK SIGNAL TO STOP
 	stop := make(chan os.Signal, 1)
