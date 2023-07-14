@@ -11,20 +11,17 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
-func send_youtube_announcement(sess *discordgo.Session, video *youtube.SearchResult, type_video string) {
+func send_youtube_video_announcement(sess *discordgo.Session, video *youtube.SearchResult) {
 	message := ""
-	channel_id := ""
+	channel_id := get_env_var("VIDEO_CHAN_ID")
 
-	switch type_video {
+	switch video.Snippet.LiveBroadcastContent {
 		case "upcoming":
-			message = "Something is brewing on the channel of " + video.Snippet.ChannelTitle + ".\n"
-			channel_id = get_env_var("UPCOMING_CHAN_ID")
+			message = "A video is brewing on the channel of " + video.Snippet.ChannelTitle + "...\n"
 		case "live":
-			message = video.Snippet.ChannelTitle + " is live !\n"
-			channel_id = get_env_var("LIVE_CHAN_ID")
+			message = "A video of " + video.Snippet.ChannelTitle + " is live !\n"
 		default:
 			message = video.Snippet.ChannelTitle + " posted a new video.\n"
-			channel_id = get_env_var("VIDEO_CHAN_ID")
 	}
 
 	message += "https://www.youtube.com/watch?v=" + video.Id.VideoId
@@ -36,8 +33,6 @@ func send_youtube_announcement(sess *discordgo.Session, video *youtube.SearchRes
 
 func youtube_announcements(sess *discordgo.Session) {
 	var last_video *youtube.SearchResult
-	var live *youtube.SearchResult
-	var upcoming *youtube.SearchResult
 	
 	for true {
 		developerKey := get_env_var("YOUTUBE_API_KEY")
@@ -66,26 +61,13 @@ func youtube_announcements(sess *discordgo.Session) {
 		video := response.Items[0]
 	
 		fmt.Println("VIDEO:")
-		fmt.Println("id: " + video.Id.VideoId + "\ttitle: " + video.Snippet.Title)
+		fmt.Println("\tid: " + video.Id.VideoId + "\t\ttitle: " + video.Snippet.Title)
 
-		switch video.Snippet.LiveBroadcastContent {
-			case "upcoming":
-				if upcoming == nil || upcoming.Id.VideoId != video.Id.VideoId {
-					upcoming = video
-					send_youtube_announcement(sess, upcoming, "upcoming")
-				}
-			case "live":
-				if live == nil || live.Id.VideoId != live.Id.VideoId {
-					live = video
-					send_youtube_announcement(sess, live, "live")
-				}
-			default:
-				if last_video == nil {
-					last_video = video
-				} else if last_video.Id.VideoId != last_video.Id.VideoId && (live == nil || last_video.Id.VideoId != live.Id.VideoId) {
-					last_video = video
-					send_youtube_announcement(sess, last_video, "video")
-				}
+		if last_video == nil {
+			last_video = video
+		} else if video.Id.VideoId != last_video.Id.VideoId {
+			last_video = video
+			send_youtube_video_announcement(sess, last_video)
 		}
 
 		// sleep for 1min
