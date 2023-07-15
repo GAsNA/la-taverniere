@@ -43,37 +43,62 @@ func send_youtube_video_announcement(sess *discordgo.Session, video *youtube.Sea
 	log_message(sess, "made a youtube announcement in <#" + channel_id + ">.")
 }
 
-func youtube_announcements(sess *discordgo.Session) {
-	var last_video *youtube.SearchResult
-	
-	for true {
-		developerKey := get_env_var("YOUTUBE_API_KEY")
+func send_youtube_live_announcement(sess *discordgo.Session, live *youtube.SearchResult) {
+	message := ""
+	channel_id := get_env_var("LIVE_CHAN_ID")
 
-		youtube_client := &http.Client{
-			Transport: &transport.APIKey{Key: developerKey},
-		}
+	ping_role_ids_env := get_env_var("PING_YOUTUBE_LIVE_ROLE_IDS")
+	ping_role_ids := strings.Split(ping_role_ids_env, ",")
 
-		service, err := youtube.New(youtube_client)
-		if err != nil {
-			log.Fatalf("Error creating new YouTube client: %v", err)
-		}
+	for i := 0; i < len(ping_role_ids); i++ {
+		message += "<@&" + ping_role_ids[i] + ">"
+	}
 
-		channelId := get_env_var("YOUTUBE_CHANNEL_ID")
-	
-		// MAKE THE API CALL TO YOUTUBE
-		call := service.Search.List([]string{"snippet"}).
-			MaxResults(1).
-			ChannelId(channelId).
-			Order("date")
-		response, err := call.Do()
-		if err != nil {
-			log.Fatalf("Error doing the request: %v", err)
-		}
+	if len(ping_role_ids) > 0 {
+		message += "\n"
+	}
 
+	switch live.Snippet.LiveBroadcastContent {
+		case "upcoming":
+			message += "A live is brewing on the channel of " + live.Snippet.ChannelTitle + "...\n"
+		case "live":
+			message += live.Snippet.ChannelTitle + " is live! Come see!\n"
+	}
+
+	message += "https://www.youtube.com/watch?v=" + live.Id.VideoId
+	_, err := sess.ChannelMessageSend(channel_id, message)
+	if err != nil { log.Fatal(err) }
+
+	log_message(sess, "made a live announcement in <#" + channel_id + ">.")
+}
+
+func get_service() *youtube.Service {
+	developerKey := get_env_var("YOUTUBE_API_KEY")
+
+	youtube_client := &http.Client{
+		Transport: &transport.APIKey{Key: developerKey},
+	}
+
+	service, err := youtube.New(youtube_client)
+	if err != nil {
+		log.Fatalf("Error creating new YouTube client: %v", err)
+	}
+
+	return service
+}
+
+func call_youtube_video(service *youtube.Service, youtube_channel_id string, last_video *youtube.SearchResult, sess *discordgo.Session) {
+	call := service.Search.List([]string{"snippet"}).
+		MaxResults(1).
+		ChannelId(youtube_channel_id).
+		Order("date")
+	response, err := call.Do()
+	if err != nil {
+		log.Fatalf("Error doing the request: %v", err)
+	}
+
+	if len(response.Items) > 0 {
 		video := response.Items[0]
-	
-		fmt.Println("VIDEO:")
-		fmt.Println("\tid: " + video.Id.VideoId + "\t\ttitle: " + video.Snippet.Title)
 
 		if last_video == nil {
 			last_video = video
@@ -81,8 +106,53 @@ func youtube_announcements(sess *discordgo.Session) {
 			last_video = video
 			send_youtube_video_announcement(sess, last_video)
 		}
+	} else {
+		fmt.Println("NO VIDEO")
+	}
+}
 
-		// sleep for 1min
-		time.Sleep((60 * 1000) * time.Millisecond)
+func call_youtube_live(service *youtube.Service, youtube_channel_id string, last_live *youtube.SearchResult, sess *discordgo.Session) {
+	call := service.Search.List([]string{"snippet"}).
+		MaxResults(1).
+		ChannelId(youtube_channel_id).
+		Order("date").
+		EventType("live").
+		Type("video")
+	response, err := call.Do()
+	if err != nil {
+		log.Fatalf("Error doing the request: %v", err)
+	}
+
+	if len(response.Items) > 0 {
+		live := response.Items[0]
+
+		if last_live == nil || live.Id.VideoId != last_live.Id.VideoId {
+			last_live = live
+			send_youtube_live_announcement(sess, last_live)
+		}
+	} else {
+		fmt.Println("NO LIVE")
+	}
+}
+
+func youtube_announcements(sess *discordgo.Session) {
+	var last_video *youtube.SearchResult
+	var last_live *youtube.SearchResult
+
+	service := get_service()
+	youtube_channel_id := get_env_var("YOUTUBE_CHANNEL_ID")
+	
+	for true {
+		// MAKE THE API CALL TO YOUTUBE FOR VIDEO
+		call_youtube_video(service, youtube_channel_id, last_video, sess)
+
+		// sleep for 30 seconds
+		time.Sleep((30 * 1000) * time.Millisecond)
+
+		// MAKE THE API CALL TO YOUTUBE FOR LIVE
+		call_youtube_live(service, youtube_channel_id, last_live, sess)
+
+		// sleep for 30 seconds
+		time.Sleep((30 * 1000) * time.Millisecond)
 	}
 }

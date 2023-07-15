@@ -1,6 +1,6 @@
 package main
 
-import (
+/*import (
 	"log"
 	"fmt"
 	"net/http"
@@ -87,4 +87,4 @@ func youtube_live_announcements(sess *discordgo.Session) {
 		// sleep for 1min
 		time.Sleep((60 * 1000) * time.Millisecond)
 	}
-}
+}*/
