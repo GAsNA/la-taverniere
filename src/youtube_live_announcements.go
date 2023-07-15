@@ -76,7 +76,7 @@ func youtube_live_announcements(sess *discordgo.Session) {
 			fmt.Println("LIVE:")
 			fmt.Println("\tid: " + live.Id.VideoId + "\t\ttitle: " + live.Snippet.Title)
 
-			if live == nil || live.Id.VideoId != last_live.Id.VideoId {
+			if last_live == nil || live.Id.VideoId != last_live.Id.VideoId {
 				last_live = live
 				send_youtube_live_announcement(sess, last_live)
 			}
