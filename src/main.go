@@ -34,6 +34,17 @@ func list_slash_commands(sess *discordgo.Session) {
 			},
 		},
 		{
+			Name:			"no-live",
+			Description:	"Make an annoucement for no live today or until a date given in parameter",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "date",
+					Description: "Date to give until there will be no live",
+				},
+			},
+		},
+    {
 			Name:        "who-are-this-people",
 			Description: "Want to know something about this people?",
 			Options: []*discordgo.ApplicationCommandOption{
@@ -98,6 +109,8 @@ func main() {
 		switch data.Name {
 			case "blacklist":
 				blacklist_command(sess, i, data)
+			case "no-live":
+				no_live_command(sess, i, data)
 			case "who-are-this-people":
 				people_command(sess, i, data)
 			case "salope":
@@ -113,6 +126,9 @@ func main() {
 
 	// SET ACTIVITY
 	set_activity(sess, 0, "Running the tavern")
+
+	// CHECK FOR YOUTUBE ACTIVITY 
+	youtube_announcements(sess)
 
 	// CHECK SIGNAL TO STOP
 	stop := make(chan os.Signal, 1)
