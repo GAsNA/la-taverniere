@@ -4,16 +4,15 @@ Simple discord bot for moderation (and more).
 <br />
 Made in Go - my first project in this programming language.
 <br /><br />
-Go to ```src``` directory and run with ```go run .```.
+Run with ```go run src/*```.
 
 ## Actions
 For commands, the bot uses interactions (slash commands).
 
 - [ ]  Announcement for newly posted youtube videos and youtube live (for one youtube channel)
-- [x]  Blacklist command to add a person's id and a reason (with date) to a chan
-    - Miss pivileged
+- [x]  Blacklist command to add a person's id and a reason (with date) to a chan - admins only
 - [ ]  Message when a kick or ban is detected + add in blacklist when ban
-- [ ]  Log message for each bot action 
+- [x]  Log message for each bot action 
 
 ### Optionnels
 - [ ]  Levels for conversation and messages

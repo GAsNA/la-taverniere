@@ -9,7 +9,7 @@ import (
 )
 
 func get_env_var(key string) string {
-	err := godotenv.Load("../.env")
+	err := godotenv.Load(".env")
 	if err != nil { log.Fatal(err) }
 
 	return os.Getenv(key)
@@ -20,15 +20,13 @@ func is_the_bot(idAuthorMessage string, idBot string) bool {
 	return false
 }
 
-func begin_with_prefix(str string) bool {
-	prefix := get_env_var("PREFIX_BOT")
+func is_role_admin(id_role string) bool {
+	admin_role_ids_env := get_env_var("ADMIN_ROLE_IDS")
+	admin_role_ids := strings.Split(admin_role_ids_env, ",")
 
-	if strings.HasPrefix(str, prefix) { return true }
+	for i := 0; i < len(admin_role_ids); i++ {
+		if admin_role_ids[i] == id_role { return true }
+	}
+
 	return false
-}
-
-func trim_prefix(str string) string {
-	prefix := get_env_var("PREFIX_BOT")
-
-	return strings.TrimPrefix(str, prefix)
 }
