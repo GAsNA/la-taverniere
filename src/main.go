@@ -44,6 +44,44 @@ func list_slash_commands(sess *discordgo.Session) {
 				},
 			},
 		},
+    {
+			Name:        "who-are-this-people",
+			Description: "Want to know something about this people?",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type: discordgo.ApplicationCommandOptionString,
+					Name:        "people",
+					Description: "People option",
+					Required:    true,
+					Choices: []*discordgo.ApplicationCommandOptionChoice{
+						{
+							Name: "Ray",
+							Value: "Ray",
+						},
+						{
+							Name: "Feitan",
+							Value: "Feitan",
+						},
+						{
+							Name: "Ukyim",
+							Value: "Ukyim",
+						},
+						{
+							Name: "Kentaro",
+							Value: "Kentaro",
+						},
+						{
+							Name: "GAsNa",
+							Value: "GAsNa",
+						},
+					},
+				},
+			},
+		},
+		{
+			Name:			"salope",
+			Description:	"Suprise!",
+		},
 	})
 	if err != nil { log.Fatal(err) }
 }
@@ -73,6 +111,10 @@ func main() {
 				blacklist_command(sess, i, data)
 			case "no-live":
 				no_live_command(sess, i, data)
+			case "who-are-this-people":
+				people_command(sess, i, data)
+			case "salope":
+				salope_command(sess, i, data)
 		}
 	})
 
