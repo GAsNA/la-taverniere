@@ -106,8 +106,6 @@ func call_youtube_video(service *youtube.Service, youtube_channel_id string, las
 			last_video = video
 			send_youtube_video_announcement(sess, last_video)
 		}
-	} else {
-		fmt.Println("NO VIDEO")
 	}
 }
 
@@ -130,8 +128,6 @@ func call_youtube_live(service *youtube.Service, youtube_channel_id string, last
 			last_live = live
 			send_youtube_live_announcement(sess, last_live)
 		}
-	} else {
-		fmt.Println("NO LIVE")
 	}
 }
 
