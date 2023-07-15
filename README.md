@@ -9,12 +9,15 @@ Run with ```go run src/*```.
 ## Actions
 For commands, the bot uses interactions (slash commands).
 
-- [ ]  Announcement for newly posted youtube videos and youtube live (for one youtube channel)
+- [x]  Announcement for newly posted youtube videos and youtube live (for one youtube channel for now)
+    - [ ] Stop bot properly
+- [x]  No youtube live command for 'today' or until a specified date
 - [x]  Blacklist command to add a person's id and a reason (with date) to a chan - admins only
 - [ ]  Message when a kick or ban is detected + add in blacklist when ban
 - [x]  Log message for each bot action 
 
 ### Optionnels
+- [x]  Commands for Ray, Feitan, Ukyim, Kentaro, GAsNa
 - [ ]  Levels for conversation and messages
 
 ## Author
