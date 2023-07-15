@@ -33,6 +33,17 @@ func list_slash_commands(sess *discordgo.Session) {
 				},
 			},
 		},
+		{
+			Name:			"no-live",
+			Description:	"Make an annoucement for no live today or until a date given in parameter",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "date",
+					Description: "Date to give until there will be no live",
+				},
+			},
+		},
 	})
 	if err != nil { log.Fatal(err) }
 }
@@ -60,6 +71,8 @@ func main() {
 		switch data.Name {
 			case "blacklist":
 				blacklist_command(sess, i, data)
+			case "no-live":
+				no_live_command(sess, i, data)
 		}
 	})
 

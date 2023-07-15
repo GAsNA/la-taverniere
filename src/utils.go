@@ -30,3 +30,24 @@ func is_role_admin(id_role string) bool {
 
 	return false
 }
+
+func is_good_format_date(date string) bool {
+	if len(date) != 10 {
+		return false
+	}
+
+	if date[2] != '/' || date[5] != '/' {
+		return false
+	}
+
+	for i := 0; i < len(date); i++ {
+		if i == 2 || i == 5 {
+			continue
+		}
+		if date[i] < '0' || date[i] > '9' {
+			return false
+		}
+	}
+
+	return true
+}
