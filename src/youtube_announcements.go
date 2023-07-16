@@ -28,11 +28,11 @@ func send_youtube_video_announcement(sess *discordgo.Session, video *youtube.Sea
 
 	switch video.Snippet.LiveBroadcastContent {
 		case "upcoming":
-			message += "A video is brewing on the channel of " + video.Snippet.ChannelTitle + "...\n"
+			message += "Une vidéo se prépare sur la chaine de  " + video.Snippet.ChannelTitle + "...\n"
 		case "live":
-			message += "A video of " + video.Snippet.ChannelTitle + " is live!\n"
+			message += "Une vidéo de " + video.Snippet.ChannelTitle + " est en live !\n"
 		default:
-			message += video.Snippet.ChannelTitle + " posted a new video. Enjoy!\n"
+			message += video.Snippet.ChannelTitle + " a posté une nouvelle vidéo. Enjoy!\n"
 	}
 
 	message += "https://www.youtube.com/watch?v=" + video.Id.VideoId
@@ -59,9 +59,9 @@ func send_youtube_live_announcement(sess *discordgo.Session, live *youtube.Searc
 
 	switch live.Snippet.LiveBroadcastContent {
 		case "upcoming":
-			message += "A live is brewing on the channel of " + live.Snippet.ChannelTitle + "...\n"
+			message += "Un live se prépare sur la chaine de " + live.Snippet.ChannelTitle + "...\n"
 		case "live":
-			message += live.Snippet.ChannelTitle + " is live! Come see!\n"
+			message += live.Snippet.ChannelTitle + " est en live ! Viens voir !\n"
 	}
 
 	message += "https://www.youtube.com/watch?v=" + live.Id.VideoId
