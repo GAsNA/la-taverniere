@@ -6,7 +6,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func people_command(sess *discordgo.Session, i *discordgo.InteractionCreate, data discordgo.ApplicationCommandInteractionData) {
+func people_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	
 	options := i.ApplicationCommandData().Options
 	optionsMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))

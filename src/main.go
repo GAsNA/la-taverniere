@@ -108,13 +108,13 @@ func main() {
 
 		switch data.Name {
 			case "blacklist":
-				blacklist_command(sess, i, data)
+				blacklist_command(sess, i)
 			case "no-live":
-				no_live_command(sess, i, data)
+				no_live_command(sess, i)
 			case "who-are-this-people":
-				people_command(sess, i, data)
+				people_command(sess, i)
 			case "salope":
-				salope_command(sess, i, data)
+				salope_command(sess, i)
 		}
 	})
 
