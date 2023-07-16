@@ -17,6 +17,7 @@ For commands, the bot uses interactions (slash commands).
 
 ### Optionnels
 - [x]  Commands for Ray, Feitan, Ukyim, Kentaro, GAsNa
+- [x]  Salope command for Kentaro
 - [ ]  Levels for conversation and messages
 
 ## Author
