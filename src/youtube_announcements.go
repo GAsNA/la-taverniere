@@ -86,7 +86,7 @@ func get_service() *youtube.Service {
 	return service
 }
 
-func call_youtube_video(service *youtube.Service, youtube_channel_id string, last_video *youtube.SearchResult, sess *discordgo.Session) {
+func call_youtube_video(service *youtube.Service, youtube_channel_id string, last_video **youtube.SearchResult, sess *discordgo.Session) {
 	call := service.Search.List([]string{"snippet"}).
 		MaxResults(1).
 		ChannelId(youtube_channel_id).
@@ -99,16 +99,16 @@ func call_youtube_video(service *youtube.Service, youtube_channel_id string, las
 	if len(response.Items) > 0 {
 		video := response.Items[0]
 
-		if last_video == nil {
-			last_video = video
-		} else if video.Id.VideoId != last_video.Id.VideoId {
-			last_video = video
-			send_youtube_video_announcement(sess, last_video)
+		if *last_video == nil {
+			*last_video = video
+		} else if video.Id.VideoId != (*last_video).Id.VideoId {
+			*last_video = video
+			send_youtube_video_announcement(sess, *last_video)
 		}
 	}
 }
 
-func call_youtube_live(service *youtube.Service, youtube_channel_id string, last_live *youtube.SearchResult, sess *discordgo.Session) {
+func call_youtube_live(service *youtube.Service, youtube_channel_id string, last_live **youtube.SearchResult, sess *discordgo.Session) {
 	call := service.Search.List([]string{"snippet"}).
 		MaxResults(1).
 		ChannelId(youtube_channel_id).
@@ -123,9 +123,9 @@ func call_youtube_live(service *youtube.Service, youtube_channel_id string, last
 	if len(response.Items) > 0 {
 		live := response.Items[0]
 
-		if last_live == nil || live.Id.VideoId != last_live.Id.VideoId {
-			last_live = live
-			send_youtube_live_announcement(sess, last_live)
+		if *last_live == nil || live.Id.VideoId != (*last_live).Id.VideoId {
+			*last_live = live
+			send_youtube_live_announcement(sess, *last_live)
 		}
 	}
 }
@@ -139,13 +139,13 @@ func youtube_announcements(sess *discordgo.Session) {
 	
 	for true {
 		// MAKE THE API CALL TO YOUTUBE FOR VIDEO
-		call_youtube_video(service, youtube_channel_id, last_video, sess)
+		call_youtube_video(service, youtube_channel_id, &last_video, sess)
 
 		// sleep for 30 seconds
 		time.Sleep((30 * 1000) * time.Millisecond)
 
 		// MAKE THE API CALL TO YOUTUBE FOR LIVE
-		call_youtube_live(service, youtube_channel_id, last_live, sess)
+		call_youtube_live(service, youtube_channel_id, &last_live, sess)
 
 		// sleep for 30 seconds
 		time.Sleep((30 * 1000) * time.Millisecond)
