@@ -10,6 +10,12 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+const (
+	// COLORS INT
+	BLACK = 0
+	BLUE = 3447003
+)
+
 func list_slash_commands(sess *discordgo.Session) {
 	appID := get_env_var("DISCORD_APP_ID")
 	guildID := get_env_var("DISCORD_GUILD_ID")
