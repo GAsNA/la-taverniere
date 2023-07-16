@@ -19,7 +19,7 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 		}
 	}
 
-	// CAN'T USE THIS COMMAND
+	// CAN'T USE THIS COMMAND IF NOT ADMIN
 	if !is_admin {
 		err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -45,6 +45,22 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 	user_to_blacklist_id := optionMap["user_to_blacklist"].UserValue(nil).ID
 	user_to_blacklist := "<@" + user_to_blacklist_id + ">"
 	reason := optionMap["reason"].StringValue()
+
+	//CAN'T BAN IF USER TO BLACKLIST IS THE BOT
+	if user_to_blacklist_id == sess.State.User.ID {
+		err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData {
+					Flags:		discordgo.MessageFlagsEphemeral,
+					Content:	"You can't ban and add to the blacklist the bot.",
+				},
+			},)
+		if err != nil { log.Fatal(err) }
+
+		log_message(sess, "can't ban and add themself to the blacklist. Requested by <@" + author.ID + ">.")
+
+		return 
+	}
 
 	// BAN USER
 	guild_id := get_env_var("DISCORD_GUILD_ID")
