@@ -10,6 +10,12 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+const (
+	// COLORS INT
+	BLACK = 0
+	BLUE = 3447003
+)
+
 func list_slash_commands(sess *discordgo.Session) {
 	appID := get_env_var("DISCORD_APP_ID")
 	guildID := get_env_var("DISCORD_GUILD_ID")
@@ -17,18 +23,18 @@ func list_slash_commands(sess *discordgo.Session) {
 	_, err := sess.ApplicationCommandBulkOverwrite(appID, guildID, []*discordgo.ApplicationCommand{
 		{
 			Name:			"blacklist",
-			Description:	"Add a blacklist message in the appropriate channel",
+			Description:	"Ban a user and send a message of blacklist to the serv",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionUser,
 					Name:        "user_to_blacklist",
-					Description: "User option",
+					Description: "User you want to ban",
 					Required:    true,
 				},
 				{
 					Type:        discordgo.ApplicationCommandOptionString,
 					Name:        "reason",
-					Description: "String option",
+					Description: "Reason of the ban",
 					Required:    true,
 				},
 			},
@@ -51,7 +57,7 @@ func list_slash_commands(sess *discordgo.Session) {
 				{
 					Type: discordgo.ApplicationCommandOptionString,
 					Name:        "people",
-					Description: "People option",
+					Description: "People you want to get a description",
 					Required:    true,
 					Choices: []*discordgo.ApplicationCommandOptionChoice{
 						{
@@ -108,13 +114,13 @@ func main() {
 
 		switch data.Name {
 			case "blacklist":
-				blacklist_command(sess, i, data)
+				blacklist_command(sess, i)
 			case "no-live":
-				no_live_command(sess, i, data)
+				no_live_command(sess, i)
 			case "who-are-this-people":
-				people_command(sess, i, data)
+				people_command(sess, i)
 			case "salope":
-				salope_command(sess, i, data)
+				salope_command(sess, i)
 		}
 	})
 

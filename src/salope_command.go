@@ -6,7 +6,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func salope_command(sess *discordgo.Session, i *discordgo.InteractionCreate, data discordgo.ApplicationCommandInteractionData) {
+func salope_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	
 	err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
