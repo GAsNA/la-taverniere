@@ -42,8 +42,14 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate, 
 		optionMap[opt.Name] = opt
 	}
 
-	user_to_blacklist := "<@" + optionMap["user_to_blacklist"].UserValue(nil).ID + ">"
+	user_to_blacklist_id := optionMap["user_to_blacklist"].UserValue(nil).ID
+	user_to_blacklist := "<@" + user_to_blacklist_id + ">"
 	reason := optionMap["reason"].StringValue()
+
+	// BAN USER
+	guild_id := get_env_var("DISCORD_GUILD_ID")
+	err := sess.GuildBanCreateWithReason(guild_id, user_to_blacklist_id, reason, 0)
+	if err != nil { log.Fatal(err) }
 
 	// SEND BLACKLIST MESSAGE IN APPROPRIATE CHANNEL
 	blacklist_chan_id := get_env_var("BLACKLIST_CHAN_ID")
@@ -68,8 +74,8 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate, 
 		},
 	}
 
-	_, err := sess.ChannelMessageSendEmbed(blacklist_chan_id, &embed)
-	if err != nil { log.Fatal(err) }
+	_, err_msg := sess.ChannelMessageSendEmbed(blacklist_chan_id, &embed)
+	if err_msg != nil { log.Fatal(err_msg) }
 
 	// RESPOND TO USER WITH EPHEMERAL MESSAGE
 	err = sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
@@ -82,5 +88,5 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate, 
 	if err != nil { log.Fatal(err) }
 
 	// ADD LOG IN LOGS CHANNEL
-	log_message(sess, "added someone to the blacklist.")
+	log_message(sess, "banned someone and added them to the blacklist.")
 }

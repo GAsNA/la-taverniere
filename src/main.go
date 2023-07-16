@@ -118,29 +118,6 @@ func main() {
 		}
 	})
 
-	sess.AddHandler(func (sess *discordgo.Session, e *discordgo.Event,) {
-		fmt.Println("LOG TYPE EVENT : " + e.Type)
-		// WHEN KICK GET GUILD_AUDIT_LOG_ENTRY_CREATE
-		// WHEN BAN GET GUILD_AUDIT_LOG_ENTRY_CREATE, GUILD_BAN_ADD
-		// WHEN REMOVE BAN GET GUILD_AUDIT_LOG_ENTRY_CREATE, GUILD_BAN_REMOVE
-
-		fmt.Printf("TYPE: %T\n", e.Struct)
-
-		// KICK HOW ??
-		//if e.Type == discordgo.guildAuditLogEntryCreateEventType {
-			//fmt.Println("IS GUILD_AUDIT_LOG_ENTRY_CREATE")
-			//auditlog := e.Struct.(*discordgo.GuildAuditLog)
-			/*if *(auditlog).ActionType == discordgo.AuditLogActionMemberKick {
-				fmt.Println("IS TYPE KICK")
-				//fmt.Println("TARGET ID: " + auditlog.TargetID)
-				//fmt.Println("USER ID: " + auditlog.UserID)
-				//fmt.Println("REASON: " + auditlog.Reason)
-			}*/
-		//}
-	})
-	
-	sess.Identify.Intents = discordgo.IntentsAll
-
 	// TURN ON
 	error_open := sess.Open()
 	if error_open != nil { log.Fatal(error_open) }

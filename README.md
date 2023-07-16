@@ -12,8 +12,7 @@ For commands, the bot uses interactions (slash commands).
 - [x]  Announcement for newly posted youtube videos and youtube live (for one youtube channel for now)
     - [ ] Stop bot properly
 - [x]  No youtube live command for 'today' or until a specified date - admins only
-- [ ]  Blacklist command to ban a person and add their id and a reason (with date) to a chan - admins only
-- [ ]  Kick command to kick a person
+- [x]  Blacklist command to ban a person and add their id and a reason (with date) to a chan - admins only
 - [x]  Log message for each bot action 
 
 ### Optionnels
