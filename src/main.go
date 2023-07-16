@@ -17,18 +17,18 @@ func list_slash_commands(sess *discordgo.Session) {
 	_, err := sess.ApplicationCommandBulkOverwrite(appID, guildID, []*discordgo.ApplicationCommand{
 		{
 			Name:			"blacklist",
-			Description:	"Add a blacklist message in the appropriate channel",
+			Description:	"Ban a user and send a message of blacklist to the serv",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionUser,
 					Name:        "user_to_blacklist",
-					Description: "User option",
+					Description: "User you want to ban",
 					Required:    true,
 				},
 				{
 					Type:        discordgo.ApplicationCommandOptionString,
 					Name:        "reason",
-					Description: "String option",
+					Description: "Reason of the ban",
 					Required:    true,
 				},
 			},
@@ -51,7 +51,7 @@ func list_slash_commands(sess *discordgo.Session) {
 				{
 					Type: discordgo.ApplicationCommandOptionString,
 					Name:        "people",
-					Description: "People option",
+					Description: "People you want to get a description",
 					Required:    true,
 					Choices: []*discordgo.ApplicationCommandOptionChoice{
 						{
