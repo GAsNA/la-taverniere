@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"strings"
+	"net/http"
+	"fmt"
 
 	"github.com/bwmarrin/discordgo"
 	"google.golang.org/api/youtube/v3"
@@ -45,18 +47,41 @@ func call_api_youtube_video(service *youtube.Service, youtube_channel_id string,
 		ChannelId(youtube_channel_id).
 		Order("date")
 	response, err := call.Do()
-	if err != nil {
-		log.Fatalf("Error doing the request: %v", err)
-	}
+	if err != nil { log.Fatalf("Error doing the request: %v", err) }
 
 	if len(response.Items) > 0 {
 		video := response.Items[0]
+
+		resp, err := http.Head("https://youtube.com/shorts/B-s71n0dHUk")
+		if err != nil { log.Fatal(err) }
+		defer resp.Body.Close()
+
+		fmt.Println(resp)
+
+		if resp.StatusCode == 200 {
+			fmt.Println("Is short")
+		} else {
+			fmt.Println("Not short")
+		}
 
 		if *last_video == nil {
 			*last_video = video
 		} else if video.Id.VideoId != (*last_video).Id.VideoId {
 			*last_video = video
-			send_youtube_video_announcement(sess, *last_video)
+
+			// if call to shorts is ok: send_youtube_shorts_announcement(sess, *last_video)
+			// else:
+			response, err := http.Get("https://www.youtube.com/shorts/" + video.Id.VideoId)
+			if err != nil { log.Fatal(err) }
+			defer response.Body.Close()
+
+			if response.StatusCode == 200 {
+				//send_youtube_short_announcement(sess, *last_video)
+				fmt.Println("Is short")
+			} else {
+				fmt.Println("Not short")
+				send_youtube_video_announcement(sess, *last_video)
+			}
 		}
 	}
 }
