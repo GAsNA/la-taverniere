@@ -13,7 +13,30 @@ import (
 const (
 	// COLORS INT
 	BLACK = 0
+	AQUA = 1752220
+	DARK_AQUA = 1146986
+	GREEN = 3066993
+	DARK_GREEN = 2067276
 	BLUE = 3447003
+	DARK_BLUE = 2123412
+	PURPLE = 10181046
+	DARK_PURPLE = 7419530
+	PINK = 15277667
+	DARK_PINK = 11342935
+	GOLD = 15844367
+	DARK_GOLD = 15844367
+	ORANGE = 15105570
+	DARK_ORANGE = 11027200
+	RED = 15158332
+	DARK_RED = 10038562
+	GREY = 9807270
+	DARK_GREY = 9936031
+	DARKER_GREY = 8359053
+	LIGHT_GREY = 12370112
+	NAVY = 3426654
+	DARK_NAVY = 2899536
+	YELLOW = 2899536
+	WHITE = 16777215
 )
 
 func list_slash_commands(sess *discordgo.Session) {
@@ -120,12 +143,100 @@ func list_slash_commands(sess *discordgo.Session) {
 					Description: "Color of your embed (ignored if embed is false)",
 					Choices: []*discordgo.ApplicationCommandOptionChoice{
 						{
+							Name: "Black",
+							Value: BLACK,
+						},
+						{
+							Name: "Aqua",
+							Value: AQUA,
+						},
+						{
+							Name: "Dark aqua",
+							Value: DARK_AQUA,
+						},
+						{
+							Name: "Green",
+							Value: GREEN,
+						},
+						{
+							Name: "Dark green",
+							Value: DARK_GREEN,
+						},
+						{
 							Name: "Blue",
 							Value: BLUE,
 						},
 						{
-							Name: "Black",
-							Value: BLACK,
+							Name: "Dark blue",
+							Value: DARK_BLUE,
+						},
+						{
+							Name: "Purple",
+							Value: PURPLE,
+						},
+						{
+							Name: "Dark purple",
+							Value: DARK_PURPLE,
+						},
+						{
+							Name: "Pink",
+							Value: DARK_PINK,
+						},
+						{
+							Name: "Gold",
+							Value: GOLD,
+						},
+						{
+							Name: "Dark gold",
+							Value: DARK_GOLD,
+						},
+						{
+							Name: "Orange",
+							Value: ORANGE,
+						},
+						{
+							Name: "Dark orange",
+							Value: DARK_ORANGE,
+						},
+						{
+							Name: "Red",
+							Value: RED,
+						},
+						{
+							Name: "Dark red",
+							Value: DARK_RED,
+						},
+						{
+							Name: "Grey",
+							Value: GREY,
+						},
+						{
+							Name: "Dark grey",
+							Value: DARK_GREY,
+						},
+						{
+							Name: "Darker grey",
+							Value: DARKER_GREY,
+						},
+						{
+							Name: "Light grey",
+							Value: LIGHT_GREY,
+						},
+						{
+							Name: "Navy",
+							Value: NAVY,
+						},
+						{
+							Name: "Dark navy",
+							Value: DARK_NAVY,
+						},
+						{
+							Name: "Yellow",
+							Value: YELLOW,
+						},
+						{
+							Name: "White",
+							Value: WHITE,
 						},
 					},
 				},
