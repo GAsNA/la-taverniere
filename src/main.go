@@ -50,7 +50,7 @@ func list_slash_commands(sess *discordgo.Session) {
 				},
 			},
 		},
-    {
+    	{
 			Name:        "who-are-this-people",
 			Description: "Want to know something about this people?",
 			Options: []*discordgo.ApplicationCommandOption{
@@ -88,6 +88,54 @@ func list_slash_commands(sess *discordgo.Session) {
 			Name:			"salope",
 			Description:	"Suprise!",
 		},
+		{
+			Name:			"message",
+			Description:	"Send a message to a choose channel",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionChannel,
+					Name:        "channel",
+					Description: "Channel where you want to send this message",
+					Required:    true,
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "message",
+					Description: "Message you want to send",
+					Required:    true,
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "title",
+					Description: "Title of your message",
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionBoolean,
+					Name:        "embed",
+					Description: "If you want to send your message to an embed (false by default)",
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionInteger,
+					Name:        "color",
+					Description: "Color of your embed (ignored if embed is false)",
+					Choices: []*discordgo.ApplicationCommandOptionChoice{
+						{
+							Name: "Blue",
+							Value: BLUE,
+						},
+						{
+							Name: "Black",
+							Value: BLACK,
+						},
+					},
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionAttachment,
+					Name:        "thumbnail",
+					Description: "Thumbnail of your embed. If embed is false, the image is just an attachement",
+				},
+			},
+		},
 	})
 	if err != nil { log.Fatal(err) }
 }
@@ -121,6 +169,8 @@ func main() {
 				people_command(sess, i)
 			case "salope":
 				salope_command(sess, i)
+			case "message":
+				message_command(sess, i)
 		}
 	})
 
@@ -134,7 +184,7 @@ func main() {
 	set_activity(sess, 0, "Running the tavern")
 
 	// CHECK FOR YOUTUBE ACTIVITY 
-	youtube_announcements(sess)
+	//youtube_announcements(sess)
 
 	// CHECK SIGNAL TO STOP
 	stop := make(chan os.Signal, 1)
