@@ -52,18 +52,6 @@ func call_api_youtube_video(service *youtube.Service, youtube_channel_id string,
 	if len(response.Items) > 0 {
 		video := response.Items[0]
 
-		resp, err := http.Head("https://youtube.com/shorts/B-s71n0dHUk")
-		if err != nil { log.Fatal(err) }
-		defer resp.Body.Close()
-
-		fmt.Println(resp)
-
-		if resp.StatusCode == 200 {
-			fmt.Println("Is short")
-		} else {
-			fmt.Println("Not short")
-		}
-
 		if *last_video == nil {
 			*last_video = video
 		} else if video.Id.VideoId != (*last_video).Id.VideoId {
@@ -71,13 +59,20 @@ func call_api_youtube_video(service *youtube.Service, youtube_channel_id string,
 
 			// if call to shorts is ok: send_youtube_shorts_announcement(sess, *last_video)
 			// else:
-			response, err := http.Get("https://www.youtube.com/shorts/" + video.Id.VideoId)
+			client := &http.Client {
+				CheckRedirect: func(req *http.Request, via []*http.Request) error {
+					return http.ErrUseLastResponse
+				},
+			}
+			req, err := http.NewRequest("HEAD", "https://youtube.com/shorts/" + video.Id.VideoId, nil)
 			if err != nil { log.Fatal(err) }
-			defer response.Body.Close()
+			resp, err := client.Do(req)
+			if err != nil { log.Fatal(err) }
+			defer resp.Body.Close()
 
-			if response.StatusCode == 200 {
-				//send_youtube_short_announcement(sess, *last_video)
+			if resp.StatusCode == 200 {
 				fmt.Println("Is short")
+				//send_youtube_short_announcement(sess, *last_video)
 			} else {
 				fmt.Println("Not short")
 				send_youtube_video_announcement(sess, *last_video)
