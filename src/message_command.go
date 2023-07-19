@@ -75,54 +75,59 @@ func message_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 		color = int(optionMap["color"].IntValue())
 	}
 	url_thumbnail := ""
-	var attachment *discordgo.MessageAttachment = nil
 	if _, ok := optionMap["thumbnail"]; ok {
-		attachment_id := optionMap["thumbnail"].Value.(string)
+		thumbnail_id := optionMap["thumbnail"].Value.(string)
+		thumbnail := i.ApplicationCommandData().Resolved.Attachments[thumbnail_id]
+		url_thumbnail = thumbnail.URL
+	}
+	var attachment *discordgo.MessageAttachment = nil
+	if _, ok := optionMap["attachment"]; ok {
+		attachment_id := optionMap["attachment"].Value.(string)
 		attachment = i.ApplicationCommandData().Resolved.Attachments[attachment_id]
-		url_thumbnail = attachment.URL
 	}
 
-	// SEND EMBED IF EMBED IS TRUE ELSE MESSAGE
+	message_to_send := ""
+
+	embeds := []*discordgo.MessageEmbed {}
 	if is_embed {
-		embed := discordgo.MessageEmbed {
-			Title:			title,
-			Description:	message,
-			Timestamp:		time.Now().Format(time.RFC3339),
-			Color:			color,
-			Thumbnail:		&discordgo.MessageEmbedThumbnail {
-				URL:	url_thumbnail,
+		embeds = []*discordgo.MessageEmbed {
+			{
+				Title:			title,
+				Description:	message,
+				Timestamp:		time.Now().Format(time.RFC3339),
+				Color:			color,
+				Thumbnail:		&discordgo.MessageEmbedThumbnail {
+					URL:	url_thumbnail,
+				},
 			},
 		}
-
-		_, err_msg := sess.ChannelMessageSendEmbed(channel_id, &embed)
-		if err_msg != nil { log.Fatal(err_msg) }
 	} else {
-		message = "### " + title + "\n" + message
-
-		files := []*discordgo.File {}
-		if url_thumbnail != "" {
-			files = []*discordgo.File {
-				{
-					Name:			attachment.Filename,
-					ContentType:	attachment.ContentType,
-					Reader:			get_io_reader(url_thumbnail),
-				},
-			}
-		}
-
-		messageSend := discordgo.MessageSend {
-			Content:		message,
-			Embeds:			[]*discordgo.MessageEmbed {},
-			TTS:			true,
-			Components:		[]discordgo.MessageComponent {},
-			Files:			files,
-		}
-
-		_, err_msg := sess.ChannelMessageSendComplex(channel_id, &messageSend)
-		if err_msg != nil { log.Fatal(err_msg) }
+		message_to_send = "### " + title + "\n" + message
 	}
 
-	// SUCCESSFULLY SENT
+	files := []*discordgo.File {}
+	if attachment != nil {
+		files = []*discordgo.File {
+			{
+				Name:			attachment.Filename,
+				ContentType:	attachment.ContentType,
+				Reader:			get_io_reader(attachment.URL),
+			},
+		}
+	}
+
+	data_to_send := discordgo.MessageSend {
+		Content:		message_to_send,
+		Embeds:			embeds,
+		TTS:			true,
+		Components:		[]discordgo.MessageComponent {},
+		Files:			files,
+	}
+
+	_, err_msg := sess.ChannelMessageSendComplex(channel_id, &data_to_send)
+	if err_msg != nil { log.Fatal(err_msg) }
+
+	// RESPONSE MESSAGE FOR SUCCESSFULLY SENT
 	err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData {

@@ -243,7 +243,12 @@ func list_slash_commands(sess *discordgo.Session) {
 				{
 					Type:        discordgo.ApplicationCommandOptionAttachment,
 					Name:        "thumbnail",
-					Description: "Thumbnail of your embed. If embed is false, the image is just an attachement",
+					Description: "Thumbnail of your embed (ignored if embed is false)",
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionAttachment,
+					Name:        "attachment",
+					Description: "Attachment",
 				},
 			},
 		},
