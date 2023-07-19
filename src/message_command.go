@@ -59,6 +59,7 @@ func message_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	channel := "<#" + channel_id + ">"
 	message := optionMap["message"].StringValue()
 	message = strings.ReplaceAll(message, "\\n", "\n")
+	message = strings.ReplaceAll(message, "\\t", "\t")
 
 		// Option not required
 	is_embed := false
