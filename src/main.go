@@ -252,6 +252,30 @@ func list_slash_commands(sess *discordgo.Session) {
 				},
 			},
 		},
+		{
+			Name:			"handler_reaction_for_role",
+			Description:	"Add a handler to add a role to each person using the chosen reaction on the chosen message",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "link_message",
+					Description: "Link of the message on which you want to add the handler",
+					Required:    true,
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "reaction",
+					Description: "Reaction you want to handler",
+					Required:    true,
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionRole,
+					Name:        "role",
+					Description: "Role you want to add",
+					Required:    true,
+				},
+			},
+		},
 	})
 	if err != nil { log.Fatal(err) }
 }
@@ -287,6 +311,8 @@ func main() {
 				salope_command(sess, i)
 			case "message":
 				message_command(sess, i)
+			case "handler_reaction_for_role":
+				handler_reaction_for_role_command(sess, i)
 		}
 	})
 
