@@ -140,6 +140,7 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 	// TODO VERIF LES CONDITIONS IDENTIQUES
 	// OR TODO SUPP HANDLER
 
+	// HANDLER FOR REACTION ADDED
 	sess.AddHandler(func (sess *discordgo.Session, m *discordgo.MessageReactionAdd,) {
 		if m.MessageReaction.MessageID != message_id { return }
 
@@ -152,7 +153,18 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 		log_message(sess, "add the role <@&" + role_id + "> to <@" + m.MessageReaction.UserID + ">")
 	})
 
-	// TODO HANDLER FOR SUPP REACTION
+	// HANDLER FOR REACTION DELETED
+	sess.AddHandler(func (sess *discordgo.Session, m *discordgo.MessageReactionRemove,) {
+		if m.MessageReaction.MessageID != message_id { return }
+
+		if (emoji_id != "" && m.MessageReaction.Emoji.ID != emoji_id) ||
+			(m.MessageReaction.Emoji.Name != emoji_name) { return }
+
+		err_remove_role := sess.GuildMemberRoleRemove(guild_id, m.MessageReaction.UserID, role_id)
+		if err_remove_role != nil { log.Fatal(err_remove_role) }
+
+		log_message(sess, "removes the role <@&" + role_id + "> to <@" + m.MessageReaction.UserID + ">")
+	})
 
 	// RESPOND TO USER WITH EPHEMERAL MESSAGE
 	err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
