@@ -63,6 +63,24 @@ func list_slash_commands(sess *discordgo.Session) {
 			},
 		},
 		{
+			Name:			"kick",
+			Description:	"Kick a user with a reason",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionUser,
+					Name:        "user_to_kick",
+					Description: "User you want to Kick",
+					Required:    true,
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "reason",
+					Description: "Reason of the kick",
+					Required:    true,
+				},
+			},
+		},
+		{
 			Name:			"no-live",
 			Description:	"Make an annoucement for no live today or until a date given in parameter",
 			Options: []*discordgo.ApplicationCommandOption{
@@ -303,6 +321,8 @@ func main() {
 		switch data.Name {
 			case "blacklist":
 				blacklist_command(sess, i)
+			case "kick":
+				kick_command(sess, i)
 			case "no-live":
 				no_live_command(sess, i)
 			case "who-are-this-people":
