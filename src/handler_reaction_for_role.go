@@ -8,6 +8,14 @@ import (
 	"github.com/forPelevin/gomoji"
 )
 
+type handler struct {
+    link		string
+    reaction	string
+    role		*discordgo.Role
+}
+
+var list_handler []handler = []handler{}
+
 func check_reaction(reaction string, emoji_name *string, emoji_id *string) bool {
 	find_all := gomoji.FindAll(reaction)
 	if len(find_all) > 1 { return false }
@@ -40,6 +48,25 @@ func check_reaction(reaction string, emoji_name *string, emoji_id *string) bool 
 		*emoji_id = parts[1]
 		return true
 	}
+
+	return false
+}
+
+func is_already_an_handler(link string, reaction string, role *discordgo.Role) bool {
+	for i := 0; i < len(list_handler); i++ {
+		if list_handler[i].link == link && list_handler[i].reaction == reaction &&
+			list_handler[i].role.ID == role.ID {
+			return true
+		}
+	}
+	
+	// Add to list_handler
+	new_handler := handler{
+		link: link,
+		reaction: reaction,
+		role: role,
+	}
+	list_handler = append(list_handler, new_handler)
 
 	return false
 }
@@ -137,9 +164,22 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 		return
 	}
 
-	// TODO VERIF LES CONDITIONS IDENTIQUES
-	// OR TODO SUPP HANDLER
+	// VERIF IF HANDLER ALREADY EXISTS
+	if is_already_an_handler(link_message, reaction, role) {
+		err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData {
+					Flags:		discordgo.MessageFlagsEphemeral,
+					Content:	"This handler was already made.",
+				},
+			},)
+		if err != nil { log.Fatal(err) }
 
+		log_message(sess, "tried to add a handler to a message to add a role with reaction, but the hanlder already exists.")
+
+		return
+	}
+	
 	// HANDLER FOR REACTION ADDED
 	sess.AddHandler(func (sess *discordgo.Session, m *discordgo.MessageReactionAdd,) {
 		if m.MessageReaction.MessageID != message_id { return }
