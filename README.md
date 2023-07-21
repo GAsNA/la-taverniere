@@ -23,6 +23,10 @@ For commands, the bot uses interactions (slash commands).
 - [x]  Salope command for Kentaro
 - [ ]  Levels for conversation and messages
 
+## Libraries
+-  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord in Go
+-  [gomoji](https://github.com/forPelevin/gomoji), for actions with emojis in string in Go
+
 ## Author
 <table>
   <tr>
