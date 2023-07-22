@@ -13,7 +13,30 @@ import (
 const (
 	// COLORS INT
 	BLACK = 0
+	AQUA = 1752220
+	DARK_AQUA = 1146986
+	GREEN = 3066993
+	DARK_GREEN = 2067276
 	BLUE = 3447003
+	DARK_BLUE = 2123412
+	PURPLE = 10181046
+	DARK_PURPLE = 7419530
+	PINK = 15277667
+	DARK_PINK = 11342935
+	GOLD = 15844367
+	DARK_GOLD = 15844367
+	ORANGE = 15105570
+	DARK_ORANGE = 11027200
+	RED = 15158332
+	DARK_RED = 10038562
+	GREY = 9807270
+	DARK_GREY = 9936031
+	DARKER_GREY = 8359053
+	LIGHT_GREY = 12370112
+	NAVY = 3426654
+	DARK_NAVY = 2899536
+	YELLOW = 2899536
+	WHITE = 16777215
 )
 
 func list_slash_commands(sess *discordgo.Session) {
@@ -40,6 +63,24 @@ func list_slash_commands(sess *discordgo.Session) {
 			},
 		},
 		{
+			Name:			"kick",
+			Description:	"Kick a user with a reason",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionUser,
+					Name:        "user_to_kick",
+					Description: "User you want to Kick",
+					Required:    true,
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "reason",
+					Description: "Reason of the kick",
+					Required:    true,
+				},
+			},
+		},
+		{
 			Name:			"no-live",
 			Description:	"Make an annoucement for no live today or until a date given in parameter",
 			Options: []*discordgo.ApplicationCommandOption{
@@ -50,7 +91,7 @@ func list_slash_commands(sess *discordgo.Session) {
 				},
 			},
 		},
-    {
+    	{
 			Name:        "who-are-this-people",
 			Description: "Want to know something about this people?",
 			Options: []*discordgo.ApplicationCommandOption{
@@ -88,6 +129,171 @@ func list_slash_commands(sess *discordgo.Session) {
 			Name:			"salope",
 			Description:	"Suprise!",
 		},
+		{
+			Name:			"message",
+			Description:	"Send a message to a choose channel",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionChannel,
+					Name:        "channel",
+					Description: "Channel where you want to send this message",
+					Required:    true,
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "message",
+					Description: "Message you want to send",
+					Required:    true,
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "title",
+					Description: "Title of your message",
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionBoolean,
+					Name:        "embed",
+					Description: "If you want to send your message to an embed (false by default)",
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionInteger,
+					Name:        "color",
+					Description: "Color of your embed (ignored if embed is false)",
+					Choices: []*discordgo.ApplicationCommandOptionChoice{
+						{
+							Name: "Black",
+							Value: BLACK,
+						},
+						{
+							Name: "Aqua",
+							Value: AQUA,
+						},
+						{
+							Name: "Dark aqua",
+							Value: DARK_AQUA,
+						},
+						{
+							Name: "Green",
+							Value: GREEN,
+						},
+						{
+							Name: "Dark green",
+							Value: DARK_GREEN,
+						},
+						{
+							Name: "Blue",
+							Value: BLUE,
+						},
+						{
+							Name: "Dark blue",
+							Value: DARK_BLUE,
+						},
+						{
+							Name: "Purple",
+							Value: PURPLE,
+						},
+						{
+							Name: "Dark purple",
+							Value: DARK_PURPLE,
+						},
+						{
+							Name: "Pink",
+							Value: DARK_PINK,
+						},
+						{
+							Name: "Gold",
+							Value: GOLD,
+						},
+						{
+							Name: "Dark gold",
+							Value: DARK_GOLD,
+						},
+						{
+							Name: "Orange",
+							Value: ORANGE,
+						},
+						{
+							Name: "Dark orange",
+							Value: DARK_ORANGE,
+						},
+						{
+							Name: "Red",
+							Value: RED,
+						},
+						{
+							Name: "Dark red",
+							Value: DARK_RED,
+						},
+						{
+							Name: "Grey",
+							Value: GREY,
+						},
+						{
+							Name: "Dark grey",
+							Value: DARK_GREY,
+						},
+						{
+							Name: "Darker grey",
+							Value: DARKER_GREY,
+						},
+						{
+							Name: "Light grey",
+							Value: LIGHT_GREY,
+						},
+						{
+							Name: "Navy",
+							Value: NAVY,
+						},
+						{
+							Name: "Dark navy",
+							Value: DARK_NAVY,
+						},
+						{
+							Name: "Yellow",
+							Value: YELLOW,
+						},
+						{
+							Name: "White",
+							Value: WHITE,
+						},
+					},
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionAttachment,
+					Name:        "thumbnail",
+					Description: "Thumbnail of your embed (ignored if embed is false)",
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionAttachment,
+					Name:        "attachment",
+					Description: "Attachment",
+				},
+			},
+		},
+		{
+			Name:			"handler_reaction_for_role",
+			Description:	"Add a handler to add a role to each person using the chosen reaction on the chosen message",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "link_message",
+					Description: "Link of the message on which you want to add the handler",
+					Required:    true,
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "reaction",
+					Description: "Reaction you want to handler",
+					Required:    true,
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionRole,
+					Name:        "role",
+					Description: "Role you want to add",
+					Required:    true,
+				},
+			},
+		},
 	})
 	if err != nil { log.Fatal(err) }
 }
@@ -115,12 +321,18 @@ func main() {
 		switch data.Name {
 			case "blacklist":
 				blacklist_command(sess, i)
+			case "kick":
+				kick_command(sess, i)
 			case "no-live":
 				no_live_command(sess, i)
 			case "who-are-this-people":
 				people_command(sess, i)
 			case "salope":
 				salope_command(sess, i)
+			case "message":
+				message_command(sess, i)
+			case "handler_reaction_for_role":
+				handler_reaction_for_role_command(sess, i)
 		}
 	})
 
@@ -134,7 +346,7 @@ func main() {
 	set_activity(sess, 0, "Running the tavern")
 
 	// CHECK FOR YOUTUBE ACTIVITY 
-	youtube_announcements(sess)
+	//youtube_announcements(sess)
 
 	// CHECK SIGNAL TO STOP
 	stop := make(chan os.Signal, 1)

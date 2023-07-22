@@ -12,14 +12,20 @@ For commands, the bot uses interactions (slash commands).
 - [x]  Announcement for newly posted youtube videos and youtube live (for one youtube channel for now)
     - [ ]  Add reel in youtube announcements
     - [ ]  Stop bot properly
-- [x]  No youtube live command for 'today' or until a specified date - admins only
-- [x]  Blacklist command to ban a person and add their id and a reason (with date) to a chan - admins only
-- [x]  Log message for each bot action 
+- [x]  No youtube live command for 'today' or until a specified date - admin only
+- [x]  Blacklist command to ban a person and add their id and a reason (with date) to a chan - admin only
+- [x]  Kick command to kick a personn - admin only
+- [x]  Command to add a handler to add a role to a user when a reaction is made on a specific message - admin only
+- [x]  Log message for each bot action
 
 ### Optionnels
 - [x]  Commands for Ray, Feitan, Ukyim, Kentaro, GAsNa
 - [x]  Salope command for Kentaro
 - [ ]  Levels for conversation and messages
+
+## Libraries
+-  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord in Go
+-  [gomoji](https://github.com/forPelevin/gomoji), for actions with emojis in string in Go
 
 ## Author
 <table>

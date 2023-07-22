@@ -51,3 +51,25 @@ func is_good_format_date(date string) bool {
 
 	return true
 }
+
+func get_message_id(link string, id_guild string) string {
+	if !strings.HasPrefix(link, "https://discord.com/channels/") { return "" }
+
+	link = strings.TrimLeft(link, "https://discord.com/channels/")
+
+	if !strings.HasPrefix(link, id_guild) { return "" }
+
+	link = strings.TrimLeft(link, id_guild)
+	link = strings.TrimLeft(link, "/")
+
+	parts := strings.Split(link, "/")
+	if len(parts) != 2 { return "" }
+
+	for i := 0; i < len(parts); i++ {
+		for j := 0; j < len(parts[i]); j++ {
+			if parts[i][j] < '0' || parts[i][j] > '9' { return "" }
+		}
+	}
+	
+	return parts[len(parts) - 1]
+}
