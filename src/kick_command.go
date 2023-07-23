@@ -20,15 +20,7 @@ func kick_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	// CAN'T USE THIS COMMAND IF NOT ADMIN
 	if !is_admin {
-		err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
-				Type: discordgo.InteractionResponseChannelMessageWithSource,
-				Data: &discordgo.InteractionResponseData {
-					Flags:		discordgo.MessageFlagsEphemeral,
-					Content:	"You do not have the right to use this command.",
-				},
-			},)
-		if err != nil { log.Fatal(err) }
-
+		ephemeral_response_for_interaction(sess, i.Interaction, "You do not have the right to use this command.")
 		log_message(sess, "tried to kick someone, but <@" + author.ID + "> to not have the right.")
 
 		return
@@ -47,15 +39,7 @@ func kick_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	//CAN'T BAN IF USER TO BLACKLIST IS THE BOT
 	if user_to_kick_id == sess.State.User.ID {
-		err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
-				Type: discordgo.InteractionResponseChannelMessageWithSource,
-				Data: &discordgo.InteractionResponseData {
-					Flags:		discordgo.MessageFlagsEphemeral,
-					Content:	"You can't kick the bot.",
-				},
-			},)
-		if err != nil { log.Fatal(err) }
-
+		ephemeral_response_for_interaction(sess, i.Interaction, "You can't kick the bot.")
 		log_message(sess, "tried to kick someone but can't kick themself.", author)
 
 		return 
@@ -67,14 +51,7 @@ func kick_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	if err != nil { log.Fatal(err) }
 
 	// RESPOND TO USER WITH EPHEMERAL MESSAGE
-	err = sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData {
-				Flags:		discordgo.MessageFlagsEphemeral,
-				Content:	"User " + user_to_kick + " has been kick.",
-			},
-		},)
-	if err != nil { log.Fatal(err) }
+	ephemeral_response_for_interaction(sess, i.Interaction, "User " + user_to_kick + " has been kick.")
 
 	// ADD LOG IN LOGS CHANNEL
 	log_message(sess, "kicked " + user_to_kick + ".", author)

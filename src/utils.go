@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/joho/godotenv"
+	"github.com/bwmarrin/discordgo"
 )
 
 func get_env_var(key string) string {
@@ -72,4 +73,15 @@ func get_discord_message_ids(link string, guild_id *string, channel_id *string, 
 	*message_id = parts[2]
 	
 	return true
+}
+
+func ephemeral_response_for_interaction(sess *discordgo.Session, interaction *discordgo.Interaction, message string) {
+	err := sess.InteractionRespond(interaction, &discordgo.InteractionResponse {
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData {
+				Flags:		discordgo.MessageFlagsEphemeral,
+				Content:	message,
+			},
+		},)
+	if err != nil { log.Fatal(err) }
 }

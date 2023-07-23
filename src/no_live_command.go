@@ -21,15 +21,7 @@ func no_live_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	// CAN'T USE THIS COMMAND
 	if !is_admin {
-		err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
-				Type: discordgo.InteractionResponseChannelMessageWithSource,
-				Data: &discordgo.InteractionResponseData {
-					Flags:		discordgo.MessageFlagsEphemeral,
-					Content:	"You do not have the right to use this command.",
-				},
-			},)
-		if err != nil { log.Fatal(err) }
-
+		ephemeral_response_for_interaction(sess, i.Interaction, "You do not have the right to use this command.")
 		log_message(sess, "tried make a no live announcement, but <@" + author.ID + "> to not have the right.")
 
 		return
@@ -60,14 +52,7 @@ func no_live_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 		date := optionMap["date"].StringValue()
 
 		if !is_good_format_date(date) {
-			err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-					Type: discordgo.InteractionResponseChannelMessageWithSource,
-					Data: &discordgo.InteractionResponseData {
-						Flags:		discordgo.MessageFlagsEphemeral,
-						Content:	"The date does not have the good format. Use dd/mm/yyyy.",
-					},
-				},)
-			if err != nil { log.Fatal(err) }
+			ephemeral_response_for_interaction(sess, i.Interaction, "The date does not have the good format. Use dd/mm/yyyy.")
 
 			return
 		}
@@ -83,14 +68,7 @@ func no_live_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 		if err != nil { log.Fatal(err) }
 	}
 
-	err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData {
-				Flags:		discordgo.MessageFlagsEphemeral,
-				Content:	"No live message made.",
-			},
-		},)
-	if err != nil { log.Fatal(err) }
+	ephemeral_response_for_interaction(sess, i.Interaction, "No live message made.")
 
 	log_message(sess, "added a no live message to <#" + no_live_chan_id + ">.", author)
 }
