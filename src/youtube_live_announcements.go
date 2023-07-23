@@ -30,7 +30,7 @@ func send_youtube_live_announcement(sess *discordgo.Session, live *youtube.Searc
 			message += live.Snippet.ChannelTitle + " est en live ! Viens voir !\n"
 	}
 
-	message += "https://www.youtube.com/watch?v=" + live.Id.VideoId
+	message += get_env_var("YOUTUBE_LINK") + "/watch?v=" + live.Id.VideoId
 	_, err := sess.ChannelMessageSend(channel_id, message)
 	if err != nil { log.Fatal(err) }
 
@@ -45,9 +45,7 @@ func call_api_youtube_live(service *youtube.Service, youtube_channel_id string, 
 		EventType("live").
 		Type("video")
 	response, err := call.Do()
-	if err != nil {
-		log.Fatalf("Error doing the request: %v", err)
-	}
+	if err != nil { log.Fatal(err) }
 
 	if len(response.Items) > 0 {
 		live := response.Items[0]

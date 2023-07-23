@@ -32,7 +32,7 @@ func send_youtube_video_announcement(sess *discordgo.Session, video *youtube.Sea
 			message += video.Snippet.ChannelTitle + " a posté une nouvelle vidéo. Enjoy!\n"
 	}
 
-	message += "https://www.youtube.com/watch?v=" + video.Id.VideoId
+	message += get_env_var("YOUTUBE_LINK") + "/watch?v=" + video.Id.VideoId
 	_, err := sess.ChannelMessageSend(channel_id, message)
 	if err != nil { log.Fatal(err) }
 
@@ -45,9 +45,7 @@ func call_api_youtube_video(service *youtube.Service, youtube_channel_id string,
 		ChannelId(youtube_channel_id).
 		Order("date")
 	response, err := call.Do()
-	if err != nil {
-		log.Fatalf("Error doing the request: %v", err)
-	}
+	if err != nil { log.Fatal(err) }
 
 	if len(response.Items) > 0 {
 		video := response.Items[0]

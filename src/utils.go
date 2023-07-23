@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/joho/godotenv"
+	"github.com/bwmarrin/discordgo"
 )
 
 func get_env_var(key string) string {
@@ -52,24 +53,35 @@ func is_good_format_date(date string) bool {
 	return true
 }
 
-func get_message_id(link string, id_guild string) string {
-	if !strings.HasPrefix(link, "https://discord.com/channels/") { return "" }
+func get_discord_message_ids(link string, guild_id *string, channel_id *string, message_id *string) bool {
+	discord_link := get_env_var("DISCORD_LINK")
 
-	link = strings.TrimLeft(link, "https://discord.com/channels/")
-
-	if !strings.HasPrefix(link, id_guild) { return "" }
-
-	link = strings.TrimLeft(link, id_guild)
-	link = strings.TrimLeft(link, "/")
+	if !strings.HasPrefix(link, discord_link + "/channels/") { return false }
+	link = strings.TrimLeft(link, discord_link + "/channels/")
 
 	parts := strings.Split(link, "/")
-	if len(parts) != 2 { return "" }
+	if len(parts) != 3 { return false }
 
 	for i := 0; i < len(parts); i++ {
 		for j := 0; j < len(parts[i]); j++ {
-			if parts[i][j] < '0' || parts[i][j] > '9' { return "" }
+			if parts[i][j] < '0' || parts[i][j] > '9' { return false }
 		}
 	}
+
+	*guild_id = parts[0]
+	*channel_id = parts[1]
+	*message_id = parts[2]
 	
-	return parts[len(parts) - 1]
+	return true
+}
+
+func ephemeral_response_for_interaction(sess *discordgo.Session, interaction *discordgo.Interaction, message string) {
+	err := sess.InteractionRespond(interaction, &discordgo.InteractionResponse {
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData {
+				Flags:		discordgo.MessageFlagsEphemeral,
+				Content:	message,
+			},
+		},)
+	if err != nil { log.Fatal(err) }
 }

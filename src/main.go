@@ -55,8 +55,7 @@ func get_color_by_name(name string) color {
 }
 
 func list_slash_commands(sess *discordgo.Session) {
-	appID := get_env_var("DISCORD_APP_ID")
-	guildID := get_env_var("DISCORD_GUILD_ID")
+	app_id := get_env_var("DISCORD_APP_ID")
 
 	colors := []*discordgo.ApplicationCommandOptionChoice{}
 	all_colors := get_colors()
@@ -65,7 +64,7 @@ func list_slash_commands(sess *discordgo.Session) {
 		colors = append(colors, &ac_color)
 	}
 	
-	_, err := sess.ApplicationCommandBulkOverwrite(appID, guildID, []*discordgo.ApplicationCommand{
+	_, err := sess.ApplicationCommandBulkOverwrite(app_id, "", []*discordgo.ApplicationCommand{
 		{
 			Name:			"blacklist",
 			Description:	"Ban a user and send a message of blacklist to the serv",
@@ -262,8 +261,8 @@ func main() {
 	})
 
 	// TURN ON
-	error_open := sess.Open()
-	if error_open != nil { log.Fatal(error_open) }
+	err = sess.Open()
+	if err != nil { log.Fatal(err) }
 
 	fmt.Println("The bot is online!")
 
@@ -279,6 +278,6 @@ func main() {
 	log.Println("Press Ctrl+C to exit")
 	<-stop
  
-	error_open = sess.Close()
+	err = sess.Close()
 	if err != nil { log.Fatal(err) }
 }

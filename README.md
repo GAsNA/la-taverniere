@@ -25,6 +25,7 @@ For commands, the bot uses interactions (slash commands).
 
 ## Libraries
 -  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord in Go
+-  [godotenv](https://github.com/joho/godotenv), to load env vars from a .env file in Go
 -  [gomoji](https://github.com/forPelevin/gomoji), for actions with emojis in string in Go
 
 ## Author
