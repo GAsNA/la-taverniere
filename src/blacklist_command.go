@@ -73,7 +73,7 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 		Title:       "Blacklisted user",
 		Description: "This user has been blacklisted",
 		Timestamp: time.Now().Format(time.RFC3339),
-		Color: BLACK,
+		Color: get_color_by_name("Black").code,
 		Fields: []*discordgo.MessageEmbedField {
 			{
 				Name:  "User",
