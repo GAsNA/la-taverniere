@@ -63,7 +63,7 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 	}
 
 	// BAN USER
-	guild_id := get_env_var("DISCORD_GUILD_ID")
+	guild_id := i.Interaction.GuildID
 	err := sess.GuildBanCreateWithReason(guild_id, user_to_blacklist_id, reason, 0)
 	if err != nil { log.Fatal(err) }
 

@@ -106,7 +106,7 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 		optionMap[opt.Name] = opt
 	}
 
-	guild_id := get_env_var("DISCORD_GUILD_ID")
+	guild_id := i.Interaction.GuildID
 
 	link_message := optionMap["link_message"].StringValue()
 	reaction := optionMap["reaction"].StringValue()

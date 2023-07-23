@@ -55,8 +55,7 @@ func get_color_by_name(name string) color {
 }
 
 func list_slash_commands(sess *discordgo.Session) {
-	appID := get_env_var("DISCORD_APP_ID")
-	guildID := get_env_var("DISCORD_GUILD_ID")
+	app_id := get_env_var("DISCORD_APP_ID")
 
 	colors := []*discordgo.ApplicationCommandOptionChoice{}
 	all_colors := get_colors()
@@ -65,7 +64,7 @@ func list_slash_commands(sess *discordgo.Session) {
 		colors = append(colors, &ac_color)
 	}
 	
-	_, err := sess.ApplicationCommandBulkOverwrite(appID, guildID, []*discordgo.ApplicationCommand{
+	_, err := sess.ApplicationCommandBulkOverwrite(app_id, "", []*discordgo.ApplicationCommand{
 		{
 			Name:			"blacklist",
 			Description:	"Ban a user and send a message of blacklist to the serv",
