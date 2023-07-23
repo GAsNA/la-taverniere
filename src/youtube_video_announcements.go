@@ -32,7 +32,7 @@ func send_youtube_video_announcement(sess *discordgo.Session, video *youtube.Sea
 			message += video.Snippet.ChannelTitle + " a posté une nouvelle vidéo. Enjoy!\n"
 	}
 
-	message += "https://www.youtube.com/watch?v=" + video.Id.VideoId
+	message += get_env_var("YOUTUBE_LINK") + "/watch?v=" + video.Id.VideoId
 	_, err := sess.ChannelMessageSend(channel_id, message)
 	if err != nil { log.Fatal(err) }
 
