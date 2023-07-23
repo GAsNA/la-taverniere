@@ -29,7 +29,7 @@ func kick_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 			},)
 		if err != nil { log.Fatal(err) }
 
-		log_message(sess, "tried to add someone to the blacklist, but <@" + author.ID + "> to not have the right.")
+		log_message(sess, "tried to kick someone, but <@" + author.ID + "> to not have the right.")
 
 		return
 	}
