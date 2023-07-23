@@ -113,7 +113,7 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 	role := optionMap["role"].RoleValue(nil, guild_id)
 	
 	// VERIF LINK
-	message_id := get_message_id(link_message, guild_id)
+	message_id := get_discord_message_id(link_message, guild_id)
 	if message_id == "" {
 		err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
 				Type: discordgo.InteractionResponseChannelMessageWithSource,

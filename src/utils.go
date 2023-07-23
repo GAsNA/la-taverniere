@@ -52,10 +52,12 @@ func is_good_format_date(date string) bool {
 	return true
 }
 
-func get_message_id(link string, id_guild string) string {
-	if !strings.HasPrefix(link, "https://discord.com/channels/") { return "" }
+func get_discord_message_id(link string, id_guild string) string {
+	discord_link := get_env_var("DISCORD_LINK")
 
-	link = strings.TrimLeft(link, "https://discord.com/channels/")
+	if !strings.HasPrefix(link, discord_link + "/channels/") { return "" }
+
+	link = strings.TrimLeft(link, discord_link + "/channels/")
 
 	if !strings.HasPrefix(link, id_guild) { return "" }
 
