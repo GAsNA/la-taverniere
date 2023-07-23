@@ -113,18 +113,64 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 	role := optionMap["role"].RoleValue(nil, guild_id)
 	
 	// VERIF LINK
-	message_id := get_discord_message_id(link_message, guild_id)
-	if message_id == "" {
+	var message_guild_id string
+	var message_channel_id string
+	var message_id string
+	if !get_discord_message_ids(link_message, &message_guild_id, &message_channel_id, &message_id) {
 		err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData {
 					Flags:		discordgo.MessageFlagsEphemeral,
-					Content:	"The link of the message is not at the good format or the message is not in this guild.",
+					Content:	"The link of the message is not at the good format.",
 				},
 			},)
 		if err != nil { log.Fatal(err) }
 
-		log_message(sess, "tried to add a handler to a message to add a role with reaction, but the link of the message is not at the good format or the message is not in this guild.", author)
+		log_message(sess, "tried to add a handler to a message to add a role with reaction, but the link of the message is not at the good format.", author)
+
+		return
+	}
+	if message_guild_id != guild_id {
+		err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData {
+					Flags:		discordgo.MessageFlagsEphemeral,
+					Content:	"The message linked is not from this guild.",
+				},
+			},)
+		if err != nil { log.Fatal(err) }
+
+		log_message(sess, "tried to add a handler to a message to add a role with reaction, but the message linked is not from this guild.", author)
+
+		return
+	}
+	channel, err := sess.Channel(message_channel_id)
+	if err != nil || channel.GuildID != guild_id {
+		err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData {
+					Flags:		discordgo.MessageFlagsEphemeral,
+					Content:	"The message linked is not from an existing channel in this guild.",
+				},
+			},)
+		if err != nil { log.Fatal(err) }
+
+		log_message(sess, "tried to add a handler to a message to add a role with reaction, but the message linked is not from an existing channel in this guild.", author)
+
+		return
+	}
+	_, err = sess.ChannelMessage(message_channel_id, message_id)
+	if err != nil {
+		err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData {
+					Flags:		discordgo.MessageFlagsEphemeral,
+					Content:	"The message linked does not exist.",
+				},
+			},)
+		if err != nil { log.Fatal(err) }
+
+		log_message(sess, "tried to add a handler to a message to add a role with reaction, but the message linked does not exist.", author)
 
 		return
 	}
@@ -207,7 +253,7 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 	})
 
 	// RESPOND TO USER WITH EPHEMERAL MESSAGE
-	err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
+	err = sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData {
 				Flags:		discordgo.MessageFlagsEphemeral,

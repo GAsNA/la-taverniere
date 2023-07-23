@@ -52,26 +52,24 @@ func is_good_format_date(date string) bool {
 	return true
 }
 
-func get_discord_message_id(link string, id_guild string) string {
+func get_discord_message_ids(link string, guild_id *string, channel_id *string, message_id *string) bool {
 	discord_link := get_env_var("DISCORD_LINK")
 
-	if !strings.HasPrefix(link, discord_link + "/channels/") { return "" }
-
+	if !strings.HasPrefix(link, discord_link + "/channels/") { return false }
 	link = strings.TrimLeft(link, discord_link + "/channels/")
 
-	if !strings.HasPrefix(link, id_guild) { return "" }
-
-	link = strings.TrimLeft(link, id_guild)
-	link = strings.TrimLeft(link, "/")
-
 	parts := strings.Split(link, "/")
-	if len(parts) != 2 { return "" }
+	if len(parts) != 3 { return false }
 
 	for i := 0; i < len(parts); i++ {
 		for j := 0; j < len(parts[i]); j++ {
-			if parts[i][j] < '0' || parts[i][j] > '9' { return "" }
+			if parts[i][j] < '0' || parts[i][j] > '9' { return false }
 		}
 	}
+
+	*guild_id = parts[0]
+	*channel_id = parts[1]
+	*message_id = parts[2]
 	
-	return parts[len(parts) - 1]
+	return true
 }
