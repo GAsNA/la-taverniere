@@ -262,8 +262,8 @@ func main() {
 	})
 
 	// TURN ON
-	error_open := sess.Open()
-	if error_open != nil { log.Fatal(error_open) }
+	err = sess.Open()
+	if err != nil { log.Fatal(err) }
 
 	fmt.Println("The bot is online!")
 
@@ -279,6 +279,6 @@ func main() {
 	log.Println("Press Ctrl+C to exit")
 	<-stop
  
-	error_open = sess.Close()
+	err = sess.Close()
 	if err != nil { log.Fatal(err) }
 }

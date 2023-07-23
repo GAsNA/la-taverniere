@@ -187,8 +187,8 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 		if (emoji_id != "" && m.MessageReaction.Emoji.ID != emoji_id) ||
 			(m.MessageReaction.Emoji.Name != emoji_name) { return }
 
-		err_add_role := sess.GuildMemberRoleAdd(guild_id, m.MessageReaction.UserID, role_id)
-		if err_add_role != nil { log.Fatal(err_add_role) }
+		err := sess.GuildMemberRoleAdd(guild_id, m.MessageReaction.UserID, role_id)
+		if err != nil { log.Fatal(err) }
 
 		log_message(sess, "add the role <@&" + role_id + "> to <@" + m.MessageReaction.UserID + ">")
 	})
@@ -200,8 +200,8 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 		if (emoji_id != "" && m.MessageReaction.Emoji.ID != emoji_id) ||
 			(m.MessageReaction.Emoji.Name != emoji_name) { return }
 
-		err_remove_role := sess.GuildMemberRoleRemove(guild_id, m.MessageReaction.UserID, role_id)
-		if err_remove_role != nil { log.Fatal(err_remove_role) }
+		err := sess.GuildMemberRoleRemove(guild_id, m.MessageReaction.UserID, role_id)
+		if err != nil { log.Fatal(err) }
 
 		log_message(sess, "removes the role <@&" + role_id + "> to <@" + m.MessageReaction.UserID + ">")
 	})

@@ -90,8 +90,8 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 		},
 	}
 
-	_, err_msg := sess.ChannelMessageSendEmbed(blacklist_chan_id, &embed)
-	if err_msg != nil { log.Fatal(err_msg) }
+	_, err = sess.ChannelMessageSendEmbed(blacklist_chan_id, &embed)
+	if err != nil { log.Fatal(err) }
 
 	// RESPOND TO USER WITH EPHEMERAL MESSAGE
 	err = sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {

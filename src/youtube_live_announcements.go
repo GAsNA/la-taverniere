@@ -45,9 +45,7 @@ func call_api_youtube_live(service *youtube.Service, youtube_channel_id string, 
 		EventType("live").
 		Type("video")
 	response, err := call.Do()
-	if err != nil {
-		log.Fatalf("Error doing the request: %v", err)
-	}
+	if err != nil { log.Fatal(err) }
 
 	if len(response.Items) > 0 {
 		live := response.Items[0]

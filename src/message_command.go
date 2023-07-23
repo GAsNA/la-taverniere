@@ -124,11 +124,11 @@ func message_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 		Files:			files,
 	}
 
-	_, err_msg := sess.ChannelMessageSendComplex(channel_id, &data_to_send)
-	if err_msg != nil { log.Fatal(err_msg) }
+	_, err := sess.ChannelMessageSendComplex(channel_id, &data_to_send)
+	if err != nil { log.Fatal(err) }
 
 	// RESPONSE MESSAGE FOR SUCCESSFULLY SENT
-	err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
+	err = sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData {
 				Flags:		discordgo.MessageFlagsEphemeral,

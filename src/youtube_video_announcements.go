@@ -45,9 +45,7 @@ func call_api_youtube_video(service *youtube.Service, youtube_channel_id string,
 		ChannelId(youtube_channel_id).
 		Order("date")
 	response, err := call.Do()
-	if err != nil {
-		log.Fatalf("Error doing the request: %v", err)
-	}
+	if err != nil { log.Fatal(err) }
 
 	if len(response.Items) > 0 {
 		video := response.Items[0]
