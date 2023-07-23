@@ -10,38 +10,60 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-const (
-	// COLORS INT
-	BLACK = 0
-	AQUA = 1752220
-	DARK_AQUA = 1146986
-	GREEN = 3066993
-	DARK_GREEN = 2067276
-	BLUE = 3447003
-	DARK_BLUE = 2123412
-	PURPLE = 10181046
-	DARK_PURPLE = 7419530
-	PINK = 15277667
-	DARK_PINK = 11342935
-	GOLD = 15844367
-	DARK_GOLD = 15844367
-	ORANGE = 15105570
-	DARK_ORANGE = 11027200
-	RED = 15158332
-	DARK_RED = 10038562
-	GREY = 9807270
-	DARK_GREY = 9936031
-	DARKER_GREY = 8359053
-	LIGHT_GREY = 12370112
-	NAVY = 3426654
-	DARK_NAVY = 2899536
-	YELLOW = 2899536
-	WHITE = 16777215
-)
+type color struct {
+	name	string
+	code	int
+}
+
+// In function because go doesn't allow const blobal array
+func get_colors() []color {
+	return []color{
+		{ name: "Black", code: 0, },
+		{ name: "Aqua", code: 1752220, },
+		{ name: "Dark aqua", code: 1146986, },
+		{ name: "Green", code: 3066993, },
+		{ name: "Dark green", code: 2067276, },
+		{ name: "Blue", code: 3447003, },
+		{ name: "Dark blue", code: 2123412, },
+		{ name: "Purple", code: 10181046, },
+		{ name: "Dark purple", code: 7419530, },
+		{ name: "Pink", code: 15277667, },
+		{ name: "Dark pink", code: 11342935, },
+		{ name: "Gold", code: 15844367, },
+		{ name: "Dark gold", code: 15844367, },
+		{ name: "Orange", code: 15105570, },
+		{ name: "Dark orange", code: 11027200, },
+		{ name: "Red", code: 15158332, },
+		{ name: "Dark red", code: 10038562, },
+		{ name: "Grey", code: 9807270, },
+		{ name: "Dark grey", code: 9936031, },
+		{ name: "Darker grey", code: 8359053, },
+		{ name: "Light grey", code: 12370112, },
+		{ name: "Navy", code: 3426654, },
+		{ name: "Dark navy", code: 2899536, },
+		{ name: "Yellow", code: 2899536, },
+		{ name: "White", code: 16777215, },
+	}
+}
+
+func get_color_by_name(name string) color {
+	colors := get_colors()
+	for i := 0; i < len(colors); i++ {
+		if colors[i].name == name { return colors[i] }
+	}
+	return colors[0]
+}
 
 func list_slash_commands(sess *discordgo.Session) {
 	appID := get_env_var("DISCORD_APP_ID")
 	guildID := get_env_var("DISCORD_GUILD_ID")
+
+	colors := []*discordgo.ApplicationCommandOptionChoice{}
+	all_colors := get_colors()
+	for i := 0; i < len(all_colors); i++ {
+		ac_color := discordgo.ApplicationCommandOptionChoice{ Name: all_colors[i].name, Value: all_colors[i].code, }
+		colors = append(colors, &ac_color)
+	}
 	
 	_, err := sess.ApplicationCommandBulkOverwrite(appID, guildID, []*discordgo.ApplicationCommand{
 		{
@@ -159,104 +181,7 @@ func list_slash_commands(sess *discordgo.Session) {
 					Type:        discordgo.ApplicationCommandOptionInteger,
 					Name:        "color",
 					Description: "Color of your embed (ignored if embed is false)",
-					Choices: []*discordgo.ApplicationCommandOptionChoice{
-						{
-							Name: "Black",
-							Value: BLACK,
-						},
-						{
-							Name: "Aqua",
-							Value: AQUA,
-						},
-						{
-							Name: "Dark aqua",
-							Value: DARK_AQUA,
-						},
-						{
-							Name: "Green",
-							Value: GREEN,
-						},
-						{
-							Name: "Dark green",
-							Value: DARK_GREEN,
-						},
-						{
-							Name: "Blue",
-							Value: BLUE,
-						},
-						{
-							Name: "Dark blue",
-							Value: DARK_BLUE,
-						},
-						{
-							Name: "Purple",
-							Value: PURPLE,
-						},
-						{
-							Name: "Dark purple",
-							Value: DARK_PURPLE,
-						},
-						{
-							Name: "Pink",
-							Value: DARK_PINK,
-						},
-						{
-							Name: "Gold",
-							Value: GOLD,
-						},
-						{
-							Name: "Dark gold",
-							Value: DARK_GOLD,
-						},
-						{
-							Name: "Orange",
-							Value: ORANGE,
-						},
-						{
-							Name: "Dark orange",
-							Value: DARK_ORANGE,
-						},
-						{
-							Name: "Red",
-							Value: RED,
-						},
-						{
-							Name: "Dark red",
-							Value: DARK_RED,
-						},
-						{
-							Name: "Grey",
-							Value: GREY,
-						},
-						{
-							Name: "Dark grey",
-							Value: DARK_GREY,
-						},
-						{
-							Name: "Darker grey",
-							Value: DARKER_GREY,
-						},
-						{
-							Name: "Light grey",
-							Value: LIGHT_GREY,
-						},
-						{
-							Name: "Navy",
-							Value: NAVY,
-						},
-						{
-							Name: "Dark navy",
-							Value: DARK_NAVY,
-						},
-						{
-							Name: "Yellow",
-							Value: YELLOW,
-						},
-						{
-							Name: "White",
-							Value: WHITE,
-						},
-					},
+					Choices:	 colors,
 				},
 				{
 					Type:        discordgo.ApplicationCommandOptionAttachment,

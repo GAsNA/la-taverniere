@@ -15,7 +15,7 @@ func log_message(sess *discordgo.Session, log_str string) {
 		Title:       "Log",
 		Description: sess.State.User.Username + " " + log_str,
 		Timestamp: time.Now().Format(time.RFC3339),
-		Color: BLUE,
+		Color: get_color_by_name("Blue").code,
 	}
 
 	_, err := sess.ChannelMessageSendEmbed(logs_chan_id, &embed)
