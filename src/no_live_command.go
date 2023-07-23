@@ -92,5 +92,5 @@ func no_live_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 		},)
 	if err != nil { log.Fatal(err) }
 
-	log_message(sess, "added a no live message to <#" + no_live_chan_id + ">")
+	log_message(sess, "added a no live message to <#" + no_live_chan_id + ">.", author)
 }

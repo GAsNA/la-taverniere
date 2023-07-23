@@ -57,7 +57,7 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 			},)
 		if err != nil { log.Fatal(err) }
 
-		log_message(sess, "can't ban and add themself to the blacklist. Requested by <@" + author.ID + ">.")
+		log_message(sess, "can't ban and add themself to the blacklist.", author)
 
 		return 
 	}
@@ -104,5 +104,5 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 	if err != nil { log.Fatal(err) }
 
 	// ADD LOG IN LOGS CHANNEL
-	log_message(sess, "banned someone and added them to the blacklist.")
+	log_message(sess, "banned " + user_to_blacklist + " and added them to the blacklist.", author)
 }

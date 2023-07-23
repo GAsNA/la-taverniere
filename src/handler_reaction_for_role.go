@@ -94,7 +94,7 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 			},)
 		if err != nil { log.Fatal(err) }
 
-		log_message(sess, "tried to add someone to the blacklist, but <@" + author.ID + "> to not have the right.")
+		log_message(sess, "tried to add a handler to a message to add a role with reaction, but <@" + author.ID + "> to not have the right.")
 
 		return
 	}
@@ -124,7 +124,7 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 			},)
 		if err != nil { log.Fatal(err) }
 
-		log_message(sess, "tried to add a handler to a message to add a role with reaction, but the link of the message is not at the good format or the message is not in this guild.")
+		log_message(sess, "tried to add a handler to a message to add a role with reaction, but the link of the message is not at the good format or the message is not in this guild.", author)
 
 		return
 	}
@@ -142,7 +142,7 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 			},)
 		if err != nil { log.Fatal(err) }
 
-		log_message(sess, "tried to add a handler to a message to add a role with reaction, but the reaction is not at the good format.")
+		log_message(sess, "tried to add a handler to a message to add a role with reaction, but the reaction is not at the good format.", author)
 
 		return
 	}
@@ -159,7 +159,7 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 			},)
 		if err != nil { log.Fatal(err) }
 
-		log_message(sess, "tried to add a handler to a message to add a role with reaction, but the role chose was @everyone.")
+		log_message(sess, "tried to add a handler to a message to add a role with reaction, but the role chose was @everyone.", author)
 
 		return
 	}
@@ -175,7 +175,7 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 			},)
 		if err != nil { log.Fatal(err) }
 
-		log_message(sess, "tried to add a handler to a message to add a role with reaction, but the hanlder already exists.")
+		log_message(sess, "tried to add a handler to a message to add a role with reaction, but the hanlder already exists.", author)
 
 		return
 	}
@@ -217,5 +217,5 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 	if err != nil { log.Fatal(err) }
 
 	// ADD LOG IN LOGS CHANNEL
-	log_message(sess, "add a handler for add a role with reaction")
+	log_message(sess, "add a handler to " + link_message + " with reaction " + reaction + " fror role <@&" + role_id + ">.", author)
 }

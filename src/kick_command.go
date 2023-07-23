@@ -56,7 +56,7 @@ func kick_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 			},)
 		if err != nil { log.Fatal(err) }
 
-		log_message(sess, "can't kick. Requested by <@" + author.ID + ">.")
+		log_message(sess, "tried to kick someone but can't kick themself.", author)
 
 		return 
 	}
@@ -77,5 +77,5 @@ func kick_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	if err != nil { log.Fatal(err) }
 
 	// ADD LOG IN LOGS CHANNEL
-	log_message(sess, "kicked someone.")
+	log_message(sess, "kicked " + user_to_kick + ".", author)
 }

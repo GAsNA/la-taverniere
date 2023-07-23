@@ -87,8 +87,8 @@ func message_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 
 	message_to_send := ""
-
 	embeds := []*discordgo.MessageEmbed {}
+
 	if is_embed {
 		embeds = []*discordgo.MessageEmbed {
 			{
@@ -124,7 +124,7 @@ func message_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 		Files:			files,
 	}
 
-	_, err := sess.ChannelMessageSendComplex(channel_id, &data_to_send)
+	msg_send, err := sess.ChannelMessageSendComplex(channel_id, &data_to_send)
 	if err != nil { log.Fatal(err) }
 
 	// RESPONSE MESSAGE FOR SUCCESSFULLY SENT
@@ -137,6 +137,7 @@ func message_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 		},)
 	if err != nil { log.Fatal(err) }
 
+	link_msg_send := get_env_var("DISCORD_LINK") + "/channels/" + i.Interaction.GuildID + "/" + msg_send.ChannelID + "/" + msg_send.ID
 	// ADD LOG IN LOGS CHANNEL
-	log_message(sess, "send a message to " + channel + ".")
+	log_message(sess, "send this message " + link_msg_send + " to " + channel + ".", author)
 }
