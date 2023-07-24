@@ -43,7 +43,7 @@ func check_reaction(reaction string, emoji_name *string, emoji_id *string) bool 
 	return false
 }
 
-func is_already_an_handler(link string, reaction string, role *discordgo.Role) bool {
+func is_an_handler(link string, reaction string, role *discordgo.Role) bool {
 	for i := 0; i < len(list_handler_reaction); i++ {
 		if list_handler_reaction[i].link == link && list_handler_reaction[i].reaction == reaction &&
 			list_handler_reaction[i].role.ID == role.ID {
@@ -138,7 +138,7 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 	}
 
 	// VERIF IF HANDLER ALREADY EXISTS
-	if is_already_an_handler(link_message, reaction, role) {
+	if is_an_handler(link_message, reaction, role) {
 		ephemeral_response_for_interaction(sess, i.Interaction, "This handler was already made.")
 		log_message(sess, "tried to add a handler to a message to add a role with reaction, but the hanlder already exists.", author)
 
@@ -162,5 +162,5 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 	ephemeral_response_for_interaction(sess, i.Interaction, "Handler add to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
 
 	// ADD LOG IN LOGS CHANNEL
-	log_message(sess, "add a handler to " + link_message + " with reaction " + reaction + " fror role <@&" + role_id + ">.", author)
+	log_message(sess, "adds a handler to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">.", author)
 }

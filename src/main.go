@@ -231,6 +231,30 @@ func list_slash_commands(sess *discordgo.Session) {
 				},
 			},
 		},
+		{
+			Name:			"delete_handler_reaction_for_role",
+			Description:	"Delete a handler that adds a role to each person using the chosen reaction on the chosen message",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "link_message",
+					Description: "Link of the message concerned by the handler",
+					Required:    true,
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "reaction",
+					Description: "Reaction concerned by the handler",
+					Required:    true,
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionRole,
+					Name:        "role",
+					Description: "Role concerned by the handler",
+					Required:    true,
+				},
+			},
+		},
 	})
 	if err != nil { log.Fatal(err) }
 }
@@ -270,6 +294,8 @@ func main() {
 				message_command(sess, i)
 			case "handler_reaction_for_role":
 				handler_reaction_for_role_command(sess, i)
+			case "delete_handler_reaction_for_role":
+				delete_handler_reaction_for_role_command(sess, i)
 		}
 	})
 
