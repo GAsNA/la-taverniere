@@ -1,20 +1,11 @@
 package main
 
 import (
-	"log"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/forPelevin/gomoji"
 )
-
-type handler struct {
-    link		string
-    reaction	string
-    role		*discordgo.Role
-}
-
-var list_handler []handler = []handler{}
 
 func check_reaction(reaction string, emoji_name *string, emoji_id *string) bool {
 	find_all := gomoji.FindAll(reaction)
@@ -53,21 +44,13 @@ func check_reaction(reaction string, emoji_name *string, emoji_id *string) bool 
 }
 
 func is_already_an_handler(link string, reaction string, role *discordgo.Role) bool {
-	for i := 0; i < len(list_handler); i++ {
-		if list_handler[i].link == link && list_handler[i].reaction == reaction &&
-			list_handler[i].role.ID == role.ID {
+	for i := 0; i < len(list_handler_reaction); i++ {
+		if list_handler_reaction[i].link == link && list_handler_reaction[i].reaction == reaction &&
+			list_handler_reaction[i].role.ID == role.ID {
 			return true
 		}
 	}
 	
-	// Add to list_handler
-	new_handler := handler{
-		link: link,
-		reaction: reaction,
-		role: role,
-	}
-	list_handler = append(list_handler, new_handler)
-
 	return false
 }
 
@@ -161,33 +144,20 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 
 		return
 	}
+
+	// ADD IN HANDLER
+	new_handler := handler_reaction{
+		link: link_message,
+		message_id: message_id,
+		reaction: reaction,
+		reaction_id: emoji_id,
+		reaction_name: emoji_name,
+		role: role,
+		role_id: role_id,
+		guild_id: guild_id,
+	}
+	list_handler_reaction = append(list_handler_reaction, new_handler)
 	
-	// HANDLER FOR REACTION ADDED
-	sess.AddHandler(func (sess *discordgo.Session, m *discordgo.MessageReactionAdd,) {
-		if m.MessageReaction.MessageID != message_id { return }
-
-		if (emoji_id != "" && m.MessageReaction.Emoji.ID != emoji_id) ||
-			(m.MessageReaction.Emoji.Name != emoji_name) { return }
-
-		err := sess.GuildMemberRoleAdd(guild_id, m.MessageReaction.UserID, role_id)
-		if err != nil { log.Fatal(err) }
-
-		log_message(sess, "add the role <@&" + role_id + "> to <@" + m.MessageReaction.UserID + ">")
-	})
-
-	// HANDLER FOR REACTION DELETED
-	sess.AddHandler(func (sess *discordgo.Session, m *discordgo.MessageReactionRemove,) {
-		if m.MessageReaction.MessageID != message_id { return }
-
-		if (emoji_id != "" && m.MessageReaction.Emoji.ID != emoji_id) ||
-			(m.MessageReaction.Emoji.Name != emoji_name) { return }
-
-		err := sess.GuildMemberRoleRemove(guild_id, m.MessageReaction.UserID, role_id)
-		if err != nil { log.Fatal(err) }
-
-		log_message(sess, "removes the role <@&" + role_id + "> to <@" + m.MessageReaction.UserID + ">")
-	})
-
 	// RESPOND TO USER WITH EPHEMERAL MESSAGE
 	ephemeral_response_for_interaction(sess, i.Interaction, "Handler add to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
 
