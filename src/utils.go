@@ -5,14 +5,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/joho/godotenv"
 	"github.com/bwmarrin/discordgo"
 )
 
 func get_env_var(key string) string {
-	err := godotenv.Load(".env")
-	if err != nil { log.Fatal(err) }
-
 	return os.Getenv(key)
 }
 
