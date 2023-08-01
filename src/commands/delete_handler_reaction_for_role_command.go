@@ -88,7 +88,7 @@ func delete_handler_reaction_for_role_command(sess *discordgo.Session, i *discor
 	}
 
 	// VERIF IF HANDLER ALREADY EXISTS
-	if !is_an_handler(link_message, reaction, role) {
+	if !is_a_registered_handler(link_message, reaction, role) {
 		ephemeral_response_for_interaction(sess, i.Interaction, "This handler does not exists.")
 		log_message(sess, "tried to delete a handler on a message that adds a role with reaction, but the hanlder does not exist.", author)
 

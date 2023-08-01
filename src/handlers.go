@@ -6,6 +6,19 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+type handler_reaction struct {
+    link			string
+	message_id		string
+    reaction		string
+	reaction_id		string
+	reaction_name	string
+    role			*discordgo.Role
+	role_id			string
+	guild_id		string
+}
+
+var list_handler_reaction []handler_reaction = []handler_reaction{}
+
 func handler_reaction_to_add_role(sess *discordgo.Session, m *discordgo.MessageReactionAdd,) {	
 	for i := 0; i < len(list_handler_reaction); i++ { 
 		this_handler := list_handler_reaction[i]

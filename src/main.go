@@ -10,19 +10,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-type handler_reaction struct {
-    link			string
-	message_id		string
-    reaction		string
-	reaction_id		string
-	reaction_name	string
-    role			*discordgo.Role
-	role_id			string
-	guild_id		string
-}
-
-var list_handler_reaction []handler_reaction = []handler_reaction{}
-
 func main() {
 
 	// INIT BOT
