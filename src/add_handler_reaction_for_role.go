@@ -54,7 +54,7 @@ func is_an_handler(link string, reaction string, role *discordgo.Role) bool {
 	return false
 }
 
-func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
+func add_handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	author := i.Member.User
 	
 	roles := i.Member.Roles
@@ -159,7 +159,7 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 	list_handler_reaction = append(list_handler_reaction, new_handler)
 	
 	// RESPOND TO USER WITH EPHEMERAL MESSAGE
-	ephemeral_response_for_interaction(sess, i.Interaction, "Handler add to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
+	ephemeral_response_for_interaction(sess, i.Interaction, "Handler added to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
 
 	// ADD LOG IN LOGS CHANNEL
 	log_message(sess, "adds a handler to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">.", author)

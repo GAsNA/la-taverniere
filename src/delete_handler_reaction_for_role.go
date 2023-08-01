@@ -107,7 +107,7 @@ func delete_handler_reaction_for_role_command(sess *discordgo.Session, i *discor
 	}
 	
 	// RESPOND TO USER WITH EPHEMERAL MESSAGE
-	ephemeral_response_for_interaction(sess, i.Interaction, "Handler delete to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
+	ephemeral_response_for_interaction(sess, i.Interaction, "Handler deleted to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
 
 	// ADD LOG IN LOGS CHANNEL
 	log_message(sess, "deletes a handler on " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">.", author)
