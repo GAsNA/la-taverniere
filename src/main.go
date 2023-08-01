@@ -208,7 +208,7 @@ func list_slash_commands(sess *discordgo.Session) {
 			},
 		},
 		{
-			Name:			"handler_reaction_for_role",
+			Name:			"handler-reaction-for-role",
 			Description:	"Add a handler to add a role to each person using the chosen reaction on the chosen message",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
@@ -232,7 +232,7 @@ func list_slash_commands(sess *discordgo.Session) {
 			},
 		},
 		{
-			Name:			"delete_handler_reaction_for_role",
+			Name:			"delete-handler-reaction-for-role",
 			Description:	"Delete a handler that adds a role to each person using the chosen reaction on the chosen message",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
@@ -292,9 +292,9 @@ func main() {
 				salope_command(sess, i)
 			case "message":
 				message_command(sess, i)
-			case "handler_reaction_for_role":
+			case "handler-reaction-for-role":
 				handler_reaction_for_role_command(sess, i)
-			case "delete_handler_reaction_for_role":
+			case "delete-handler-reaction-for-role":
 				delete_handler_reaction_for_role_command(sess, i)
 		}
 	})
