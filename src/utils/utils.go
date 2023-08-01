@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/forPelevin/gomoji"
 )
 
 func get_env_var(key string) string {
@@ -80,4 +81,51 @@ func ephemeral_response_for_interaction(sess *discordgo.Session, interaction *di
 			},
 		},)
 	if err != nil { log.Fatal(err) }
+}
+
+func check_reaction(reaction string, emoji_name *string, emoji_id *string) bool {
+	find_all := gomoji.FindAll(reaction)
+	if len(find_all) > 1 { return false }
+
+	if len(find_all) == 1 {
+		reaction_without_emoji := gomoji.RemoveEmojis(reaction)
+		if len(reaction_without_emoji) > 0 { return false }
+		
+		if len(reaction_without_emoji) == 0 {
+			*emoji_name = reaction
+			return true
+		}
+	}
+
+	if len(find_all) == 0 {
+		if !strings.HasPrefix(reaction, "<:") { return false }
+		reaction = strings.TrimLeft(reaction, "<:")
+
+		if reaction[len(reaction) - 1] != '>' { return false }
+		reaction = strings.TrimRight(reaction, ">")
+
+		parts := strings.Split(reaction, ":")
+		if len(parts) != 2 { return false }
+
+		for i := 0; i < len(parts[1]); i++ {
+			if parts[1][i] < '0' || parts[1][i] > '9' { return false }
+		}
+
+		*emoji_name = parts[0]
+		*emoji_id = parts[1]
+		return true
+	}
+
+	return false
+}
+
+func is_a_registered_handler(link string, reaction string, role *discordgo.Role) bool {
+	for i := 0; i < len(list_handler_reaction); i++ {
+		if list_handler_reaction[i].link == link && list_handler_reaction[i].reaction == reaction &&
+			list_handler_reaction[i].role.ID == role.ID {
+			return true
+		}
+	}
+	
+	return false
 }

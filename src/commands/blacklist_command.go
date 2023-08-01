@@ -34,7 +34,7 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 		optionMap[opt.Name] = opt
 	}
 
-	user_to_blacklist_id := optionMap["user_to_blacklist"].UserValue(nil).ID
+	user_to_blacklist_id := optionMap["user"].UserValue(nil).ID
 	user_to_blacklist := "<@" + user_to_blacklist_id + ">"
 	reason := optionMap["reason"].StringValue()
 

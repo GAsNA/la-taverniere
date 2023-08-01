@@ -33,7 +33,7 @@ func delete_handler_reaction_for_role_command(sess *discordgo.Session, i *discor
 
 	guild_id := i.Interaction.GuildID
 
-	link_message := optionMap["link_message"].StringValue()
+	link_message := optionMap["link"].StringValue()
 	reaction := optionMap["reaction"].StringValue()
 	role := optionMap["role"].RoleValue(nil, guild_id)
 	
@@ -88,9 +88,9 @@ func delete_handler_reaction_for_role_command(sess *discordgo.Session, i *discor
 	}
 
 	// VERIF IF HANDLER ALREADY EXISTS
-	if !is_an_handler(link_message, reaction, role) {
+	if !is_a_registered_handler(link_message, reaction, role) {
 		ephemeral_response_for_interaction(sess, i.Interaction, "This handler does not exists.")
-		log_message(sess, "tried to delete a handler on a message that adds a role with reaction, but the hanlder already exists.", author)
+		log_message(sess, "tried to delete a handler on a message that adds a role with reaction, but the hanlder does not exist.", author)
 
 		return
 	}
@@ -107,7 +107,7 @@ func delete_handler_reaction_for_role_command(sess *discordgo.Session, i *discor
 	}
 	
 	// RESPOND TO USER WITH EPHEMERAL MESSAGE
-	ephemeral_response_for_interaction(sess, i.Interaction, "Handler delete to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
+	ephemeral_response_for_interaction(sess, i.Interaction, "Handler deleted to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
 
 	// ADD LOG IN LOGS CHANNEL
 	log_message(sess, "deletes a handler on " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">.", author)

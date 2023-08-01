@@ -33,7 +33,7 @@ func kick_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 		optionMap[opt.Name] = opt
 	}
 
-	user_to_kick_id := optionMap["user_to_kick"].UserValue(nil).ID
+	user_to_kick_id := optionMap["user"].UserValue(nil).ID
 	user_to_kick := "<@" + user_to_kick_id + ">"
 	reason := optionMap["reason"].StringValue()
 
