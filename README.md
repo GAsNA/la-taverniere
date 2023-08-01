@@ -4,24 +4,33 @@ Simple discord bot for moderation (and more).
 <br />
 Made in Go - my first project in this programming language.
 <br /><br />
+It was originally made for a friend, then edited for public release.
+<br /><br />
 Run with ```go run src/*```.
 
+## TODO
+- [ ]  Multi-guild accessibility
+    - [ ]  Connection to DB
+    - [ ]  Ask channels for messages of the bot
+
 ## Actions
-For commands, the bot uses interactions (slash commands).
 
 - [x]  Announcement for newly posted youtube videos and youtube live (for one youtube channel for now)
-    - [ ]  Add reel in youtube announcements
+    - [ ]  Add reel in youtube announcements. See if /shorts/{idvideo} return something if shorts or error if not ou l'inverse
     - [ ]  Stop bot properly
+- [x]  Log message for each bot action
+- [ ]  Levels for conversation and messages
+
+### Commands
 - [x]  No youtube live command for 'today' or until a specified date - admin only
 - [x]  Blacklist command to ban a person and add their id and a reason (with date) to a chan - admin only
 - [x]  Kick command to kick a personn - admin only
-- [x]  Command to add a handler to add a role to a user when a reaction is made on a specific message - admin only
-- [x]  Log message for each bot action
-
-### Optionnels
+- [x]  Command to add or delete a handler to add a role to a user when a reaction is made on a specific message - admin only
+    - [ ] Merge add and delete commands
+    - [ ] Reaction are optionnal (all reaction taken in account if not specified)
 - [x]  Commands for Ray, Feitan, Ukyim, Kentaro, GAsNa
 - [x]  Salope command for Kentaro
-- [ ]  Levels for conversation and messages
+- [ ]  Command to add role with name: /role us -> add role to the person who ask. If doesn't exist, add argument for role you want
 
 ## Libraries
 -  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord in Go
@@ -49,3 +58,4 @@ For commands, the bot uses interactions (slash commands).
 ![goBadge](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)
 ![discordBadge](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)
 ![youtubeBadge](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)
+![dockerBadge](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white)
