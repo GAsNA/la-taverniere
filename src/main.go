@@ -84,7 +84,7 @@ func list_slash_commands(sess *discordgo.Session) {
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionUser,
-					Name:        "user_to_blacklist",
+					Name:        "user",
 					Description: "User you want to ban",
 					Required:    true,
 				},
@@ -102,7 +102,7 @@ func list_slash_commands(sess *discordgo.Session) {
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionUser,
-					Name:        "user_to_kick",
+					Name:        "user",
 					Description: "User you want to Kick",
 					Required:    true,
 				},
@@ -213,7 +213,7 @@ func list_slash_commands(sess *discordgo.Session) {
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionString,
-					Name:        "link_message",
+					Name:        "link",
 					Description: "Link of the message on which you want to add the handler",
 					Required:    true,
 				},
@@ -237,7 +237,7 @@ func list_slash_commands(sess *discordgo.Session) {
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionString,
-					Name:        "link_message",
+					Name:        "link",
 					Description: "Link of the message concerned by the handler",
 					Required:    true,
 				},
@@ -299,7 +299,7 @@ func main() {
 		}
 	})
 
-	// HANDLER FOR REACTION ADDED
+	// HANDLER FOR REACTION ADDED AND ROLE
 	sess.AddHandler(func (sess *discordgo.Session, m *discordgo.MessageReactionAdd,) {	
 		for i := 0; i < len(list_handler_reaction); i++ { 
 			this_handler := list_handler_reaction[i]

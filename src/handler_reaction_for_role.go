@@ -83,7 +83,7 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 
 	guild_id := i.Interaction.GuildID
 
-	link_message := optionMap["link_message"].StringValue()
+	link_message := optionMap["link"].StringValue()
 	reaction := optionMap["reaction"].StringValue()
 	role := optionMap["role"].RoleValue(nil, guild_id)
 	
