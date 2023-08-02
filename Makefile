@@ -6,7 +6,7 @@ clean:
 					docker compose down
 
 fclean: 			clean
-					docker system prune -f --all
+					docker image prune -f
 
 re:					fclean all
 
