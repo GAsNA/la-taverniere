@@ -1,8 +1,11 @@
 all: 
-					docker compose up --build
+					docker compose up -d --build
+					docker compose logs -f bot
+
+stop:
+					docker compose stop
 
 clean:
-					docker compose stop
 					docker compose down
 
 fclean: 			clean
@@ -13,4 +16,4 @@ re:					fclean all
 image:
 					docker image ls
 
-.PHONY: all clean fclean re image
+.PHONY: all stop clean fclean re image

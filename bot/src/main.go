@@ -12,6 +12,9 @@ import (
 
 func main() {
 
+	// INIT DATABASE
+	run_database()
+
 	// INIT BOT
 	token := get_env_var("DISCORD_BOT_TOKEN")
 
