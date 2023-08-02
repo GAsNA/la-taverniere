@@ -6,7 +6,7 @@ Made in Go - my first project in this programming language.
 <br /><br />
 It was originally made for a friend, then edited for public release.
 <br /><br />
-Run with ```go run src/*```.
+Run with ```make```.
 
 ## TODO
 - [ ]  Multi-guild accessibility
