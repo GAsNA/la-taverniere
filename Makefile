@@ -5,15 +5,18 @@ all:
 stop:
 					docker compose stop
 
-clean:
+down:
 					docker compose down
 
-fclean: 			clean
+clean:
 					docker image prune -f
+
+fclean:				down
+					docker image prune -f -a
 
 re:					fclean all
 
 image:
 					docker image ls
 
-.PHONY: all stop clean fclean re image
+.PHONY: all stop down clean fclean re image
