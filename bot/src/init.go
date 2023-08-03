@@ -4,10 +4,12 @@ import (
 	"log"
 	"fmt"
 	"database/sql"
-	"strconv"
-	
+	"context"
+
 	_ "github.com/lib/pq"
 	"github.com/bwmarrin/discordgo"
+	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/dialect/sqlitedialect"
 )
 
 var (
@@ -19,53 +21,48 @@ var (
 
 
 func run_database() {
-	var db	*sql.DB
+	var sqldb	*sql.DB
+	ctx := context.Background()
 	
 	psqlconn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", host, user, password, dbname)
-	db, err := sql.Open("postgres", psqlconn)
+	sqldb, err := sql.Open("postgres", psqlconn)
 	if err != nil { log.Fatal(err) }
 
-	defer db.Close()
-
-	if err = db.Ping(); err != nil { log.Fatal(err) }
+	db := bun.NewDB(sqldb, sqlitedialect.New())
 
 	log.Println("The database is connected")
 
-	// CREATE TABLE
-	columns := []string {
-		"id SERIAL PRIMARY KEY NOT NULL",
-		"name TEXT",
-		"roll_number INT",
+	type test_users struct {
+		bun.BaseModel `bun:"table:test_users"`
+
+		ID			int64	`bun:"id,pk,autoincrement,type:SERIAL"`
+		Name		string	`bun:"name,notnull"`
+		Roll_number	int		`bun:roll_number,notnull`
 	}
-	db_create_table(db, "test_users", columns)
+
+	// CREATE TABLE
+	_, err = db.NewCreateTable().
+			Model((*test_users)(nil)).
+			IfNotExists().
+			Exec(ctx)
+	if err != nil { log.Fatal(err) }
+
+	log.Println("Table created!")
 
 	// INSERT IN TABLE
-	columns = []string {
-		"name",
-		"roll_number",
-	}
-	values := []string {
-		"Jack",
-		strconv.Itoa(21),
-	}
-	db_insert_in_table(db, "test_users", columns, values, "name", "Jack")
+	user := &test_users{Name: "Jack", Roll_number: 21}
+	_, err = db.NewInsert().Model(user).Ignore().Exec(ctx)
+	if err != nil { log.Fatal(err) }
+
+	log.Println("Inserted in table!")
 
 	// SELECT IN TABLE
-	columns = []string {
-		"*",
-	}
-	rows := db_select_in_table(db, "test_users", columns)
+	var users []test_users
+	err = db.NewSelect().Model(&users).Scan(ctx)
+	if err != nil { log.Fatal(err) }
 
-	defer rows.Close()
-	for rows.Next() {
-		id := 0
-		name := ""
-		roll_number := 0
-
-		err = rows.Scan(&id, &name, &roll_number)
-		if err != nil { log.Fatal(err) }
-
-		fmt.Println(id, name, roll_number)
+	for i := 0; i < len(users); i++ {
+		fmt.Println(users[i].ID, users[i].Name, users[i].Roll_number)
 	}
 }
 
