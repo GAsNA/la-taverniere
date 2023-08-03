@@ -4,6 +4,7 @@ import (
 	"log"
 	"fmt"
 	"database/sql"
+	"strconv"
 	
 	_ "github.com/lib/pq"
 	"github.com/bwmarrin/discordgo"
@@ -16,9 +17,10 @@ var (
     dbname	= get_env_var("POSTGRES_DB")
 )
 
-var db	*sql.DB
 
 func run_database() {
+	var db	*sql.DB
+	
 	psqlconn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", host, user, password, dbname)
 	db, err := sql.Open("postgres", psqlconn)
 	if err != nil { log.Fatal(err) }
@@ -30,29 +32,29 @@ func run_database() {
 	log.Println("The database is connected")
 
 	// CREATE TABLE
-	createTest := `CREATE TABLE IF NOT EXISTS test_users
-	(
-		id SERIAL PRIMARY KEY NOT NULL,
-		name TEXT,
-		roll_number INT
-	)`
-	_, err = db.Exec(createTest)
-	if err != nil { log.Fatal(err) }
+	columns := []string {
+		"id SERIAL PRIMARY KEY NOT NULL",
+		"name TEXT",
+		"roll_number INT",
+	}
+	db_create_table(db, "test_users", columns)
 
 	// INSERT IN TABLE
-	insertDynStmt := `INSERT INTO test_users(name, roll_number)
-	SELECT $1, $2
-	WHERE
-	NOT EXISTS (
-		SELECT name FROM test_users WHERE name = $1
-	);
-	`
-    _, err = db.Exec(insertDynStmt, "Jack", 21)
-	if err != nil { log.Fatal(err) }
+	columns = []string {
+		"name",
+		"roll_number",
+	}
+	values := []string {
+		"Jack",
+		strconv.Itoa(21),
+	}
+	db_insert_in_table(db, "test_users", columns, values, "name", "Jack")
 
 	// SELECT IN TABLE
-	rows, err := db.Query(`SELECT * FROM test_users`)
-	if err != nil { log.Fatal(err) }
+	columns = []string {
+		"*",
+	}
+	rows := db_select_in_table(db, "test_users", columns)
 
 	defer rows.Close()
 	for rows.Next() {
