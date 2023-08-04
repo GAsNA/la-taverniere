@@ -13,32 +13,29 @@ import (
 )
 
 var (
-	host	= get_env_var("POSTGRES_HOST")
-    user	= get_env_var("POSTGRES_USER")
-    password= get_env_var("POSTGRES_PASSWORD")
-    dbname	= get_env_var("POSTGRES_DB")
+	ctx 	= context.Background()
+	db		*bun.DB
 )
 
-
 func run_database() {
-	var sqldb	*sql.DB
-	ctx := context.Background()
-	
-	psqlconn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", host, user, password, dbname)
+	// INIT DB
+	host	:= get_env_var("POSTGRES_HOST")
+	user_pg	:= get_env_var("POSTGRES_USER")
+	password:= get_env_var("POSTGRES_PASSWORD")
+	dbname	:= get_env_var("POSTGRES_DB")
+
+	psqlconn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", host, user_pg, password, dbname)
 	sqldb, err := sql.Open("postgres", psqlconn)
 	if err != nil { log.Fatal(err) }
 
-	db := bun.NewDB(sqldb, sqlitedialect.New())
+	defer sqldb.Close()
+
+	if err = sqldb.Ping(); err != nil { log.Fatal(err) }	
+
+	// GET BUN DB
+	db = bun.NewDB(sqldb, sqlitedialect.New())
 
 	log.Println("The database is connected")
-
-	type test_users struct {
-		bun.BaseModel `bun:"table:test_users"`
-
-		ID			int64	`bun:"id,pk,autoincrement,type:SERIAL"`
-		Name		string	`bun:"name,notnull"`
-		Roll_number	int		`bun:roll_number,notnull`
-	}
 
 	// CREATE TABLE
 	_, err = db.NewCreateTable().
@@ -50,20 +47,27 @@ func run_database() {
 	log.Println("Table created!")
 
 	// INSERT IN TABLE
-	user := &test_users{Name: "Jack", Roll_number: 21}
-	_, err = db.NewInsert().Model(user).Ignore().Exec(ctx)
-	if err != nil { log.Fatal(err) }
+	var users []test_users
+	err = db.NewSelect().Model(&users).Where("name = ?", "Jack").Scan(ctx)
 
-	log.Println("Inserted in table!")
+	if len(users) == 0 {
+		user := &test_users{Name: "Jack", Roll_number: 21}
+		_, err = db.NewInsert().Model(user).Ignore().Exec(ctx)
+		if err != nil { log.Fatal(err) }
+		log.Println("Inserted in table!")
+	} else {
+		log.Println("Already inserted in table!")
+	}
 
 	// SELECT IN TABLE
-	var users []test_users
 	err = db.NewSelect().Model(&users).Scan(ctx)
 	if err != nil { log.Fatal(err) }
 
 	for i := 0; i < len(users); i++ {
 		fmt.Println(users[i].ID, users[i].Name, users[i].Roll_number)
 	}
+
+	log.Println("Selected in table!")
 }
 
 func list_slash_commands(sess *discordgo.Session) {
