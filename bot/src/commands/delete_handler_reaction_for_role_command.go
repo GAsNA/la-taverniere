@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -95,16 +97,21 @@ func delete_handler_reaction_for_role_command(sess *discordgo.Session, i *discor
 		return
 	}
 
-	// DELETE THE HANDLER
-	for i := 0; i < len(list_handler_reaction); i++ {
-		this_handler := list_handler_reaction[i]
-		if link_message == this_handler.link && reaction == this_handler.reaction && role_id == this_handler.role.ID {
-			copy(list_handler_reaction[i:], list_handler_reaction[i+1:])
-			list_handler_reaction[len(list_handler_reaction)-1] = handler_reaction{}
-			list_handler_reaction = list_handler_reaction[:len(list_handler_reaction)-1]
-			break
-		}
+	// DELETE HANDLER IN DB
+	del_handler := &handler_reaction_role {
+		Msg_Link: link_message, Msg_ID: message_id,
+		Reaction: reaction, Reaction_ID: emoji_id, Reaction_Name: emoji_name,
+		Role_ID: role_id,
+		Guild_ID: guild_id,
 	}
+		
+	_, err = db.NewDelete().
+				Model(del_handler).
+				Where("msg_link = ? AND reaction = ? AND role_id = ?", link_message, reaction, role_id).
+				Exec(ctx)
+	if err != nil { log.Fatal(err) }
+
+	log.Println("Handler deleted in table!")
 	
 	// RESPOND TO USER WITH EPHEMERAL MESSAGE
 	ephemeral_response_for_interaction(sess, i.Interaction, "Handler deleted to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")

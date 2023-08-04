@@ -120,12 +120,13 @@ func check_reaction(reaction string, emoji_name *string, emoji_id *string) bool 
 }
 
 func is_a_registered_handler(link string, reaction string, role *discordgo.Role) bool {
-	for i := 0; i < len(list_handler_reaction); i++ {
-		if list_handler_reaction[i].link == link && list_handler_reaction[i].reaction == reaction &&
-			list_handler_reaction[i].role.ID == role.ID {
-			return true
-		}
-	}
-	
+	var handlers []handler_reaction_role
+	err := db.NewSelect().Model(&handlers).
+			Where("msg_link = ? AND reaction = ? AND role_id = ?", link, reaction, role.ID).
+			Scan(ctx)
+	if err != nil { log.Fatal(err) }
+
+	if len(handlers) > 0 { return true }
+
 	return false
 }

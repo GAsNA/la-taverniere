@@ -6,19 +6,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-type handler_reaction struct {
-    link			string
-	message_id		string
-    reaction		string
-	reaction_id		string
-	reaction_name	string
-    role			*discordgo.Role
-	role_id			string
-	guild_id		string
-}
-
-var list_handler_reaction []handler_reaction = []handler_reaction{}
-
 func new_guild_joined(sess *discordgo.Session, gc *discordgo.GuildCreate) {
 	guild_id := gc.Guild.ID
 
@@ -35,35 +22,47 @@ func new_guild_joined(sess *discordgo.Session, gc *discordgo.GuildCreate) {
 }
 
 func handler_reaction_to_add_role(sess *discordgo.Session, m *discordgo.MessageReactionAdd,) {	
-	for i := 0; i < len(list_handler_reaction); i++ { 
-		this_handler := list_handler_reaction[i]
+	msg_id := m.MessageReaction.MessageID
+	reaction_id := m.MessageReaction.Emoji.ID
+	reaction_name := m.MessageReaction.Emoji.Name
 
-		if m.MessageReaction.MessageID != this_handler.message_id { continue }
+	user_id := m.MessageReaction.UserID
 
-		if (this_handler.reaction_id != "" && m.MessageReaction.Emoji.ID != this_handler.reaction_id) ||
-			(m.MessageReaction.Emoji.Name != this_handler.reaction_name) { continue }
+	var handlers []handler_reaction_role
+	err := db.NewSelect().Model(&handlers).
+			Where("msg_id = ? AND ((reaction_id IS NOT NULL AND reaction_id = ?) AND reaction_name = ?)", msg_id, reaction_id, reaction_name).
+			Scan(ctx)
+	if err != nil { log.Fatal(err) }
 
-		err := sess.GuildMemberRoleAdd(this_handler.guild_id, m.MessageReaction.UserID, this_handler.role_id)
+	if len(handlers) > 0 {
+		this_handler := handlers[0]
+
+		err = sess.GuildMemberRoleAdd(this_handler.Guild_ID, user_id, this_handler.Role_ID)
 		if err != nil { log.Fatal(err) }
 
-		log_message(sess, "add the role <@&" + this_handler.role_id + "> to <@" + m.MessageReaction.UserID + ">")
-		break
+		log_message(sess, "add the role <@&" + this_handler.Role_ID + "> to <@" + user_id + ">")
 	}
 }
 
 func handler_reaction_to_delete_role(sess *discordgo.Session, m *discordgo.MessageReactionRemove,) {
-	for i := 0; i < len(list_handler_reaction); i++ { 
-		this_handler := list_handler_reaction[i]
+	msg_id := m.MessageReaction.MessageID
+	reaction_id := m.MessageReaction.Emoji.ID
+	reaction_name := m.MessageReaction.Emoji.Name
 
-		if m.MessageReaction.MessageID != this_handler.message_id { continue }
+	user_id := m.MessageReaction.UserID
 
-		if (this_handler.reaction_id != "" && m.MessageReaction.Emoji.ID != this_handler.reaction_id) ||
-			(m.MessageReaction.Emoji.Name != this_handler.reaction_name) { continue }
+	var handlers []handler_reaction_role
+	err := db.NewSelect().Model(&handlers).
+			Where("msg_id = ? AND ((reaction_id IS NOT NULL AND reaction_id = ?) AND reaction_name = ?)", msg_id, reaction_id, reaction_name).
+			Scan(ctx)
+	if err != nil { log.Fatal(err) }
 
-		err := sess.GuildMemberRoleRemove(this_handler.guild_id, m.MessageReaction.UserID, this_handler.role_id)
+	if len(handlers) > 0 {
+		this_handler := handlers[0]
+
+		err = sess.GuildMemberRoleRemove(this_handler.Guild_ID, user_id, this_handler.Role_ID)
 		if err != nil { log.Fatal(err) }
 
-		log_message(sess, "removes the role <@&" + this_handler.role_id + "> to <@" + m.MessageReaction.UserID + ">")
-		break
+		log_message(sess, "removes the role <@&" + this_handler.Role_ID + "> to <@" + user_id + ">")
 	}
 }

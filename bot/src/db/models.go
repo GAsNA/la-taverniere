@@ -25,8 +25,8 @@ type handler_reaction_role struct {
 	Msg_Link		string	`bun:"msg_link,notnull"`
 	Msg_ID			string	`bun:"msg_id,notnull"`
 	Reaction		string	`bun:"reaction,notnull"`
-	Reaction_ID		string	`bun:"reaction_id,notnull"`
-	Reaction_name	string	`bun:"reaction_name,notnull"`
+	Reaction_ID		string	`bun:"reaction_id"`
+	Reaction_Name	string	`bun:"reaction_name,notnull"`
 	Role_ID			string	`bun:"role_id,notnull"`
 	Guild_ID		string	`bun:"guild_id,notnull"`
 }
