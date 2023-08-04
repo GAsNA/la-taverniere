@@ -20,17 +20,17 @@ type handler_reaction struct {
 var list_handler_reaction []handler_reaction = []handler_reaction{}
 
 func new_guild_joined(sess *discordgo.Session, gc *discordgo.GuildCreate) {
-	id_guild := gc.Guild.ID
+	guild_id := gc.Guild.ID
 
 	var guilds []guild
-	err := db.NewSelect().Model(&guilds).Where("id_guild = ?", id_guild).Scan(ctx)
+	err := db.NewSelect().Model(&guilds).Where("guild_id = ?", guild_id).Scan(ctx)
 	if err != nil { log.Println(err) }
 
 	if len(guilds) == 0 {
-		new_guild := &guild{ID_guild: id_guild}
+		new_guild := &guild{Guild_ID: guild_id}
 		_, err = db.NewInsert().Model(new_guild).Ignore().Exec(ctx)
 		if err != nil { log.Println(err) }
-		if err == nil { log.Println("Guild id " + id_guild + " registered!") }
+		if err == nil { log.Println("Guild id " + guild_id + " registered!") }
 	}
 }
 

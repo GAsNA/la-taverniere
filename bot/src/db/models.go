@@ -16,5 +16,5 @@ type guild struct {
 	bun.BaseModel `bun:"table:guild"`
 
 	ID			int64	`bun:"id,pk,autoincrement,type:SERIAL"`
-	ID_guild	string	`bun:"id_guild,notnull"`
+	Guild_ID	string	`bun:"guild_id,notnull"`
 }
