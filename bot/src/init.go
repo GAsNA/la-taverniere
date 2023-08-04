@@ -28,8 +28,6 @@ func run_database() {
 	sqldb, err := sql.Open("postgres", psqlconn)
 	if err != nil { log.Fatal(err) }
 
-	defer sqldb.Close()
-
 	if err = sqldb.Ping(); err != nil { log.Fatal(err) }	
 
 	// GET BUN DB
@@ -37,6 +35,11 @@ func run_database() {
 
 	log.Println("The database is connected")
 
+	// CREATION TABLES
+	_, err = db.NewCreateTable().Model((*guild)(nil)).IfNotExists().Exec(ctx)
+	if err != nil { log.Fatal(err) }
+
+	/*
 	// CREATE TABLE
 	_, err = db.NewCreateTable().
 			Model((*test_users)(nil)).
@@ -68,6 +71,7 @@ func run_database() {
 	}
 
 	log.Println("Selected in table!")
+	*/
 }
 
 func list_slash_commands(sess *discordgo.Session) {

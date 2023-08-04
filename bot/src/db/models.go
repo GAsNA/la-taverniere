@@ -11,3 +11,10 @@ type test_users struct {
 	Name		string	`bun:"name,notnull"`
 	Roll_number	int		`bun:roll_number,notnull`
 }
+
+type guild struct {
+	bun.BaseModel `bun:"table:guild"`
+
+	ID			int64	`bun:"id,pk,autoincrement,type:SERIAL"`
+	ID_guild	string	`bun:"id_guild,notnull"`
+}

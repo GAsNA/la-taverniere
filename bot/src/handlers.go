@@ -19,6 +19,21 @@ type handler_reaction struct {
 
 var list_handler_reaction []handler_reaction = []handler_reaction{}
 
+func new_guild_joined(sess *discordgo.Session, gc *discordgo.GuildCreate) {
+	id_guild := gc.Guild.ID
+
+	var guilds []guild
+	err := db.NewSelect().Model(&guilds).Where("id_guild = ?", id_guild).Scan(ctx)
+	if err != nil { log.Println(err) }
+
+	if len(guilds) == 0 {
+		new_guild := &guild{ID_guild: id_guild}
+		_, err = db.NewInsert().Model(new_guild).Ignore().Exec(ctx)
+		if err != nil { log.Println(err) }
+		if err == nil { log.Println("Guild id " + id_guild + " registered!") }
+	}
+}
+
 func handler_reaction_to_add_role(sess *discordgo.Session, m *discordgo.MessageReactionAdd,) {	
 	for i := 0; i < len(list_handler_reaction); i++ { 
 		this_handler := list_handler_reaction[i]
