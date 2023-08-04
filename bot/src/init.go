@@ -38,6 +38,8 @@ func run_database() {
 	// CREATION TABLES
 	_, err = db.NewCreateTable().Model((*guild)(nil)).IfNotExists().Exec(ctx)
 	if err != nil { log.Fatal(err) }
+	_, err = db.NewCreateTable().Model((*handler_reaction_role)(nil)).ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).IfNotExists().Exec(ctx)
+	if err != nil { log.Fatal(err) }
 
 	/*
 	// CREATE TABLE
