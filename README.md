@@ -10,7 +10,7 @@ Run with ```make```.
 
 ## TODO
 - [ ]  Multi-guild accessibility
-    - [ ]  Connection to DB
+    - [x]  Connection to DB
 
 ## Actions
 
@@ -29,7 +29,7 @@ Run with ```make```.
     - [ ] Reaction are optionnal (all reaction taken in account if not specified)
 - [x]  Commands for Ray, Feitan, Ukyim, Kentaro, GAsNa
 - [x]  Salope command for Kentaro
-- [ ]  Command to add role with name: /role us -> add role to the person who ask. If doesn't exist, add argument for role you want
+- [ ]  Command to add role with nam e: /role us -> add role to the person who ask. If doesn't exist, add argument for role you want
 - [ ]  Help command to describe all existing commands
 - [ ]  Config command to set channels and other thing for the bot to work properly
 
