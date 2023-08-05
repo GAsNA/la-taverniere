@@ -10,7 +10,6 @@ Run with ```make```.
 
 ## TODO
 - [ ]  Multi-guild accessibility
-    - [x]  Connection to DB
 
 ## Actions
 
@@ -18,7 +17,7 @@ Run with ```make```.
     - [ ]  Add reel in youtube announcements. See if /shorts/{idvideo} return something if shorts or error if not ou l'inverse
     - [ ]  Stop bot properly
 - [x]  Log message for each bot action
-- [ ]  Levels for conversation and messages
+- [x]  Levels for conversation and messages
 
 ### Commands
 - [x]  No youtube live command for 'today' or until a specified date - admin only
