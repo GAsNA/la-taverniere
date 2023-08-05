@@ -36,6 +36,7 @@ Run with ```make```.
 ## Libraries
 -  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord in Go
 -  [gomoji](https://github.com/forPelevin/gomoji), for actions with emojis in string in Go
+-  [bun](https://github.com/uptrace/bun), to simplify interactions with postgres/sql database
 
 ## Author
 <table>

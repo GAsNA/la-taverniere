@@ -2,9 +2,79 @@ package main
 
 import (
 	"log"
-	
+	"fmt"
+	"database/sql"
+	"context"
+
+	_ "github.com/lib/pq"
 	"github.com/bwmarrin/discordgo"
+	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/dialect/sqlitedialect"
 )
+
+var (
+	ctx 	= context.Background()
+	db		*bun.DB
+)
+
+func run_database() {
+	// INIT DB
+	host	:= get_env_var("POSTGRES_HOST")
+	user_pg	:= get_env_var("POSTGRES_USER")
+	password:= get_env_var("POSTGRES_PASSWORD")
+	dbname	:= get_env_var("POSTGRES_DB")
+
+	psqlconn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", host, user_pg, password, dbname)
+	sqldb, err := sql.Open("postgres", psqlconn)
+	if err != nil { log.Fatal(err) }
+
+	if err = sqldb.Ping(); err != nil { log.Fatal(err) }	
+
+	// GET BUN DB
+	db = bun.NewDB(sqldb, sqlitedialect.New())
+
+	log.Println("The database is connected")
+
+	// CREATION TABLES
+	_, err = db.NewCreateTable().Model((*guild)(nil)).IfNotExists().Exec(ctx)
+	if err != nil { log.Fatal(err) }
+	_, err = db.NewCreateTable().Model((*handler_reaction_role)(nil)).ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).IfNotExists().Exec(ctx)
+	if err != nil { log.Fatal(err) }
+
+	/*
+	// CREATE TABLE
+	_, err = db.NewCreateTable().
+			Model((*test_users)(nil)).
+			IfNotExists().
+			Exec(ctx)
+	if err != nil { log.Fatal(err) }
+
+	log.Println("Table created!")
+
+	// INSERT IN TABLE
+	var users []test_users
+	err = db.NewSelect().Model(&users).Where("name = ?", "Jack").Scan(ctx)
+
+	if len(users) == 0 {
+		user := &test_users{Name: "Jack", Roll_number: 21}
+		_, err = db.NewInsert().Model(user).Ignore().Exec(ctx)
+		if err != nil { log.Fatal(err) }
+		log.Println("Inserted in table!")
+	} else {
+		log.Println("Already inserted in table!")
+	}
+
+	// SELECT IN TABLE
+	err = db.NewSelect().Model(&users).Scan(ctx)
+	if err != nil { log.Fatal(err) }
+
+	for i := 0; i < len(users); i++ {
+		fmt.Println(users[i].ID, users[i].Name, users[i].Roll_number)
+	}
+
+	log.Println("Selected in table!")
+	*/
+}
 
 func list_slash_commands(sess *discordgo.Session) {
 	app_id := get_env_var("DISCORD_APP_ID")

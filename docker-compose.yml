@@ -1,9 +1,14 @@
 version: "3.9"
+
 services:
-  app:
+  bot:
     build:
       dockerfile: Dockerfile
-      context: .
+      context: ./bot
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
     environment:
       DISCORD_APP_ID: ${DISCORD_APP_ID}
       DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN}
@@ -19,3 +24,40 @@ services:
       YOUTUBE_API_KEY: ${YOUTUBE_API_KEY}
       YOUTUBE_CHANNEL_ID: ${YOUTUBE_CHANNEL_ID}
       YOUTUBE_LINK: ${YOUTUBE_LINK}
+      DATABASE_URL: ${DATABASE_URL}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
+  postgres:
+   image: postgres:15
+   restart: unless-stopped
+   healthcheck:
+     test: ["CMD-SHELL", "pg_isready -V"]
+     interval: 10s
+     timeout: 5s
+     retries: 5
+   volumes:
+     - data:/var/lib/postgresql/data
+   environment:
+     POSTGRES_USER: ${POSTGRES_USER}
+     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+     POSTGRES_DB: ${POSTGRES_DB}
+
+  # The Postgres Admin tool if we want to run some custom queries and so on against our Database
+  postgres_admin:
+    image: dpage/pgadmin4:latest
+    restart: unless-stopped
+    volumes:
+      - ./db/pgadmin_servers.json:/pgadmin4/servers.json
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - 5050:80
+
+volumes:
+  data:

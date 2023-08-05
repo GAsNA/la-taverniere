@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -70,7 +72,7 @@ func add_handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo
 
 	// VERIF REACTION
 	emoji_name := ""
-	emoji_id := ""
+	emoji_id := *new(string)
 	if !check_reaction(reaction, &emoji_name, &emoji_id) {
 		ephemeral_response_for_interaction(sess, i.Interaction, "The reaction is not at the good format.")
 		log_message(sess, "tried to add a handler to a message to add a role with reaction, but the reaction is not at the good format.", author)
@@ -95,18 +97,17 @@ func add_handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo
 		return
 	}
 
-	// ADD IN HANDLER
-	new_handler := handler_reaction{
-		link: link_message,
-		message_id: message_id,
-		reaction: reaction,
-		reaction_id: emoji_id,
-		reaction_name: emoji_name,
-		role: role,
-		role_id: role_id,
-		guild_id: guild_id,
+	// ADD HANDLER IN DB
+	new_handler := &handler_reaction_role{
+		Msg_Link: link_message, Msg_ID: message_id,
+		Reaction: reaction, Reaction_ID: emoji_id, Reaction_Name: emoji_name,
+		Role_ID: role_id,
+		Guild_ID: guild_id,
 	}
-	list_handler_reaction = append(list_handler_reaction, new_handler)
+	_, err = db.NewInsert().Model(new_handler).Ignore().Exec(ctx)
+	if err != nil { log.Fatal(err) }
+
+	log.Println("New Handler inserted in table!")
 	
 	// RESPOND TO USER WITH EPHEMERAL MESSAGE
 	ephemeral_response_for_interaction(sess, i.Interaction, "Handler added to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
