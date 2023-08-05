@@ -2,6 +2,8 @@ package main
 
 import (
 	"log"
+	"math"
+	"strconv"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -64,5 +66,37 @@ func handler_reaction_to_delete_role(sess *discordgo.Session, m *discordgo.Messa
 		if err != nil { log.Fatal(err) }
 
 		log_message(sess, "removes the role <@&" + this_handler.Role_ID + "> to <@" + user_id + ">")
+	}
+}
+
+func new_message_posted(sess *discordgo.Session, m *discordgo.MessageCreate) {
+	guild_id := m.Message.GuildID
+	user_id := m.Message.Author.ID
+
+	if is_the_bot(user_id, sess.State.User.ID) { return }
+
+	var users []nb_msg
+	err := db.NewSelect().Model(&users).
+			Where("user_id = ? AND guild_id = ?", user_id, guild_id).
+			Scan(ctx)
+	if err != nil { log.Fatal(err) }
+
+	if len(users) == 0 {
+		new_user := &nb_msg{User_ID: user_id, Guild_ID: guild_id}
+		_, err = db.NewInsert().Model(new_user).Ignore().Exec(ctx)
+		if err != nil { log.Println(err) }
+		if err == nil { log.Println("User id " + user_id + " registered with guild id " + guild_id + " in nb_msg table!") }
+	} else {
+		user := users[0]
+		user.Nb_Msg = user.Nb_Msg + 1
+		_, err := db.NewUpdate().Model(&user).Column("nb_msg").Where("id = ?", user.ID).Exec(ctx)
+		if err != nil { log.Println(err) }
+		if err == nil { log.Println("Nb messages of user id " + user_id + " updated in nb_msg table!") }
+
+		// levels calcul with
+			// (1 + racine(1 + 8 * nb_msg / 50)) / 2
+		levels := ((1 + math.Sqrt(float64(1 + 8 * user.Nb_Msg / 50))) / 2)
+		levels_int := int(levels)
+		log_message(sess, "gives xp to <@" + user_id + ">. They are levels" + strconv.Itoa(levels_int) + ".")
 	}
 }

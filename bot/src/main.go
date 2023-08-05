@@ -52,6 +52,7 @@ func main() {
 	sess.AddHandler(new_guild_joined)
 	sess.AddHandler(handler_reaction_to_add_role)
 	sess.AddHandler(handler_reaction_to_delete_role)
+	sess.AddHandler(new_message_posted)
 
 	// TURN ON
 	err = sess.Open()

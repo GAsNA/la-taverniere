@@ -36,44 +36,15 @@ func run_database() {
 	log.Println("The database is connected")
 
 	// CREATION TABLES
+		// Guild
 	_, err = db.NewCreateTable().Model((*guild)(nil)).IfNotExists().Exec(ctx)
 	if err != nil { log.Fatal(err) }
+		// Handler_Reaction_Role
 	_, err = db.NewCreateTable().Model((*handler_reaction_role)(nil)).ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).IfNotExists().Exec(ctx)
 	if err != nil { log.Fatal(err) }
-
-	/*
-	// CREATE TABLE
-	_, err = db.NewCreateTable().
-			Model((*test_users)(nil)).
-			IfNotExists().
-			Exec(ctx)
+		// Nb_Msg
+	_, err = db.NewCreateTable().Model((*nb_msg)(nil)).ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).IfNotExists().Exec(ctx)
 	if err != nil { log.Fatal(err) }
-
-	log.Println("Table created!")
-
-	// INSERT IN TABLE
-	var users []test_users
-	err = db.NewSelect().Model(&users).Where("name = ?", "Jack").Scan(ctx)
-
-	if len(users) == 0 {
-		user := &test_users{Name: "Jack", Roll_number: 21}
-		_, err = db.NewInsert().Model(user).Ignore().Exec(ctx)
-		if err != nil { log.Fatal(err) }
-		log.Println("Inserted in table!")
-	} else {
-		log.Println("Already inserted in table!")
-	}
-
-	// SELECT IN TABLE
-	err = db.NewSelect().Model(&users).Scan(ctx)
-	if err != nil { log.Fatal(err) }
-
-	for i := 0; i < len(users); i++ {
-		fmt.Println(users[i].ID, users[i].Name, users[i].Roll_number)
-	}
-
-	log.Println("Selected in table!")
-	*/
 }
 
 func list_slash_commands(sess *discordgo.Session) {

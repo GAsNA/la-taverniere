@@ -30,3 +30,12 @@ type handler_reaction_role struct {
 	Role_ID			string	`bun:"role_id,notnull"`
 	Guild_ID		string	`bun:"guild_id,notnull"`
 }
+
+type nb_msg struct {
+	bun.BaseModel `bun:"table:nb_msg"`
+
+	ID				int64	`bun:"id,pk,autoincrement,type:SERIAL"`
+	User_ID			string	`bun:"user_id,notnull"`
+	Guild_ID		string	`bun:"guild_id,notnull"`
+	Nb_Msg			int64	`bun:"nb_msg,notnull,default:1"`
+}
