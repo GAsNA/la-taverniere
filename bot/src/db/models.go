@@ -4,14 +4,6 @@ import (
 	"github.com/uptrace/bun"
 )
 
-type test_users struct {
-	bun.BaseModel `bun:"table:test_users"`
-
-	ID			int64	`bun:"id,pk,autoincrement,type:SERIAL"`
-	Name		string	`bun:"name,notnull"`
-	Roll_number	int		`bun:roll_number,notnull`
-}
-
 type guild struct {
 	bun.BaseModel `bun:"table:guild"`
 
@@ -31,11 +23,12 @@ type handler_reaction_role struct {
 	Guild_ID		string	`bun:"guild_id,notnull"`
 }
 
-type nb_msg struct {
-	bun.BaseModel `bun:"table:nb_msg"`
+type level struct {
+	bun.BaseModel `bun:"table:level"`
 
 	ID				int64	`bun:"id,pk,autoincrement,type:SERIAL"`
 	User_ID			string	`bun:"user_id,notnull"`
 	Guild_ID		string	`bun:"guild_id,notnull"`
 	Nb_Msg			int64	`bun:"nb_msg,notnull,default:1"`
+	Level			int64	`bun:"level,notnull,default:0"`
 }

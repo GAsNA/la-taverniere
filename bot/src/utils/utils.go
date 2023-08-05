@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"math"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/forPelevin/gomoji"
@@ -129,4 +130,10 @@ func is_a_registered_handler(link string, reaction string, role *discordgo.Role)
 	if len(handlers) > 0 { return true }
 
 	return false
+}
+
+func calcul_level_with_nb_messages(nb_msg int64) int64 {
+		// level calcul with
+			// (1 + racine(1 + 8 * 15 * nb_msg / 50)) / 2
+	return int64((1.0 + math.Sqrt(1.0 + (8.0 * 15.0 * float64(nb_msg) / 50.0))) / 2.0)
 }

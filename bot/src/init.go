@@ -43,7 +43,7 @@ func run_database() {
 	_, err = db.NewCreateTable().Model((*handler_reaction_role)(nil)).ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).IfNotExists().Exec(ctx)
 	if err != nil { log.Fatal(err) }
 		// Nb_Msg
-	_, err = db.NewCreateTable().Model((*nb_msg)(nil)).ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).IfNotExists().Exec(ctx)
+	_, err = db.NewCreateTable().Model((*level)(nil)).ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).IfNotExists().Exec(ctx)
 	if err != nil { log.Fatal(err) }
 }
 
