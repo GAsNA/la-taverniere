@@ -81,22 +81,25 @@ func new_message_posted(sess *discordgo.Session, m *discordgo.MessageCreate) {
 			Scan(ctx)
 	if err != nil { log.Fatal(err) }
 
+	var user nb_msg
+
 	if len(users) == 0 {
 		new_user := &nb_msg{User_ID: user_id, Guild_ID: guild_id}
 		_, err = db.NewInsert().Model(new_user).Ignore().Exec(ctx)
 		if err != nil { log.Println(err) }
 		if err == nil { log.Println("User id " + user_id + " registered with guild id " + guild_id + " in nb_msg table!") }
+
+		user = nb_msg{Nb_Msg: 1}
 	} else {
-		user := users[0]
-		user.Nb_Msg = user.Nb_Msg + 1
+		user = users[0]
+		user.Nb_Msg += 1
 		_, err := db.NewUpdate().Model(&user).Column("nb_msg").Where("id = ?", user.ID).Exec(ctx)
 		if err != nil { log.Println(err) }
 		if err == nil { log.Println("Nb messages of user id " + user_id + " updated in nb_msg table!") }
-
-		// levels calcul with
-			// (1 + racine(1 + 8 * nb_msg / 50)) / 2
-		levels := ((1 + math.Sqrt(float64(1 + 8 * user.Nb_Msg / 50))) / 2)
-		levels_int := int(levels)
-		log_message(sess, "gives xp to <@" + user_id + ">. They are levels" + strconv.Itoa(levels_int) + ".")
 	}
+
+	// levels calcul with
+		// (1 + racine(1 + 8 * 15 * nb_msg / 50)) / 2
+	levels := (1.0 + math.Sqrt(1.0 + (8.0 * 15.0 * float64(user.Nb_Msg) / 50.0))) / 2.0
+	log_message(sess, "gives xp to <@" + user_id + ">. They are levels " + strconv.Itoa(int(levels)) + ".")
 }
