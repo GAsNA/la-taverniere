@@ -12,9 +12,22 @@ import (
 	"github.com/uptrace/bun/dialect/sqlitedialect"
 )
 
+type action_db struct {
+	id		int64
+	name	string
+}
+
 var (
 	ctx 	= context.Background()
 	db		*bun.DB
+
+	actions_db = []action_db {
+		{ id: 0, name: "Youtube Video Announcements" },
+		{ id: 0, name: "Youtube Live Announcements" },
+		{ id: 0, name: "Logs" },
+		{ id: 0, name: "Levels" },
+		{ id: 0, name: "Blacklist Logs" },
+	}
 )
 
 func run_database() {
@@ -40,24 +53,96 @@ func run_database() {
 	_, err = db.NewCreateTable().Model((*guild)(nil)).IfNotExists().Exec(ctx)
 	if err != nil { log.Fatal(err) }
 		// Handler_Reaction_Role
-	_, err = db.NewCreateTable().Model((*handler_reaction_role)(nil)).ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).IfNotExists().Exec(ctx)
+	_, err = db.NewCreateTable().Model((*handler_reaction_role)(nil)).
+				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
+				IfNotExists().Exec(ctx)
 	if err != nil { log.Fatal(err) }
-		// Nb_Msg
-	_, err = db.NewCreateTable().Model((*level)(nil)).ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).IfNotExists().Exec(ctx)
+		// Level
+	_, err = db.NewCreateTable().Model((*level)(nil)).
+				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
+				IfNotExists().Exec(ctx)
 	if err != nil { log.Fatal(err) }
+		// Action
+	_, err = db.NewCreateTable().Model((*action)(nil)).
+				IfNotExists().Exec(ctx)
+	if err != nil { log.Fatal(err) }
+		// Channel_For_Action
+	_, err = db.NewCreateTable().Model((*channel_for_action)(nil)).
+				ForeignKey(`("action_id") REFERENCES "action" ("id") ON DELETE CASCADE`).
+				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
+				IfNotExists().Exec(ctx)
+	if err != nil { log.Fatal(err) }
+		// Role_Admin
+	_, err = db.NewCreateTable().Model((*role_admin)(nil)).
+				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
+				IfNotExists().Exec(ctx)
+	if err != nil { log.Fatal(err) }
+
+	// ENTER ACTIONS IN DB
+	for i := 0; i < len(actions_db); i++ {
+		var actions []action
+		err = db.NewSelect().Model(&actions).
+				Where("name = ?", actions_db[i].name).
+				Scan(ctx)
+		if err != nil { log.Fatal(err) }
+
+		if len(actions) == 0 {
+			new_action := &action{Name: actions_db[i].name}
+			_, err := db.NewInsert().Model(new_action).Ignore().Exec(ctx)
+			if err != nil { log.Fatal(err) }
+
+			err = db.NewSelect().Model(&actions).
+					Where("name = ?", actions_db[i].name).
+					Scan(ctx)
+			if err != nil { log.Fatal(err) }
+		}
+
+		actions_db[i].id = actions[0].ID
+	}
 }
 
 func list_slash_commands(sess *discordgo.Session) {
 	app_id := get_env_var("DISCORD_APP_ID")
 
+	actions := []*discordgo.ApplicationCommandOptionChoice{}
+	for i := 0; i < len(actions_db); i++ {
+		ac_action := discordgo.ApplicationCommandOptionChoice {
+						Name: actions_db[i].name,
+						Value: actions_db[i].id,
+					}
+		actions = append(actions, &ac_action)
+	}
+
 	colors := []*discordgo.ApplicationCommandOptionChoice{}
 	all_colors := get_colors()
 	for i := 0; i < len(all_colors); i++ {
-		ac_color := discordgo.ApplicationCommandOptionChoice{ Name: all_colors[i].name, Value: all_colors[i].code, }
+		ac_color := discordgo.ApplicationCommandOptionChoice{
+						Name: all_colors[i].name,
+						Value: all_colors[i].code,
+					}
 		colors = append(colors, &ac_color)
 	}
 	
 	_, err := sess.ApplicationCommandBulkOverwrite(app_id, "", []*discordgo.ApplicationCommand{
+		{
+			Name:			"config",
+			Description:	"Configure the bot. Give a channel associate to an action.",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionInteger,
+					Name:        "action",
+					Description: "Action that can be performed by the bot",
+					Required:    true,
+					Choices:	 actions,
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionChannel,
+					Name:        "channel",
+					Description: "Channel associated to this action.",
+					Required:    true,
+				},
+			},
+		},
 		{
 			Name:			"blacklist",
 			Description:	"Ban a user and send a message of blacklist to the serv",
