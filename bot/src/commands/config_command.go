@@ -6,21 +6,9 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func config_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
-	author := i.Member.User
-
-	guild_id := i.Interaction.GuildID
-
-	// CAN'T USE THIS COMMAND IF NOT ADMIN
-	if !is_admin(sess, i.Member, guild_id) {
-		ephemeral_response_for_interaction(sess, i.Interaction, "You do not have the right to use this command.")
-		log_message(sess, guild_id, "tried to use the config command, but <@" + author.ID + "> to not have the right.")
-
-		return
-	}
-
+func config_channels(sess *discordgo.Session, i *discordgo.InteractionCreate, author *discordgo.User, guild_id string) {
 	// GET OPTIONS AND MAP
-	options := i.ApplicationCommandData().Options
+	options := i.ApplicationCommandData().Options[0].Options
 	optionMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))
 	for _, opt := range options {
 		optionMap[opt.Name] = opt
@@ -66,4 +54,65 @@ func config_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	ephemeral_response_for_interaction(sess, i.Interaction, "Channel added for this action.")
 	log_message(sess, guild_id, "added a channel for an action", author)
+}
+
+func config_admins(sess *discordgo.Session, i *discordgo.InteractionCreate, author *discordgo.User, guild_id string) {
+	// GET OPTIONS AND MAP
+	options := i.ApplicationCommandData().Options[0].Options
+	optionMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))
+	for _, opt := range options {
+		optionMap[opt.Name] = opt
+	}
+
+	role_id := optionMap["role"].RoleValue(nil, guild_id).ID
+
+	// VERIFICATION IF ENTER ALREADY EXISTS
+	var roles_admins []role_admin
+	err := db.NewSelect().Model(&roles_admins).
+			Where("role_id = ? AND guild_id = ?", role_id, guild_id).
+			Scan(ctx)
+	if err != nil { log.Fatal(err) }
+
+	// IF NOT EXISTS INTEGERATE TO DB
+	if len(roles_admins) == 0 {
+		new_role_admin := &role_admin{Role_ID: role_id, Guild_ID: guild_id}
+		_, err = db.NewInsert().Model(new_role_admin).Ignore().Exec(ctx)
+		if err != nil { log.Fatal(err) }
+
+		ephemeral_response_for_interaction(sess, i.Interaction, "Role <@&" + role_id + "> is now concidered as admin.")
+		log_message(sess, guild_id, "added role <@&" + role_id + "> as admin.", author)
+		return
+	}
+
+	// IF EXISTS REMOVE FROM DB
+	del_role_admin := roles_admins[0]
+	_, err = db.NewDelete().Model(&del_role_admin).
+				Where("id = ?", del_role_admin.ID).
+				Exec(ctx)
+	if err != nil { log.Fatal(err) }
+
+	ephemeral_response_for_interaction(sess, i.Interaction, "Role <@&" + role_id + "> is now removed from admin roles.")
+	log_message(sess, guild_id, "removes role <@&" + role_id + "> from admin.", author)
+}
+
+func config_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
+	author := i.Member.User
+
+	guild_id := i.Interaction.GuildID
+
+	// CAN'T USE THIS COMMAND IF NOT ADMIN
+	if !is_admin(sess, i.Member, guild_id) {
+		ephemeral_response_for_interaction(sess, i.Interaction, "You do not have the right to use this command.")
+		log_message(sess, guild_id, "tried to use the config command, but <@" + author.ID + "> to not have the right.")
+
+		return
+	}
+
+	// WHICH SUBCOMMAND
+	switch i.ApplicationCommandData().Options[0].Name {
+		case "config-channels":
+			config_channels(sess, i, author, guild_id)
+		case "config-admins":
+			config_admins(sess, i, author, guild_id)
+	}
 }

@@ -12,22 +12,9 @@ import (
 	"github.com/uptrace/bun/dialect/sqlitedialect"
 )
 
-type action_db struct {
-	id		int64
-	name	string
-}
-
 var (
 	ctx 	= context.Background()
 	db		*bun.DB
-
-	actions_db = []action_db {
-		{ id: 0, name: "Youtube Video Announcements" },
-		{ id: 0, name: "Youtube Live Announcements" },
-		{ id: 0, name: "Logs" },
-		{ id: 0, name: "Levels" },
-		{ id: 0, name: "Blacklist Logs" },
-	}
 )
 
 func run_database() {
@@ -126,20 +113,40 @@ func list_slash_commands(sess *discordgo.Session) {
 	_, err := sess.ApplicationCommandBulkOverwrite(app_id, "", []*discordgo.ApplicationCommand{
 		{
 			Name:			"config",
-			Description:	"Configure the bot. Give a channel associate to an action.",
+			Description:	"Configure the bot.",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
-					Type:        discordgo.ApplicationCommandOptionInteger,
-					Name:        "action",
-					Description: "Action that can be performed by the bot",
-					Required:    true,
-					Choices:	 actions,
+					Name:			"config-channels",
+					Description:	"Give a channel associate to an action.",
+					Type:			discordgo.ApplicationCommandOptionSubCommand,
+					Options:		[]*discordgo.ApplicationCommandOption{
+						{
+							Type:        discordgo.ApplicationCommandOptionInteger,
+							Name:        "action",
+							Description: "Action that can be performed by the bot",
+							Required:    true,
+							Choices:	 actions,
+						},
+						{
+							Type:        discordgo.ApplicationCommandOptionChannel,
+							Name:        "channel",
+							Description: "Channel associated to this action.",
+							Required:    true,
+						},
+					},
 				},
 				{
-					Type:        discordgo.ApplicationCommandOptionChannel,
-					Name:        "channel",
-					Description: "Channel associated to this action.",
-					Required:    true,
+					Name:			"config-admins",
+					Description:	"Give a role to determine as administrator role for the bot.",
+					Type:			discordgo.ApplicationCommandOptionSubCommand,
+					Options:		[]*discordgo.ApplicationCommandOption{
+						{
+							Type:        discordgo.ApplicationCommandOptionRole,
+							Name:        "role",
+							Description: "Administrator role",
+							Required:    true,
+						},
+					},
 				},
 			},
 		},
