@@ -12,9 +12,22 @@ import (
 	"github.com/uptrace/bun/dialect/sqlitedialect"
 )
 
+type action_db struct {
+	id		int64
+	name	string
+}
+
 var (
 	ctx 	= context.Background()
 	db		*bun.DB
+
+	actions_db = []action_db {
+		{ id: 0, name: "Youtube Video Announcements" },
+		{ id: 0, name: "Youtube Live Announcements" },
+		{ id: 0, name: "Logs" },
+		{ id: 0, name: "Levels" },
+		{ id: 0, name: "Blacklist Logs" },
+	}
 )
 
 func run_database() {
