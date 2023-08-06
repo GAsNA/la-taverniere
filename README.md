@@ -11,7 +11,10 @@ Run with ```make```.
 ## TODO
 - [ ]  Multi-guild accessibility
 - [ ]  Verification if text channel, when channel is required in command
-- [ ]  Description message commad in readme
+        ChannelTypes:[]discordgo.ChannelType {
+            discordgo.ChannelTypeGuildText,
+        },
+- [ ]  Description message command in readme
 - [ ]  Verification message command when no title and no embed...
 
 ## Actions
