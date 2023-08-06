@@ -21,21 +21,19 @@ func is_the_bot(idAuthorMessage string, idBot string) bool {
 	return false
 }
 
-func is_role_admin(id_role string) bool {
-	admin_role_ids_env := get_env_var("ADMIN_ROLE_IDS")
-	admin_role_ids := strings.Split(admin_role_ids_env, ",")
-
-	for i := 0; i < len(admin_role_ids); i++ {
-		if admin_role_ids[i] == id_role { return true }
-	}
-
-	return false
-}
-
 func is_admin(sess *discordgo.Session, member *discordgo.Member, guild_id string) bool {
 	roles := member.Roles
+	
+	var roles_admins []role_admin
+	err := db.NewSelect().Model(&roles_admins).
+			Where("guild_id = ?", guild_id).
+			Scan(ctx)
+	if err != nil { log.Fatal(err) }
+	
 	for i := 0; i < len(roles); i++ {
-		if is_role_admin(roles[i]) { return true }
+		for j := 0; j < len(roles_admins); j++ {
+			if roles_admins[j].Role_ID == roles[i] { return true }
+		}
 	}
 
 	guild, err := sess.Guild(guild_id)
