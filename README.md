@@ -10,6 +10,8 @@ Run with ```make```.
 
 ## TODO
 - [ ]  Multi-guild accessibility
+    - [ ]  Admins roles in db
+    - [ ]  Roles to ping for yt live and video in db   
 - [ ]  Verification if text channel, when channel is required in command
         ChannelTypes:[]discordgo.ChannelType {
             discordgo.ChannelTypeGuildText,
@@ -41,7 +43,7 @@ Run with ```make```.
 - [x]  Salope command for Kentaro
 - [ ]  Command to add role with nam e: /role us -> add role to the person who ask. If doesn't exist, add argument for role you want
 - [ ]  Help command to describe all existing commands
-- [ ]  Config command to set channels and other thing for the bot to work properly
+- [x]  Config command to set channels and other thing for the bot to work properly
 
 ## Libraries
 -  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord in Go
