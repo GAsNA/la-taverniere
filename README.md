@@ -10,7 +10,6 @@ Run with ```make```.
 
 ## TODO
 - [ ]  Multi-guild accessibility
-    - [ ]  Admins roles in db
     - [ ]  Roles to ping for yt live and video in db   
 - [ ]  Verification if text channel, when channel is required in command
         ChannelTypes:[]discordgo.ChannelType {
