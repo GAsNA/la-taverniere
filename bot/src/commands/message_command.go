@@ -22,17 +22,10 @@ func get_io_reader(URL string) io.Reader {
 func message_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	author := i.Member.User
 	
-	roles := i.Member.Roles
-	is_admin := false
-	for i := 0; i < len(roles); i++ {
-		if is_role_admin(roles[i]) {
-			is_admin = true
-			break
-		}
-	}
+	guild_id := i.Interaction.GuildID
 
 	// CAN'T USE THIS COMMAND IF NOT ADMIN
-	if !is_admin {
+	if !is_admin(sess, i.Member, guild_id) {
 		ephemeral_response_for_interaction(sess, i.Interaction, "You do not have the right to use this command.")
 		log_message(sess, "tried to send a message via the bot, but <@" + author.ID + "> to not have the right.")
 
