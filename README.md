@@ -10,6 +10,7 @@ Run with ```make```.
 
 ## TODO
 - [ ]  Multi-guild accessibility
+- [ ]  Verification if text channel, when channel is required in command
 
 ## Actions
 
