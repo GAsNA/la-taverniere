@@ -15,10 +15,25 @@ func no_live_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	// CAN'T USE THIS COMMAND
 	if !is_admin(sess, i.Member, guild_id) {
 		ephemeral_response_for_interaction(sess, i.Interaction, "You do not have the right to use this command.")
-		log_message(sess, "tried make a no live announcement, but <@" + author.ID + "> to not have the right.")
+		log_message(sess, guild_id, "tried make a no live announcement, but <@" + author.ID + "> to not have the right.")
 
 		return
 	}
+	
+	// VERIFICATION IF CHANNEL IS CONFIGURATE
+	var channels_for_actions []channel_for_action
+	err := db.NewSelect().Model(&channels_for_actions).
+			Where("action_id = ? AND guild_id = ?", get_action_db_by_name("Youtube Live Announcements").id, guild_id).
+			Scan(ctx)
+	if err != nil { log.Fatal(err) }
+
+	if len(channels_for_actions) == 0 {
+		ephemeral_response_for_interaction(sess, i.Interaction, "This command needs to be configurate with ``/config``. Choose the action ``Youtube Live Announcements``.")
+		log_message(sess, guild_id, "tried make a no live announcement, but the channel is not set.")
+		return
+	}
+
+	no_live_chan_id := channels_for_actions[0].Channel_ID
 
 	// GET OPTIONS AND MAP
 	options := i.ApplicationCommandData().Options
@@ -27,7 +42,6 @@ func no_live_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 		optionMap[opt.Name] = opt
 	}
 
-	no_live_chan_id := get_env_var("NO_LIVE_CHAN_ID")
 	ping_role_ids_env := get_env_var("PING_YOUTUBE_LIVE_ROLE_IDS")
 	ping_role_ids := strings.Split(ping_role_ids_env, ",")
 
@@ -52,16 +66,16 @@ func no_live_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 
 		message += "Pas de live youtube prévu jusqu'au " + date + ". Désolé !"
 
-		_, err := sess.ChannelMessageSend(no_live_chan_id, message)
+		_, err = sess.ChannelMessageSend(no_live_chan_id, message)
 		if err != nil { log.Fatal(err) }
 	} else {
 		message += "Pas de live youtube aujourd'hui. Désolé !"
 
-		_, err := sess.ChannelMessageSend(no_live_chan_id, message)
+		_, err = sess.ChannelMessageSend(no_live_chan_id, message)
 		if err != nil { log.Fatal(err) }
 	}
 
 	ephemeral_response_for_interaction(sess, i.Interaction, "No live message made.")
 
-	log_message(sess, "added a no live message to <#" + no_live_chan_id + ">.", author)
+	log_message(sess, guild_id, "added a no live message to <#" + no_live_chan_id + ">.", author)
 }

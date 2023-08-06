@@ -5,7 +5,6 @@ type color struct {
 	code	int
 }
 
-// In function because go doesn't allow const blobal array
 func get_colors() []color {
 	return []color{
 		{ name: "Black", code: 0, },
