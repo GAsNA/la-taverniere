@@ -27,6 +27,8 @@ Run with ```make```.
 - [x]  Levels for conversation and messages
 
 ### Commands
+>By default, the owner of a guild is an admin.
+
 - [x]  No youtube live command for 'today' or until a specified date - admin only
 - [x]  Blacklist command to ban a person and add their id and a reason (with date) to a chan - admin only
 - [x]  Kick command to kick a personn - admin only
