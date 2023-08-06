@@ -66,6 +66,8 @@ func handler_reaction_to_add_role(sess *discordgo.Session, m *discordgo.MessageR
 
 	user_id := m.MessageReaction.UserID
 
+	guild_id := m.MessageReaction.GuildID
+
 	var handlers []handler_reaction_role
 	err := db.NewSelect().Model(&handlers).
 			Where("msg_id = ? AND ((reaction_id IS NOT NULL AND reaction_id = ?) AND reaction_name = ?)", msg_id, reaction_id, reaction_name).
@@ -78,7 +80,7 @@ func handler_reaction_to_add_role(sess *discordgo.Session, m *discordgo.MessageR
 		err = sess.GuildMemberRoleAdd(this_handler.Guild_ID, user_id, this_handler.Role_ID)
 		if err != nil { log.Fatal(err) }
 
-		log_message(sess, "add the role <@&" + this_handler.Role_ID + "> to <@" + user_id + ">")
+		log_message(sess, guild_id, "add the role <@&" + this_handler.Role_ID + "> to <@" + user_id + ">")
 	}
 }
 
@@ -88,6 +90,8 @@ func handler_reaction_to_delete_role(sess *discordgo.Session, m *discordgo.Messa
 	reaction_name := m.MessageReaction.Emoji.Name
 
 	user_id := m.MessageReaction.UserID
+
+	guild_id := m.MessageReaction.GuildID
 
 	var handlers []handler_reaction_role
 	err := db.NewSelect().Model(&handlers).
@@ -101,6 +105,6 @@ func handler_reaction_to_delete_role(sess *discordgo.Session, m *discordgo.Messa
 		err = sess.GuildMemberRoleRemove(this_handler.Guild_ID, user_id, this_handler.Role_ID)
 		if err != nil { log.Fatal(err) }
 
-		log_message(sess, "removes the role <@&" + this_handler.Role_ID + "> to <@" + user_id + ">")
+		log_message(sess, guild_id, "removes the role <@&" + this_handler.Role_ID + "> to <@" + user_id + ">")
 	}
 }

@@ -16,6 +16,7 @@ Run with ```make```.
 - [x]  Announcement for newly posted youtube videos and youtube live (for one youtube channel for now)
     - [ ]  Add reel in youtube announcements. See if /shorts/{idvideo} return something if shorts or error if not ou l'inverse
     - [ ]  Stop bot properly
+    - [ ]  Multi-guild accessibility
 - [x]  Log message for each bot action
 - [x]  Levels for conversation and messages
 

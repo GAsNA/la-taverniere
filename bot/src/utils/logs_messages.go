@@ -7,7 +7,20 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func log_message(sess *discordgo.Session, log_str string, user ...*discordgo.User) {
+func log_message(sess *discordgo.Session, guild_id string, log_str string, user ...*discordgo.User) {
+	// VERIF IF LOG CHANNEL IS SET
+	action := get_action_db_by_name("Logs")
+	var channels_for_actions []channel_for_action
+	err := db.NewSelect().Model(&channels_for_actions).
+			Where("action_id = ? AND guild_id = ?", action.id, guild_id).
+			Scan(ctx)
+	if err != nil { log.Fatal(err) }
+
+	if len(channels_for_actions) == 0 { return }
+
+	// LOG MESSAGE
+	logs_chan_id := channels_for_actions[0].Channel_ID
+	
 	message := sess.State.User.Username + " " + log_str
 
 	if len(user) > 0 {
@@ -15,7 +28,6 @@ func log_message(sess *discordgo.Session, log_str string, user ...*discordgo.Use
 	}
 
 	// SEND LOG MESSAGE IN APPROPRIATE CHANNEL
-	logs_chan_id := get_env_var("LOGS_CHAN_ID")
 	embed := discordgo.MessageEmbed{
 		Title:       "Log",
 		Description: message,
@@ -23,6 +35,6 @@ func log_message(sess *discordgo.Session, log_str string, user ...*discordgo.Use
 		Color: get_color_by_name("Blue").code,
 	}
 
-	_, err := sess.ChannelMessageSendEmbed(logs_chan_id, &embed)
+	_, err = sess.ChannelMessageSendEmbed(logs_chan_id, &embed)
 	if err != nil { log.Fatal(err) }
 }

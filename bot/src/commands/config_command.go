@@ -14,7 +14,7 @@ func config_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	// CAN'T USE THIS COMMAND IF NOT ADMIN
 	if !is_admin(sess, i.Member, guild_id) {
 		ephemeral_response_for_interaction(sess, i.Interaction, "You do not have the right to use this command.")
-		log_message(sess, "tried to use the config command, but <@" + author.ID + "> to not have the right.")
+		log_message(sess, guild_id, "tried to use the config command, but <@" + author.ID + "> to not have the right.")
 
 		return
 	}
@@ -48,10 +48,10 @@ func config_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 			if err != nil { log.Fatal(err) }
 
 			ephemeral_response_for_interaction(sess, i.Interaction, "Channel updated for this action.")
-			log_message(sess, "updated a channel for an action", author)
+			log_message(sess, guild_id, "updated a channel for an action", author)
 		} else {
 			ephemeral_response_for_interaction(sess, i.Interaction, "This configuration already exists.")
-			log_message(sess, "tried to add a configuration for the channel <#" + channel_id + ">, but the configuration already exists.", author)
+			log_message(sess, guild_id, "tried to add a configuration for the channel <#" + channel_id + ">, but the configuration already exists.", author)
 		}
 		return
 	}
@@ -65,5 +65,5 @@ func config_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	if err != nil { log.Fatal(err) }
 
 	ephemeral_response_for_interaction(sess, i.Interaction, "Channel added for this action.")
-	log_message(sess, "added a channel for an action", author)
+	log_message(sess, guild_id, "added a channel for an action", author)
 }

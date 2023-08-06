@@ -27,7 +27,7 @@ func message_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	// CAN'T USE THIS COMMAND IF NOT ADMIN
 	if !is_admin(sess, i.Member, guild_id) {
 		ephemeral_response_for_interaction(sess, i.Interaction, "You do not have the right to use this command.")
-		log_message(sess, "tried to send a message via the bot, but <@" + author.ID + "> to not have the right.")
+		log_message(sess, guild_id, "tried to send a message via the bot, but <@" + author.ID + "> to not have the right.")
 
 		return
 	}
@@ -117,5 +117,5 @@ func message_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	link_msg_send := get_env_var("DISCORD_LINK") + "/channels/" + i.Interaction.GuildID + "/" + msg_send.ChannelID + "/" + msg_send.ID
 	// ADD LOG IN LOGS CHANNEL
-	log_message(sess, "send this message " + link_msg_send + " to " + channel + ".", author)
+	log_message(sess, guild_id, "send this message " + link_msg_send + " to " + channel + ".", author)
 }

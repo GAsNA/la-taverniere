@@ -36,7 +36,8 @@ func send_youtube_video_announcement(sess *discordgo.Session, video *youtube.Sea
 	_, err := sess.ChannelMessageSend(channel_id, message)
 	if err != nil { log.Fatal(err) }
 
-	log_message(sess, "made a youtube announcement in <#" + channel_id + ">.")
+	guild_id := get_env_var("GUILD_ID")
+	log_message(sess, guild_id, "made a youtube announcement in <#" + channel_id + ">.")
 }
 
 func call_api_youtube_video(service *youtube.Service, youtube_channel_id string, last_video **youtube.SearchResult, sess *discordgo.Session) {

@@ -30,6 +30,16 @@ var (
 	}
 )
 
+func get_action_db_by_name(name string) action_db {
+	for i := 0; i < len(actions_db); i++ {
+		if actions_db[i].name == name {
+			return actions_db[i]
+		}
+	}
+
+	return actions_db[0]
+}
+
 func run_database() {
 	// INIT DB
 	host	:= get_env_var("POSTGRES_HOST")

@@ -15,7 +15,7 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 	// CAN'T USE THIS COMMAND IF NOT ADMIN
 	if !is_admin(sess, i.Member, guild_id) {
 		ephemeral_response_for_interaction(sess, i.Interaction, "You do not have the right to use this command.")
-		log_message(sess, "tried to add someone to the blacklist, but <@" + author.ID + "> to not have the right.")
+		log_message(sess, guild_id, "tried to add someone to the blacklist, but <@" + author.ID + "> to not have the right.")
 
 		return
 	}
@@ -34,7 +34,7 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 	//CAN'T BAN IF USER TO BLACKLIST IS THE BOT
 	if user_to_blacklist_id == sess.State.User.ID {
 		ephemeral_response_for_interaction(sess, i.Interaction, "You can't ban and add to the blacklist the bot.")
-		log_message(sess, "can't ban and add themself to the blacklist.", author)
+		log_message(sess, guild_id, "can't ban and add themself to the blacklist.", author)
 
 		return 
 	}
@@ -73,5 +73,5 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 	ephemeral_response_for_interaction(sess, i.Interaction, "User " + user_to_blacklist + " added to blacklist.")
 
 	// ADD LOG IN LOGS CHANNEL
-	log_message(sess, "banned " + user_to_blacklist + " and added them to the blacklist.", author)
+	log_message(sess, guild_id, "banned " + user_to_blacklist + " and added them to the blacklist.", author)
 }
