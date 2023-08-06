@@ -29,6 +29,8 @@ func main() {
 		data := i.ApplicationCommandData()
 
 		switch data.Name {
+			case "config":
+				config_command(sess, i)
 			case "blacklist":
 				blacklist_command(sess, i)
 			case "kick":

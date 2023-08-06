@@ -10,17 +10,10 @@ import (
 func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	author := i.Member.User
 	
-	roles := i.Member.Roles
-	is_admin := false
-	for i := 0; i < len(roles); i++ {
-		if is_role_admin(roles[i]) {
-			is_admin = true
-			break
-		}
-	}
+	guild_id := i.Interaction.GuildID
 
 	// CAN'T USE THIS COMMAND IF NOT ADMIN
-	if !is_admin {
+	if !is_admin(sess, i.Member, guild_id) {
 		ephemeral_response_for_interaction(sess, i.Interaction, "You do not have the right to use this command.")
 		log_message(sess, "tried to add someone to the blacklist, but <@" + author.ID + "> to not have the right.")
 
@@ -47,7 +40,6 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 	}
 
 	// BAN USER
-	guild_id := i.Interaction.GuildID
 	err := sess.GuildBanCreateWithReason(guild_id, user_to_blacklist_id, reason, 0)
 	if err != nil { log.Fatal(err) }
 

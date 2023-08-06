@@ -32,6 +32,20 @@ func is_role_admin(id_role string) bool {
 	return false
 }
 
+func is_admin(sess *discordgo.Session, member *discordgo.Member, guild_id string) bool {
+	roles := member.Roles
+	for i := 0; i < len(roles); i++ {
+		if is_role_admin(roles[i]) { return true }
+	}
+
+	guild, err := sess.Guild(guild_id)
+	if err != nil { log.Fatal(err) }
+
+	if guild.OwnerID == member.User.ID { return true }
+
+	return false
+}
+
 func is_good_format_date(date string) bool {
 	if len(date) != 10 {
 		return false

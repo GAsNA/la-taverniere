@@ -9,17 +9,10 @@ import (
 func add_handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	author := i.Member.User
 	
-	roles := i.Member.Roles
-	is_admin := false
-	for i := 0; i < len(roles); i++ {
-		if is_role_admin(roles[i]) {
-			is_admin = true
-			break
-		}
-	}
+	guild_id := i.Interaction.GuildID
 
 	// CAN'T USE THIS COMMAND IF NOT ADMIN
-	if !is_admin {
+	if !is_admin(sess, i.Member, guild_id) {
 		ephemeral_response_for_interaction(sess, i.Interaction, "You do not have the right to use this command.")
 		log_message(sess, "tried to add a handler to a message to add a role with reaction, but <@" + author.ID + "> to not have the right.")
 
@@ -32,8 +25,6 @@ func add_handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo
 	for _, opt := range options {
 		optionMap[opt.Name] = opt
 	}
-
-	guild_id := i.Interaction.GuildID
 
 	link_message := optionMap["link"].StringValue()
 	reaction := optionMap["reaction"].StringValue()
