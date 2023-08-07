@@ -87,7 +87,8 @@ func message_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 			},
 		}
 	} else {
-		message_to_send = "### " + title + "\n" + message
+		if title != "" { message_to_send += "### " + title + "\n" }
+		message_to_send += message
 	}
 
 	files := []*discordgo.File {}

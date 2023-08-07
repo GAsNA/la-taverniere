@@ -10,7 +10,6 @@ Run with ```make```.
 
 ## TODO
 - [ ]  Description message command in readme
-- [ ]  Verification message command when no title and no embed...
 - [ ]  Verification all log error
 - [ ]  Log message for message command: supp "in channel"
 
