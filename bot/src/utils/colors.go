@@ -23,7 +23,7 @@ func get_colors() []color {
 		{ name: "Orange", code: 15105570, },
 		{ name: "Dark orange", code: 11027200, },
 		{ name: "Red", code: 15158332, },
-		{ name: "Dark red", code: 10038562, },
+		{ name: "Bot Red", code: 5121565, },
 		{ name: "Grey", code: 9807270, },
 		{ name: "Dark grey", code: 9936031, },
 		{ name: "Darker grey", code: 8359053, },
