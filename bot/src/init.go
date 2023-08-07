@@ -142,6 +142,7 @@ func list_slash_commands(sess *discordgo.Session) {
 							Name:        "channel",
 							Description: "Channel associated to this action.",
 							Required:    true,
+							ChannelTypes:[]discordgo.ChannelType {discordgo.ChannelTypeGuildText,},
 						},
 					},
 				},
@@ -262,6 +263,7 @@ func list_slash_commands(sess *discordgo.Session) {
 					Name:        "channel",
 					Description: "Channel where you want to send this message",
 					Required:    true,
+					ChannelTypes:[]discordgo.ChannelType {discordgo.ChannelTypeGuildText,},
 				},
 				{
 					Type:        discordgo.ApplicationCommandOptionString,
