@@ -64,6 +64,16 @@ func run_database() {
 				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
 				IfNotExists().Exec(ctx)
 	if err != nil { log.Fatal(err) }
+		// Youtube_Live_Role
+	_, err = db.NewCreateTable().Model((*youtube_live_role)(nil)).
+				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
+				IfNotExists().Exec(ctx)
+	if err != nil { log.Fatal(err) }
+		// Youtube_Video_Role
+	_, err = db.NewCreateTable().Model((*youtube_video_role)(nil)).
+				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
+				IfNotExists().Exec(ctx)
+	if err != nil { log.Fatal(err) }
 
 	// ENTER ACTIONS IN DB
 	for i := 0; i < len(actions_db); i++ {
@@ -145,6 +155,29 @@ func list_slash_commands(sess *discordgo.Session) {
 							Name:        "role",
 							Description: "Administrator role",
 							Required:    true,
+						},
+					},
+				},
+				{
+					Name:			"config-youtube-roles",
+					Description:	"Give a role to add it to the list of role ping at each youtube announcements.",
+					Type:			discordgo.ApplicationCommandOptionSubCommand,
+					Options:		[]*discordgo.ApplicationCommandOption{
+						{
+							Type:		discordgo.ApplicationCommandOptionString,
+							Name:		"youtube-announcements",
+							Description:"Type of youtube announcement you want to add the role to ping.",
+							Required:	true,
+							Choices:	[]*discordgo.ApplicationCommandOptionChoice{
+								{ Name: "Live", Value: "live", },
+								{ Name: "Video", Value: "video", },
+							},
+						},
+						{
+							Type:		discordgo.ApplicationCommandOptionRole,
+							Name:		"role",
+							Description:"Administrator role",
+							Required:	true,
 						},
 					},
 				},

@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -17,6 +16,12 @@ func no_live_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 		ephemeral_response_for_interaction(sess, i.Interaction, "You do not have the right to use this command.")
 		log_message(sess, guild_id, "tried make a no live announcement, but <@" + author.ID + "> to not have the right.")
 
+		return
+	}
+
+	// PROVISIONAL
+	if guild_id != get_env_var("GUILD_ID") {
+		ephemeral_response_for_interaction(sess, i.Interaction, "This command is not open for now...")
 		return
 	}
 	
@@ -42,8 +47,16 @@ func no_live_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 		optionMap[opt.Name] = opt
 	}
 
-	ping_role_ids_env := get_env_var("PING_YOUTUBE_LIVE_ROLE_IDS")
-	ping_role_ids := strings.Split(ping_role_ids_env, ",")
+	var youtube_live_roles []youtube_live_role
+	err = db.NewSelect().Model(&youtube_live_roles).
+			Where("guild_id = ?", guild_id).
+			Scan(ctx)
+	if err != nil { log.Fatal(err) }
+
+	var ping_role_ids []string
+	for i := 0; i < len(youtube_live_roles); i++ {
+		ping_role_ids = append(ping_role_ids, youtube_live_roles[i].Role_ID)
+	}
 
 	message := ""
 

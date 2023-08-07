@@ -17,6 +17,12 @@ func config_channels(sess *discordgo.Session, i *discordgo.InteractionCreate, au
 	action_id := optionMap["action"].IntValue()
 	channel_id := optionMap["channel"].ChannelValue(nil).ID
 
+	// PROVISIONAL
+	if guild_id != get_env_var("GUILD_ID") && (action_id == get_action_db_by_name("Youtube Live Announcements").id || action_id == get_action_db_by_name("Youtube Video Announcements").id) {
+		ephemeral_response_for_interaction(sess, i.Interaction, "This option in this command is not open for now...")
+		return
+	}
+
 	// VERIFICATION IF ENTER ALREADY EXISTS
 	var channels_for_actions []channel_for_action
 	err := db.NewSelect().Model(&channels_for_actions).
@@ -95,6 +101,86 @@ func config_admins(sess *discordgo.Session, i *discordgo.InteractionCreate, auth
 	log_message(sess, guild_id, "removes role <@&" + role_id + "> from admin.", author)
 }
 
+func config_youtube_roles_live(sess *discordgo.Session, i *discordgo.InteractionCreate, author *discordgo.User, guild_id string, role_id string) {
+	// VERIFICATION IF ENTER ALREADY EXISTS
+	var youtube_live_roles []youtube_live_role
+	err := db.NewSelect().Model(&youtube_live_roles).
+			Where("role_id = ? AND guild_id = ?", role_id, guild_id).
+			Scan(ctx)
+	if err != nil { log.Fatal(err) }
+
+	// IF NOT EXISTS INTEGERATE TO DB
+	if len(youtube_live_roles) == 0 {
+		new_youtube_live_role := &youtube_live_role{Role_ID: role_id, Guild_ID: guild_id}
+		_, err = db.NewInsert().Model(new_youtube_live_role).Ignore().Exec(ctx)
+		if err != nil { log.Fatal(err) }
+
+		ephemeral_response_for_interaction(sess, i.Interaction, "Role <@&" + role_id + "> will now be ping for each youtube live announcements.")
+		log_message(sess, guild_id, "added role <@&" + role_id + "> as ping for youtube live announcements.", author)
+		return
+	}
+
+	// IF EXISTS REMOVE FROM DB
+	del_youtube_live_role := youtube_live_roles[0]
+	_, err = db.NewDelete().Model(&del_youtube_live_role).
+				Where("id = ?", del_youtube_live_role.ID).
+				Exec(ctx)
+	if err != nil { log.Fatal(err) }
+
+	ephemeral_response_for_interaction(sess, i.Interaction, "Role <@&" + role_id + "> will no longer be ping for youtube live announcements.")
+	log_message(sess, guild_id, "removes role <@&" + role_id + "> from list of role ping for youtube live announcements.", author)
+}
+
+func config_youtube_roles_video(sess *discordgo.Session, i *discordgo.InteractionCreate, author *discordgo.User, guild_id string, role_id string) {
+	// VERIFICATION IF ENTER ALREADY EXISTS
+	var youtube_video_roles []youtube_video_role
+	err := db.NewSelect().Model(&youtube_video_roles).
+			Where("role_id = ? AND guild_id = ?", role_id, guild_id).
+			Scan(ctx)
+	if err != nil { log.Fatal(err) }
+
+	// IF NOT EXISTS INTEGERATE TO DB
+	if len(youtube_video_roles) == 0 {
+		new_youtube_video_role := &youtube_video_role{Role_ID: role_id, Guild_ID: guild_id}
+		_, err = db.NewInsert().Model(new_youtube_video_role).Ignore().Exec(ctx)
+		if err != nil { log.Fatal(err) }
+
+		ephemeral_response_for_interaction(sess, i.Interaction, "Role <@&" + role_id + "> will now be ping for each youtube video announcements.")
+		log_message(sess, guild_id, "added role <@&" + role_id + "> as ping for youtube video announcements.", author)
+		return
+	}
+
+	// IF EXISTS REMOVE FROM DB
+	del_youtube_video_role := youtube_video_roles[0]
+	_, err = db.NewDelete().Model(&del_youtube_video_role).
+				Where("id = ?", del_youtube_video_role.ID).
+				Exec(ctx)
+	if err != nil { log.Fatal(err) }
+
+	ephemeral_response_for_interaction(sess, i.Interaction, "Role <@&" + role_id + "> will no longer be ping for youtube video announcements.")
+	log_message(sess, guild_id, "removes role <@&" + role_id + "> from list of role ping for youtube video announcements.", author)
+}
+
+func config_youtube_roles(sess *discordgo.Session, i *discordgo.InteractionCreate, author *discordgo.User, guild_id string) {
+	// GET OPTIONS AND MAP
+	options := i.ApplicationCommandData().Options[0].Options
+	optionMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))
+	for _, opt := range options {
+		optionMap[opt.Name] = opt
+	}
+
+	youtube_announcements := optionMap["youtube-announcements"].StringValue()
+	role_id := optionMap["role"].RoleValue(nil, guild_id).ID
+
+	// WHICH ANNOUNCEMENTS
+	switch youtube_announcements {
+		case "live":
+			config_youtube_roles_live(sess, i, author, guild_id, role_id)
+		case "video":
+			config_youtube_roles_video(sess, i, author, guild_id, role_id)
+	}
+}
+
 func config_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	author := i.Member.User
 
@@ -114,5 +200,12 @@ func config_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 			config_channels(sess, i, author, guild_id)
 		case "config-admins":
 			config_admins(sess, i, author, guild_id)
+		case "config-youtube-roles":
+			// PROVISIONAL
+			if guild_id != get_env_var("GUILD_ID") {
+				ephemeral_response_for_interaction(sess, i.Interaction, "This command is not open for now...")
+				return
+			}
+			config_youtube_roles(sess, i, author, guild_id)
 	}
 }

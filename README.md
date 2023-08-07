@@ -9,8 +9,6 @@ It was originally made for a friend, then edited for public release.
 Run with ```make```.
 
 ## TODO
-- [ ]  Multi-guild accessibility
-    - [ ]  Roles to ping for yt live and video in db   
 - [ ]  Verification if text channel, when channel is required in command
         ChannelTypes:[]discordgo.ChannelType {
             discordgo.ChannelTypeGuildText,
@@ -22,17 +20,16 @@ Run with ```make```.
 
 ## Actions
 
-- [x]  Announcement for newly posted youtube videos and youtube live (for one youtube channel for now)
+- [x]  Announcement for newly posted youtube videos and youtube live - NOT PUBLICLY OPEN TO EVERY GUILD FOR NOW
     - [ ]  Add reel in youtube announcements. See if /shorts/{idvideo} return something if shorts or error if not ou l'inverse
     - [ ]  Stop bot properly
-    - [ ]  Multi-guild accessibility
 - [x]  Log message for each bot action
 - [x]  Levels for conversation and messages
 
 ### Commands
 >By default, the owner of a guild is an admin.
 
-- [x]  No youtube live command for 'today' or until a specified date - admin only
+- [x]  No youtube live command for 'today' or until a specified date - admin only - NOT PUBLICLY OPEN TO EVERY GUILD FOR NOW
 - [x]  Blacklist command to ban a person and add their id and a reason (with date) to a chan - admin only
 - [x]  Kick command to kick a personn - admin only
 - [x]  Command to add or delete a handler to add a role to a user when a reaction is made on a specific message - admin only
@@ -43,6 +40,7 @@ Run with ```make```.
 - [ ]  Command to add role with nam e: /role us -> add role to the person who ask. If doesn't exist, add argument for role you want
 - [ ]  Help command to describe all existing commands
 - [x]  Config command to set channels and other thing for the bot to work properly
+    - [ ]  Set youtube channels to track
 
 ## Libraries
 -  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord in Go
