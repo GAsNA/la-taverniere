@@ -17,6 +17,12 @@ func config_channels(sess *discordgo.Session, i *discordgo.InteractionCreate, au
 	action_id := optionMap["action"].IntValue()
 	channel_id := optionMap["channel"].ChannelValue(nil).ID
 
+	// PROVISIONAL
+	if guild_id != get_env_var("GUILD_ID") && (action_id == get_action_db_by_name("Youtube Live Announcements").id || action_id == get_action_db_by_name("Youtube Video Announcements").id) {
+		ephemeral_response_for_interaction(sess, i.Interaction, "This option in this command is not open for now...")
+		return
+	}
+
 	// VERIFICATION IF ENTER ALREADY EXISTS
 	var channels_for_actions []channel_for_action
 	err := db.NewSelect().Model(&channels_for_actions).
@@ -195,6 +201,11 @@ func config_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 		case "config-admins":
 			config_admins(sess, i, author, guild_id)
 		case "config-youtube-roles":
+			// PROVISIONAL
+			if guild_id != get_env_var("GUILD_ID") {
+				ephemeral_response_for_interaction(sess, i.Interaction, "This command is not open for now...")
+				return
+			}
 			config_youtube_roles(sess, i, author, guild_id)
 	}
 }
