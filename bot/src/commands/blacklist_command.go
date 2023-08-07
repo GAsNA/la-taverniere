@@ -10,19 +10,12 @@ import (
 func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	author := i.Member.User
 	
-	roles := i.Member.Roles
-	is_admin := false
-	for i := 0; i < len(roles); i++ {
-		if is_role_admin(roles[i]) {
-			is_admin = true
-			break
-		}
-	}
+	guild_id := i.Interaction.GuildID
 
 	// CAN'T USE THIS COMMAND IF NOT ADMIN
-	if !is_admin {
+	if !is_admin(sess, i.Member, guild_id) {
 		ephemeral_response_for_interaction(sess, i.Interaction, "You do not have the right to use this command.")
-		log_message(sess, "tried to add someone to the blacklist, but <@" + author.ID + "> to not have the right.")
+		log_message(sess, guild_id, "tried to add someone to the blacklist, but <@" + author.ID + "> to not have the right.")
 
 		return
 	}
@@ -41,18 +34,32 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 	//CAN'T BAN IF USER TO BLACKLIST IS THE BOT
 	if user_to_blacklist_id == sess.State.User.ID {
 		ephemeral_response_for_interaction(sess, i.Interaction, "You can't ban and add to the blacklist the bot.")
-		log_message(sess, "can't ban and add themself to the blacklist.", author)
+		log_message(sess, guild_id, "can't ban and add themself to the blacklist.", author)
 
 		return 
 	}
 
 	// BAN USER
-	guild_id := i.Interaction.GuildID
 	err := sess.GuildBanCreateWithReason(guild_id, user_to_blacklist_id, reason, 0)
 	if err != nil { log.Fatal(err) }
 
+	// RESPOND TO USER WITH EPHEMERAL MESSAGE
+	ephemeral_response_for_interaction(sess, i.Interaction, "User " + user_to_blacklist + " has been ban.")
+
+	// ADD LOG IN LOGS CHANNEL
+	log_message(sess, guild_id, "banned " + user_to_blacklist + ".", author)
+
 	// SEND BLACKLIST MESSAGE IN APPROPRIATE CHANNEL
-	blacklist_chan_id := get_env_var("BLACKLIST_CHAN_ID")
+	var channels_for_actions []channel_for_action
+	err = db.NewSelect().Model(&channels_for_actions).
+			Where("action_id = ? AND guild_id = ?", get_action_db_by_name("Blacklist Logs").id, guild_id).
+			Scan(ctx)
+	if err != nil { log.Fatal(err) }
+
+	if len(channels_for_actions) == 0 { return }
+
+	blacklist_chan_id := channels_for_actions[0].Channel_ID
+
 	embed := discordgo.MessageEmbed{
 		Title:       "Blacklisted user",
 		Description: "This user has been blacklisted",
@@ -76,10 +83,4 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 
 	_, err = sess.ChannelMessageSendEmbed(blacklist_chan_id, &embed)
 	if err != nil { log.Fatal(err) }
-
-	// RESPOND TO USER WITH EPHEMERAL MESSAGE
-	ephemeral_response_for_interaction(sess, i.Interaction, "User " + user_to_blacklist + " added to blacklist.")
-
-	// ADD LOG IN LOGS CHANNEL
-	log_message(sess, "banned " + user_to_blacklist + " and added them to the blacklist.", author)
 }

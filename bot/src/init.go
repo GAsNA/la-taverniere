@@ -2,21 +2,187 @@ package main
 
 import (
 	"log"
-	
+	"fmt"
+	"database/sql"
+	"context"
+
+	_ "github.com/lib/pq"
 	"github.com/bwmarrin/discordgo"
+	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/dialect/sqlitedialect"
 )
+
+var (
+	ctx 	= context.Background()
+	db		*bun.DB
+)
+
+func run_database() {
+	// INIT DB
+	host	:= get_env_var("POSTGRES_HOST")
+	user_pg	:= get_env_var("POSTGRES_USER")
+	password:= get_env_var("POSTGRES_PASSWORD")
+	dbname	:= get_env_var("POSTGRES_DB")
+
+	psqlconn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", host, user_pg, password, dbname)
+	sqldb, err := sql.Open("postgres", psqlconn)
+	if err != nil { log.Fatal(err) }
+
+	if err = sqldb.Ping(); err != nil { log.Fatal(err) }	
+
+	// GET BUN DB
+	db = bun.NewDB(sqldb, sqlitedialect.New())
+
+	log.Println("The database is connected")
+
+	// CREATION TABLES
+		// Guild
+	_, err = db.NewCreateTable().Model((*guild)(nil)).IfNotExists().Exec(ctx)
+	if err != nil { log.Fatal(err) }
+		// Handler_Reaction_Role
+	_, err = db.NewCreateTable().Model((*handler_reaction_role)(nil)).
+				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
+				IfNotExists().Exec(ctx)
+	if err != nil { log.Fatal(err) }
+		// Level
+	_, err = db.NewCreateTable().Model((*level)(nil)).
+				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
+				IfNotExists().Exec(ctx)
+	if err != nil { log.Fatal(err) }
+		// Action
+	_, err = db.NewCreateTable().Model((*action)(nil)).
+				IfNotExists().Exec(ctx)
+	if err != nil { log.Fatal(err) }
+		// Channel_For_Action
+	_, err = db.NewCreateTable().Model((*channel_for_action)(nil)).
+				ForeignKey(`("action_id") REFERENCES "action" ("id") ON DELETE CASCADE`).
+				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
+				IfNotExists().Exec(ctx)
+	if err != nil { log.Fatal(err) }
+		// Role_Admin
+	_, err = db.NewCreateTable().Model((*role_admin)(nil)).
+				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
+				IfNotExists().Exec(ctx)
+	if err != nil { log.Fatal(err) }
+		// Youtube_Live_Role
+	_, err = db.NewCreateTable().Model((*youtube_live_role)(nil)).
+				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
+				IfNotExists().Exec(ctx)
+	if err != nil { log.Fatal(err) }
+		// Youtube_Video_Role
+	_, err = db.NewCreateTable().Model((*youtube_video_role)(nil)).
+				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
+				IfNotExists().Exec(ctx)
+	if err != nil { log.Fatal(err) }
+
+	// ENTER ACTIONS IN DB
+	for i := 0; i < len(actions_db); i++ {
+		var actions []action
+		err = db.NewSelect().Model(&actions).
+				Where("name = ?", actions_db[i].name).
+				Scan(ctx)
+		if err != nil { log.Fatal(err) }
+
+		if len(actions) == 0 {
+			new_action := &action{Name: actions_db[i].name}
+			_, err := db.NewInsert().Model(new_action).Ignore().Exec(ctx)
+			if err != nil { log.Fatal(err) }
+
+			err = db.NewSelect().Model(&actions).
+					Where("name = ?", actions_db[i].name).
+					Scan(ctx)
+			if err != nil { log.Fatal(err) }
+		}
+
+		actions_db[i].id = actions[0].ID
+	}
+}
 
 func list_slash_commands(sess *discordgo.Session) {
 	app_id := get_env_var("DISCORD_APP_ID")
 
+	actions := []*discordgo.ApplicationCommandOptionChoice{}
+	for i := 0; i < len(actions_db); i++ {
+		ac_action := discordgo.ApplicationCommandOptionChoice {
+						Name: actions_db[i].name,
+						Value: actions_db[i].id,
+					}
+		actions = append(actions, &ac_action)
+	}
+
 	colors := []*discordgo.ApplicationCommandOptionChoice{}
 	all_colors := get_colors()
 	for i := 0; i < len(all_colors); i++ {
-		ac_color := discordgo.ApplicationCommandOptionChoice{ Name: all_colors[i].name, Value: all_colors[i].code, }
+		ac_color := discordgo.ApplicationCommandOptionChoice{
+						Name: all_colors[i].name,
+						Value: all_colors[i].code,
+					}
 		colors = append(colors, &ac_color)
 	}
 	
 	_, err := sess.ApplicationCommandBulkOverwrite(app_id, "", []*discordgo.ApplicationCommand{
+		{
+			Name:			"config",
+			Description:	"Configure the bot.",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Name:			"config-channels",
+					Description:	"Give a channel associate to an action.",
+					Type:			discordgo.ApplicationCommandOptionSubCommand,
+					Options:		[]*discordgo.ApplicationCommandOption{
+						{
+							Type:        discordgo.ApplicationCommandOptionInteger,
+							Name:        "action",
+							Description: "Action that can be performed by the bot",
+							Required:    true,
+							Choices:	 actions,
+						},
+						{
+							Type:        discordgo.ApplicationCommandOptionChannel,
+							Name:        "channel",
+							Description: "Channel associated to this action.",
+							Required:    true,
+						},
+					},
+				},
+				{
+					Name:			"config-admins",
+					Description:	"Give a role to determine as administrator role for the bot.",
+					Type:			discordgo.ApplicationCommandOptionSubCommand,
+					Options:		[]*discordgo.ApplicationCommandOption{
+						{
+							Type:        discordgo.ApplicationCommandOptionRole,
+							Name:        "role",
+							Description: "Administrator role",
+							Required:    true,
+						},
+					},
+				},
+				{
+					Name:			"config-youtube-roles",
+					Description:	"Give a role to add it to the list of role ping at each youtube announcements.",
+					Type:			discordgo.ApplicationCommandOptionSubCommand,
+					Options:		[]*discordgo.ApplicationCommandOption{
+						{
+							Type:		discordgo.ApplicationCommandOptionString,
+							Name:		"youtube-announcements",
+							Description:"Type of youtube announcement you want to add the role to ping.",
+							Required:	true,
+							Choices:	[]*discordgo.ApplicationCommandOptionChoice{
+								{ Name: "Live", Value: "live", },
+								{ Name: "Video", Value: "video", },
+							},
+						},
+						{
+							Type:		discordgo.ApplicationCommandOptionRole,
+							Name:		"role",
+							Description:"Administrator role",
+							Required:	true,
+						},
+					},
+				},
+			},
+		},
 		{
 			Name:			"blacklist",
 			Description:	"Ban a user and send a message of blacklist to the serv",
