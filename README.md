@@ -9,9 +9,7 @@ It was originally made for a friend, then edited for public release.
 Run with ```make```.
 
 ## TODO
-- [ ]  Description message command in readme
 - [ ]  Verification all log error
-- [ ]  Log message for message command: supp "in channel"
 
 ## Actions
 
@@ -24,18 +22,19 @@ Run with ```make```.
 ### Commands
 >By default, the owner of a guild is an admin.
 
-- [x]  No youtube live command for 'today' or until a specified date - admin only - NOT PUBLICLY OPEN TO EVERY GUILD FOR NOW
+- [ ]  Help command to describe all existing commands
+- [x]  Config command to set channels and other thing for the bot to work properly
+    - [ ]  Set youtube channels to track
+- [x]  Message comand to send a message/an embed, with thumbnail, attachment... through the bot - admin only
 - [x]  Blacklist command to ban a person and add their id and a reason (with date) to a chan - admin only
 - [x]  Kick command to kick a personn - admin only
 - [x]  Command to add or delete a handler to add a role to a user when a reaction is made on a specific message - admin only
     - [ ] Merge add and delete commands
     - [ ] Reaction are optionnal (all reaction taken in account if not specified)
+- [ ]  Command to add role with nam e: /role us -> add role to the person who ask. If doesn't exist, add argument for role you want
+- [x]  No youtube live command for 'today' or until a specified date - admin only - NOT PUBLICLY OPEN TO EVERY GUILD FOR NOW
 - [x]  Commands for Ray, Feitan, Ukyim, Kentaro, GAsNa
 - [x]  Salope command for Kentaro
-- [ ]  Command to add role with nam e: /role us -> add role to the person who ask. If doesn't exist, add argument for role you want
-- [ ]  Help command to describe all existing commands
-- [x]  Config command to set channels and other thing for the bot to work properly
-    - [ ]  Set youtube channels to track
 
 ## Libraries
 -  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord in Go
