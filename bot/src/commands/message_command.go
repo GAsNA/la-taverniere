@@ -118,5 +118,5 @@ func message_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	link_msg_send := get_env_var("DISCORD_LINK") + "/channels/" + i.Interaction.GuildID + "/" + msg_send.ChannelID + "/" + msg_send.ID
 	// ADD LOG IN LOGS CHANNEL
-	log_message(sess, guild_id, "send this message " + link_msg_send + " to " + channel + ".", author)
+	log_message(sess, guild_id, "send this message " + link_msg_send + ".", author)
 }
