@@ -56,3 +56,19 @@ type role_admin struct {
 	Role_ID			string	`bun:"role_id,notnull"`
 	Guild_ID		string	`bun:"guild_id,notnull"`
 }
+
+type youtube_live_role struct {
+	bun.BaseModel `bun:"table:youtube_live_role"`
+
+	ID				int64	`bun:"id,pk,autoincrement,type:SERIAL"`
+	Role_ID			string	`bun:"role_id,notnull"`
+	Guild_ID		string	`bun:"guild_id,notnull"`
+}
+
+type youtube_video_role struct {
+	bun.BaseModel `bun:"table:youtube_video_role"`
+
+	ID				int64	`bun:"id,pk,autoincrement,type:SERIAL"`
+	Role_ID			string	`bun:"role_id,notnull"`
+	Guild_ID		string	`bun:"guild_id,notnull"`
+}
