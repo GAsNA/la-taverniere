@@ -122,6 +122,10 @@ func list_slash_commands(sess *discordgo.Session) {
 	
 	_, err := sess.ApplicationCommandBulkOverwrite(app_id, "", []*discordgo.ApplicationCommand{
 		{
+			Name:			"help",
+			Description:	"Description of the bot and all its commands and actions.",
+		},
+		{
 			Name:			"config",
 			Description:	"Configure the bot.",
 			Options: []*discordgo.ApplicationCommandOption{
