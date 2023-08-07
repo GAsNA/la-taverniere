@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"strings"
 
 	"github.com/bwmarrin/discordgo"
 	"google.golang.org/api/youtube/v3"
@@ -11,9 +10,18 @@ import (
 func send_youtube_video_announcement(sess *discordgo.Session, video *youtube.SearchResult) {
 	message := ""
 	channel_id := get_env_var("VIDEO_CHAN_ID")
+	guild_id := get_env_var("GUILD_ID")
 
-	ping_role_ids_env := get_env_var("PING_YOUTUBE_VIDEO_ROLE_IDS")
-	ping_role_ids := strings.Split(ping_role_ids_env, ",")
+	var youtube_video_roles []youtube_video_role
+	err := db.NewSelect().Model(&youtube_video_roles).
+			Where("guild_id = ?", guild_id).
+			Scan(ctx)
+	if err != nil { log.Fatal(err) }
+
+	var ping_role_ids []string
+	for i := 0; i < len(youtube_video_roles); i++ {
+		ping_role_ids = append(ping_role_ids, youtube_video_roles[i].Role_ID)
+	}
 
 	for i := 0; i < len(ping_role_ids); i++ {
 		message += "<@&" + ping_role_ids[i] + ">"
@@ -33,10 +41,9 @@ func send_youtube_video_announcement(sess *discordgo.Session, video *youtube.Sea
 	}
 
 	message += get_env_var("YOUTUBE_LINK") + "/watch?v=" + video.Id.VideoId
-	_, err := sess.ChannelMessageSend(channel_id, message)
+	_, err = sess.ChannelMessageSend(channel_id, message)
 	if err != nil { log.Fatal(err) }
 
-	guild_id := get_env_var("GUILD_ID")
 	log_message(sess, guild_id, "made a youtube announcement in <#" + channel_id + ">.")
 }
 
