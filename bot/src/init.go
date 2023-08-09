@@ -304,13 +304,13 @@ func list_slash_commands(sess *discordgo.Session) {
 			},
 		},
 		{
-			Name:			"add-handler-reaction-for-role",
-			Description:	"Add a handler to add a role to each person using the chosen reaction on the chosen message",
+			Name:			"handler-reaction-for-role",
+			Description:	"Add/delete a handler that adds a role to each person using the chosen reaction on the chosen message",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionString,
 					Name:        "link",
-					Description: "Link of the message on which you want to add the handler",
+					Description: "Link of the message on which you want to add/delete the handler",
 					Required:    true,
 				},
 				{
@@ -323,30 +323,6 @@ func list_slash_commands(sess *discordgo.Session) {
 					Type:        discordgo.ApplicationCommandOptionRole,
 					Name:        "role",
 					Description: "Role you want to add",
-					Required:    true,
-				},
-			},
-		},
-		{
-			Name:			"delete-handler-reaction-for-role",
-			Description:	"Delete a handler that adds a role to each person using the chosen reaction on the chosen message",
-			Options: []*discordgo.ApplicationCommandOption{
-				{
-					Type:        discordgo.ApplicationCommandOptionString,
-					Name:        "link",
-					Description: "Link of the message concerned by the handler",
-					Required:    true,
-				},
-				{
-					Type:        discordgo.ApplicationCommandOptionString,
-					Name:        "reaction",
-					Description: "Reaction concerned by the handler",
-					Required:    true,
-				},
-				{
-					Type:        discordgo.ApplicationCommandOptionRole,
-					Name:        "role",
-					Description: "Role concerned by the handler",
 					Required:    true,
 				},
 			},

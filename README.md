@@ -29,9 +29,7 @@ Run with ```make```.
 - [x]  Blacklist command to ban a person and add their id and a reason (with date) to a chan - admin only
 - [x]  Kick command to kick a personn - admin only
 - [x]  Command to add or delete a handler to add a role to a user when a reaction is made on a specific message - admin only
-    - [ ] Merge add and delete commands
     - [ ] Reaction are optionnal (all reaction taken in account if not specified)
-- [ ]  Command to add role with nam e: /role us -> add role to the person who ask. If doesn't exist, add argument for role you want
 - [x]  No youtube live command for 'today' or until a specified date - admin only - NOT PUBLICLY OPEN TO EVERY GUILD FOR NOW
 - [x]  Commands for Ray, Feitan, Ukyim, Kentaro, GAsNa
 - [x]  Salope command for Kentaro

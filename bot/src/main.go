@@ -45,10 +45,8 @@ func main() {
 				salope_command(sess, i)
 			case "message":
 				message_command(sess, i)
-			case "add-handler-reaction-for-role":
-				add_handler_reaction_for_role_command(sess, i)
-			case "delete-handler-reaction-for-role":
-				delete_handler_reaction_for_role_command(sess, i)
+			case "handler-reaction-for-role":
+				handler_reaction_for_role_command(sess, i)
 		}
 	})
 
