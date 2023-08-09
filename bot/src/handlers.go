@@ -26,8 +26,9 @@ func new_message_posted(sess *discordgo.Session, m *discordgo.MessageCreate) {
 	author := m.Message.Author
 	user_id := author.ID
 
-	if is_the_bot(user_id, sess.State.User.ID) { return }
 	if author.Bot { return }
+
+	if m.Message.Type == discordgo.MessageTypeGuildMemberJoin { return }
 
 	var channels_for_actions []channel_for_action
 	err := db.NewSelect().Model(&channels_for_actions).
