@@ -11,7 +11,7 @@ func help_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	bot := sess.State.User
 
 	title := "👋 Hi! Let me introduce myself..."
-	description := "I am La Tavernivere and I am a multi-functionnal bot. I am running multiple taverns ; you better not play with me... 💪\nYou can see below all my supported commands and actions.\nEnjoy !"
+	description := "I am " + bot.Username + " and I am a multi-functionnal bot. I am running multiple taverns ; you better not play with me... 💪\nYou can see below all my supported commands and actions.\nEnjoy !"
 
 	embed := discordgo.MessageEmbed {
 		Title:			title,
@@ -36,7 +36,7 @@ func help_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 			},
 			{
 				Name:	"☠️ /blacklist",
-				Value:	"Ban a user and a message of blacklist to the guild.",
+				Value:	"Ban a user and send a message of blacklist to the guild.",
 				Inline: true,
 			},
 			{
