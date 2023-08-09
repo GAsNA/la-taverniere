@@ -6,7 +6,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func add_handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
+func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	author := i.Member.User
 	
 	guild_id := i.Interaction.GuildID
@@ -82,27 +82,45 @@ func add_handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo
 
 	// VERIF IF HANDLER ALREADY EXISTS
 	if is_a_registered_handler(link_message, reaction, role) {
-		ephemeral_response_for_interaction(sess, i.Interaction, "This handler was already made.")
-		log_message(sess, guild_id, "tried to add a handler to a message to add a role with reaction, but the hanlder already exists.", author)
+		// DELETE HANDLER IN DB
+		del_handler := &handler_reaction_role {
+			Msg_Link: link_message, Msg_ID: message_id,
+			Reaction: reaction, Reaction_ID: emoji_id, Reaction_Name: emoji_name,
+			Role_ID: role_id,
+			Guild_ID: guild_id,
+		}
+		
+		_, err = db.NewDelete().
+					Model(del_handler).
+					Where("msg_link = ? AND reaction = ? AND role_id = ?", link_message, reaction, role_id).
+					Exec(ctx)
+		if err != nil { log.Fatal(err) }
 
-		return
-	}
-
-	// ADD HANDLER IN DB
-	new_handler := &handler_reaction_role{
-		Msg_Link: link_message, Msg_ID: message_id,
-		Reaction: reaction, Reaction_ID: emoji_id, Reaction_Name: emoji_name,
-		Role_ID: role_id,
-		Guild_ID: guild_id,
-	}
-	_, err = db.NewInsert().Model(new_handler).Ignore().Exec(ctx)
-	if err != nil { log.Fatal(err) }
-
-	log.Println("New Handler inserted in table!")
+		log.Println("Handler deleted in table!")
 	
-	// RESPOND TO USER WITH EPHEMERAL MESSAGE
-	ephemeral_response_for_interaction(sess, i.Interaction, "Handler added to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
+		// RESPOND TO USER WITH EPHEMERAL MESSAGE
+		ephemeral_response_for_interaction(sess, i.Interaction, "Handler deleted to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
 
-	// ADD LOG IN LOGS CHANNEL
-	log_message(sess, guild_id, "adds a handler to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">.", author)
+		// ADD LOG IN LOGS CHANNEL
+		log_message(sess, guild_id, "deletes a handler on " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">.", author)
+		return
+	} else {
+		// ADD HANDLER IN DB
+		new_handler := &handler_reaction_role{
+			Msg_Link: link_message, Msg_ID: message_id,
+			Reaction: reaction, Reaction_ID: emoji_id, Reaction_Name: emoji_name,
+			Role_ID: role_id,
+			Guild_ID: guild_id,
+		}
+		_, err = db.NewInsert().Model(new_handler).Ignore().Exec(ctx)
+		if err != nil { log.Fatal(err) }
+
+		log.Println("New Handler inserted in table!")
+	
+		// RESPOND TO USER WITH EPHEMERAL MESSAGE
+		ephemeral_response_for_interaction(sess, i.Interaction, "Handler added to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
+
+		// ADD LOG IN LOGS CHANNEL
+		log_message(sess, guild_id, "adds a handler to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">.", author)
+	}
 }
