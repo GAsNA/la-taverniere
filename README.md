@@ -8,11 +8,6 @@ It was originally made for a friend, then edited for public release.
 <br /><br />
 Run with ```make```.
 
-## TODO
-- [ ]  Verification all log error
-- [ ]  handler-reaction-role: check if role is higher than the bot
-- [ ]  Personalized join and leave message
-
 ## Actions
 
 - [x]  Announcement for newly posted youtube videos and youtube live - NOT PUBLICLY OPEN TO EVERY GUILD FOR NOW
@@ -33,6 +28,12 @@ Run with ```make```.
 - [x]  Command to add or delete a handler to add a role to a user when a reaction is made on a specific message - admin only
     - [ ] Reaction are optionnal (all reaction taken in account if not specified)
 - [x]  No youtube live command for 'today' or until a specified date - admin only - NOT PUBLICLY OPEN TO EVERY GUILD FOR NOW
+
+## TODO
+- [ ]  Verification all log error
+- [ ]  handler-reaction-role: check if role is higher than the bot
+- [ ]  Personalized join and leave message
+- [ ]  Remove "DATABASE_URL" from env.sample
 
 ## Libraries
 -  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord in Go
