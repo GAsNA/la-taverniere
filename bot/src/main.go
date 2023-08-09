@@ -39,10 +39,6 @@ func main() {
 				kick_command(sess, i)
 			case "no-live":
 				no_live_command(sess, i)
-			case "who-are-this-people":
-				people_command(sess, i)
-			case "salope":
-				salope_command(sess, i)
 			case "message":
 				message_command(sess, i)
 			case "handler-reaction-for-role":
