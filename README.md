@@ -22,7 +22,7 @@ Run with ```make```.
 ### Commands
 >By default, the owner of a guild is an admin.
 
-- [ ]  Help command to describe all existing commands
+- [x]  Help command to describe all existing commands
 - [x]  Config command to set channels and other thing for the bot to work properly
     - [ ]  Set youtube channels to track
 - [x]  Message comand to send a message/an embed, with thumbnail, attachment... through the bot - admin only
