@@ -10,6 +10,8 @@ Run with ```make```.
 
 ## TODO
 - [ ]  Verification all log error
+- [ ]  handler-reaction-role: check if role is higher than the bot
+- [ ]  Personalized join and leave message
 
 ## Actions
 
@@ -31,8 +33,6 @@ Run with ```make```.
 - [x]  Command to add or delete a handler to add a role to a user when a reaction is made on a specific message - admin only
     - [ ] Reaction are optionnal (all reaction taken in account if not specified)
 - [x]  No youtube live command for 'today' or until a specified date - admin only - NOT PUBLICLY OPEN TO EVERY GUILD FOR NOW
-- [x]  Commands for Ray, Feitan, Ukyim, Kentaro, GAsNa
-- [x]  Salope command for Kentaro
 
 ## Libraries
 -  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord in Go
