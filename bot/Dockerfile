@@ -10,7 +10,6 @@ COPY		src/commands/*.go ./
 COPY		src/db/*.go ./
 COPY		src/utils/*.go ./
 COPY		src/youtube/*.go ./
-COPY		src/other/*.go ./
 
 RUN			go build -o /la-taverniere
 
