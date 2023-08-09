@@ -23,9 +23,11 @@ func new_guild_joined(sess *discordgo.Session, gc *discordgo.GuildCreate) {
 
 func new_message_posted(sess *discordgo.Session, m *discordgo.MessageCreate) {
 	guild_id := m.Message.GuildID
-	user_id := m.Message.Author.ID
+	author := m.Message.Author
+	user_id := author.ID
 
 	if is_the_bot(user_id, sess.State.User.ID) { return }
+	if author.Bot { return }
 
 	var channels_for_actions []channel_for_action
 	err := db.NewSelect().Model(&channels_for_actions).
