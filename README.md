@@ -57,6 +57,15 @@ Run with ```make```.
   </tr>
 </table>
 
+## Contributing
+
+Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/GAsNA/la-taverniere/issues).
+
+## License
+
+Copyright © 2023 [GAsNa](https://github.com/GAsNa).<br />
+This project is [GPL](https://github.com/GAsNA/la-taverniere/blob/main/LICENSE) licensed.
+
 ## Badges
 ![goBadge](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)
 ![discordBadge](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)
