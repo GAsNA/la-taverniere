@@ -1,12 +1,12 @@
 {
   "Servers": {
     "1": {
-      "Name": "la-taverniere",
+      "Name": "la-taverniere-dev",
       "Group": "Servers",
       "Port": 5432,
       "Username": "user",
       "SSLMode": "prefer",
-      "MaintenanceDB": "la-taverniere",
+      "MaintenanceDB": "la-taverniere-dev",
       "Host": "postgres"
     }
   }

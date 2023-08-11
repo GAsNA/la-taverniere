@@ -43,6 +43,8 @@ func main() {
 				message_command(sess, i)
 			case "handler-reaction-for-role":
 				handler_reaction_for_role_command(sess, i)
+			case "level":
+				level_command(sess, i)
 		}
 	})
 

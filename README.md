@@ -28,16 +28,17 @@ Run with ```make```.
 - [x]  Command to add or delete a handler to add a role to a user when a reaction is made on a specific message - admin only
     - [ ] Reaction are optionnal (all reaction taken in account if not specified)
 - [x]  No youtube live command for 'today' or until a specified date - admin only - NOT PUBLICLY OPEN TO EVERY GUILD FOR NOW
+- [ ]  Level command to see someone's level or reinit it - reinit someone else level is admin only
 
 ## TODO
 - [ ]  Verification all log error
 - [ ]  Personalized join and leave message
 - [ ]  Handler-reaction-role: choice to make the message
-- [ ]  Command see its own level
 - [ ]  Level with percent
 - [ ]  Command reinit their own level/chose someone if admin
 - [ ]  Level too fast
 - [ ]  Pass log to first person
+- [ ]  config command: rename config subcommand
 
 ## Libraries
 -  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord in Go
