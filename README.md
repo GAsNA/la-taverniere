@@ -31,14 +31,13 @@ Run with ```make```.
 
 ## TODO
 - [ ]  Verification all log error
-- [ ]  handler-reaction-role: check if role is higher than the bot
 - [ ]  Personalized join and leave message
-- [ ]  Remove "DATABASE_URL" from env.sample
 - [ ]  Handler-reaction-role: choice to make the message
 - [ ]  Command see its own level
 - [ ]  Level with percent
 - [ ]  Command reinit their own level/chose someone if admin
 - [ ]  Level too fast
+- [ ]  Pass log to first person
 
 ## Libraries
 -  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord in Go
