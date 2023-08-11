@@ -91,9 +91,12 @@ func handler_reaction_to_add_role(sess *discordgo.Session, m *discordgo.MessageR
 		this_handler := handlers[0]
 
 		err = sess.GuildMemberRoleAdd(this_handler.Guild_ID, user_id, this_handler.Role_ID)
-		if err != nil { log.Fatal(err) }
+		if err != nil {
+			log_message(sess, guild_id, "is probably too low in the guild and can't give the role <@&" + this_handler.Role_ID + ">. Try to give her a higher place.\nIf the problem persists, please try to contact her owner.")
+			log.Println(err)
+		}
 
-		log_message(sess, guild_id, "add the role <@&" + this_handler.Role_ID + "> to <@" + user_id + ">")
+		log_message(sess, guild_id, "adds the role <@&" + this_handler.Role_ID + "> to <@" + user_id + ">")
 	}
 }
 
@@ -116,7 +119,10 @@ func handler_reaction_to_delete_role(sess *discordgo.Session, m *discordgo.Messa
 		this_handler := handlers[0]
 
 		err = sess.GuildMemberRoleRemove(this_handler.Guild_ID, user_id, this_handler.Role_ID)
-		if err != nil { log.Fatal(err) }
+		if err != nil {
+			log_message(sess, guild_id, "is probably too low in the guild and can't remove the role <@&" + this_handler.Role_ID + ">. Try to give her a higher place.\nIf the problem persists, please try to contact her owner.")
+			log.Println(err)
+		}
 
 		log_message(sess, guild_id, "removes the role <@&" + this_handler.Role_ID + "> to <@" + user_id + ">")
 	}
