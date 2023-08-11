@@ -32,7 +32,6 @@ Run with ```make```.
 ## TODO
 - [ ]  Verification all log error
 - [ ]  Personalized join and leave message
-- [ ]  Remove "DATABASE_URL" from env.sample
 - [ ]  Handler-reaction-role: choice to make the message
 - [ ]  Command see its own level
 - [ ]  Level with percent
