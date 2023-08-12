@@ -36,7 +36,7 @@ func reset_level(sess *discordgo.Session, i *discordgo.InteractionCreate, reset 
 				Scan(ctx)
 		if err != nil { log.Fatal(err) }
 
-		if len(levels) == 0 || levels[0].Level == 0 {
+		if len(levels) == 0 {
 			if author.ID == user_id {
 				message = "You do not"
 			} else {
@@ -44,12 +44,9 @@ func reset_level(sess *discordgo.Session, i *discordgo.InteractionCreate, reset 
 			}
 			message += " have a level yet."
 		} else {
-			upd_level := levels[0]
-			upd_level.Level = 0
-			upd_level.Nb_Msg = 0
-			_, err = db.NewUpdate().Model(&upd_level).
-						Column("level", "nb_msg").
-						Where("id = ?", upd_level.ID).
+			del_level := levels[0]
+			_, err = db.NewDelete().Model(&del_level).
+						Where("id = ?", del_level.ID).
 						Exec(ctx)
 			if err != nil { log.Fatal(err) }
 
@@ -116,7 +113,7 @@ func display_level(sess *discordgo.Session, i *discordgo.InteractionCreate, auth
 	if err != nil { log.Fatal(err) }
 
 	message := ""
-	if len(levels) == 0 || levels[0].Level == 0 {
+	if len(levels) == 0 {
 		if user.ID == author.ID {
 			message = "You don't"
 		} else {
