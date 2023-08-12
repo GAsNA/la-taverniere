@@ -196,11 +196,11 @@ func config_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	// WHICH SUBCOMMAND
 	switch i.ApplicationCommandData().Options[0].Name {
-		case "config-channels":
+		case "channels":
 			config_channels(sess, i, author, guild_id)
-		case "config-admins":
+		case "admins":
 			config_admins(sess, i, author, guild_id)
-		case "config-youtube-roles":
+		case "youtube-roles":
 			// PROVISIONAL
 			if guild_id != get_env_var("GUILD_ID") {
 				ephemeral_response_for_interaction(sess, i.Interaction, "This command is not open for now...")
