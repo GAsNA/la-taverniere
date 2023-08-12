@@ -35,8 +35,8 @@ Run with ```make```.
 - [ ]  Personalized join and leave message
 - [ ]  Handler-reaction-role: choice to make the message
 - [ ]  Level with percent
-- [ ]  Command reinit their own level/chose someone if admin
 - [ ]  Level too fast
+- [ ]  Badge/Presentation for level
 - [ ]  Pass log to first person
 - [ ]  config command: rename config subcommand
 

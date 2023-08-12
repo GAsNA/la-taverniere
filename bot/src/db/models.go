@@ -29,8 +29,8 @@ type level struct {
 	ID				int64	`bun:"id,pk,autoincrement,type:SERIAL"`
 	User_ID			string	`bun:"user_id,notnull"`
 	Guild_ID		string	`bun:"guild_id,notnull"`
-	Nb_Msg			int64	`bun:"nb_msg,notnull,default:1"`
-	Level			int64	`bun:"level,notnull,default:0"`
+	Nb_Msg			int64	`bun:"nb_msg,default:0"`
+	Level			int64	`bun:"level,default:0"`
 }
 
 type action struct {

@@ -49,7 +49,7 @@ func new_message_posted(sess *discordgo.Session, m *discordgo.MessageCreate) {
 	if len(users) == 0 {
 		level_calculated := calcul_level_with_nb_messages(1)
 
-		new_user := &level{User_ID: user_id, Guild_ID: guild_id, Level: level_calculated}
+		new_user := &level{User_ID: user_id, Guild_ID: guild_id, Nb_Msg: 1, Level: level_calculated}
 		_, err = db.NewInsert().Model(new_user).Ignore().Exec(ctx)
 		if err != nil { log.Println(err) }
 		if err == nil { log.Println("User id " + user_id + " registered with guild id " + guild_id + " in level table!") }
