@@ -35,7 +35,7 @@ Run with ```make```.
 - [ ]  Personalized join and leave message
 - [ ]  Handler-reaction-role: choice to make the message
 - [ ]  Level with percent
-- [ ]  Level too fast
+- [ ]  Level reset: not update!! -> delete
 - [ ]  Badge/Presentation for level
 - [ ]  Pass log to first person
 - [ ]  config command: rename config subcommand
