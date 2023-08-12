@@ -37,7 +37,6 @@ Run with ```make```.
 - [ ]  Level with percent
 - [ ]  Badge/Presentation for level
 - [ ]  Pass log to first person
-- [ ]  config command: rename config subcommand
 
 ## Libraries
 -  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord in Go

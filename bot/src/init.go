@@ -130,7 +130,7 @@ func list_slash_commands(sess *discordgo.Session) {
 			Description:	"Configure the bot.",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
-					Name:			"config-channels",
+					Name:			"channels",
 					Description:	"Give a channel associate to an action.",
 					Type:			discordgo.ApplicationCommandOptionSubCommand,
 					Options:		[]*discordgo.ApplicationCommandOption{
@@ -151,7 +151,7 @@ func list_slash_commands(sess *discordgo.Session) {
 					},
 				},
 				{
-					Name:			"config-admins",
+					Name:			"admins",
 					Description:	"Give a role to determine as administrator role for the bot.",
 					Type:			discordgo.ApplicationCommandOptionSubCommand,
 					Options:		[]*discordgo.ApplicationCommandOption{
@@ -164,7 +164,7 @@ func list_slash_commands(sess *discordgo.Session) {
 					},
 				},
 				{
-					Name:			"config-youtube-roles",
+					Name:			"youtube-roles",
 					Description:	"Give a role to add it to the list of role ping at each youtube announcements.",
 					Type:			discordgo.ApplicationCommandOptionSubCommand,
 					Options:		[]*discordgo.ApplicationCommandOption{
