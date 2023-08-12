@@ -304,6 +304,22 @@ func list_slash_commands(sess *discordgo.Session) {
 				},
 			},
 		},
+		{
+			Name:			"level",
+			Description:	"To see someone level or reset it.",
+			Options: []*discordgo.ApplicationCommandOption {
+				{
+					Type:		discordgo.ApplicationCommandOptionUser,
+					Name:		"user",
+					Description:"User whose level you want to see.",
+				},
+				{
+					Type:		discordgo.ApplicationCommandOptionBoolean,
+					Name:		"reset",
+					Description:"To reset the level to 0.",
+				},
+			},
+		},
 	})
 	if err != nil { log.Fatal(err) }
 }

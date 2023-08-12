@@ -26,23 +26,39 @@ func main() {
 
 	// ACTIONS FOR INTERACTIONS
 	sess.AddHandler(func (sess *discordgo.Session, i *discordgo.InteractionCreate,) {
-		data := i.ApplicationCommandData()
+		switch i.Type {
 
-		switch data.Name {
-			case "help":
-				help_command(sess, i)
-			case "config":
-				config_command(sess, i)
-			case "blacklist":
-				blacklist_command(sess, i)
-			case "kick":
-				kick_command(sess, i)
-			case "no-live":
-				no_live_command(sess, i)
-			case "message":
-				message_command(sess, i)
-			case "handler-reaction-for-role":
-				handler_reaction_for_role_command(sess, i)
+			case discordgo.InteractionApplicationCommand:
+				data := i.ApplicationCommandData()
+
+				switch data.Name {
+					case "help":
+						help_command(sess, i)
+					case "config":
+						config_command(sess, i)
+					case "blacklist":
+						blacklist_command(sess, i)
+					case "kick":
+						kick_command(sess, i)
+					case "no-live":
+						no_live_command(sess, i)
+					case "message":
+						message_command(sess, i)
+					case "handler-reaction-for-role":
+						handler_reaction_for_role_command(sess, i)
+					case "level":
+						level_command(sess, i)
+				}
+
+			case discordgo.InteractionMessageComponent:
+				data := i.MessageComponentData()
+
+				switch data.CustomID {
+					case "success-reset-level":
+						reset_level(sess, i, true)
+					case "fail-reset-level":
+						reset_level(sess, i, false)
+				}
 		}
 	})
 
