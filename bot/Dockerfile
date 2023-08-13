@@ -11,6 +11,9 @@ COPY		src/db/*.go ./
 COPY		src/utils/*.go ./
 COPY		src/youtube/*.go ./
 
-RUN			go build -o /la-taverniere
+COPY		fonts ./fonts/
+COPY		images ./images/
 
-CMD			["/la-taverniere"]
+RUN			go build -o ./la-taverniere
+
+CMD			["./la-taverniere"]

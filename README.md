@@ -35,7 +35,8 @@ Run with ```make```.
 - [ ]  Personalized join and leave message
 - [ ]  Handler-reaction-role: choice to make the message
 - [ ]  Level with percent
-- [ ]  Badge/Presentation for level
+- [ ]  Level is float not int in db
+- [ ]  Modif func ephemeral_message_in_response to add options
 - [ ]  Pass log to first person
 
 ## Libraries

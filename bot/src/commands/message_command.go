@@ -10,7 +10,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func get_io_reader(URL string) io.Reader {
+func get_io_reader_by_url(URL string) io.Reader {
 	response, err := http.Get(URL)
 	if err != nil { log.Fatal(err) }
 
@@ -97,7 +97,7 @@ func message_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 			{
 				Name:			attachment.Filename,
 				ContentType:	attachment.ContentType,
-				Reader:			get_io_reader(attachment.URL),
+				Reader:			get_io_reader_by_url(attachment.URL),
 			},
 		}
 	}

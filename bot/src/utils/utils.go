@@ -146,10 +146,10 @@ func is_a_registered_handler(link string, reaction string, role *discordgo.Role)
 	return false
 }
 
-func calcul_level_with_nb_messages(nb_msg int64) int64 {
+func calcul_level_with_nb_messages(nb_msg int64) float64 {
 		// level calcul with
 			// (1 + racine(1 + 8 * 8 * nb_msg / 50)) / 2
-	return int64((1.0 + math.Sqrt(1.0 + (8.0 * 8.0 * float64(nb_msg) / 50.0))) / 2.0)
+	return (1.0 + math.Sqrt(1.0 + (8.0 * 8.0 * float64(nb_msg) / 50.0))) / 2.0
 }
 
 func levels_message(sess *discordgo.Session, levels_chan_id string, user *level) {
@@ -163,4 +163,12 @@ func levels_message(sess *discordgo.Session, levels_chan_id string, user *level)
 
 	_, err := sess.ChannelMessageSendEmbed(levels_chan_id, &embed)
 	if err != nil { log.Fatal(err) }
+}
+
+func truncate_str(str string, len_max int) string {
+	if len(str) > len_max {
+		str = str[:len_max - 3]
+		str += "..."
+	}
+	return str
 }
