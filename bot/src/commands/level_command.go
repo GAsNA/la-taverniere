@@ -4,7 +4,6 @@ import (
 	"log"
 	"strings"
 	"os"
-	"math"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -130,8 +129,7 @@ func display_level(sess *discordgo.Session, i *discordgo.InteractionCreate, auth
 		guild, err := sess.Guild(guild_id)
 		guild_name := guild.Name
 		name_file := "level-" + username + "-" + guild_name + ".png"
-		percent := int64(math.Mod(calcul_level_with_nb_messages(this_level.Nb_Msg), 1.0) * 100)
-		link_image_level := get_image_level(name_file, username, user.AvatarURL("80"), guild_name, this_level.Level, percent)
+		link_image_level := get_image_level(name_file, username, user.AvatarURL("80"), guild_name, this_level.Level)
 
 		reader_file, err := os.Open(link_image_level)
 		if err != nil { log.Fatal(err) }
