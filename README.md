@@ -41,9 +41,11 @@ Run with ```make```.
 - [ ]  config command: rename config subcommand
 
 ## Libraries
--  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord in Go
--  [gomoji](https://github.com/forPelevin/gomoji), for actions with emojis in string in Go
+-  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord
+-  [gomoji](https://github.com/forPelevin/gomoji), for actions with emojis in string
 -  [bun](https://github.com/uptrace/bun), to simplify interactions with postgres/sql database
+-  [gg](https://github.com/fogleman/gg), for rendering 2D graphics
+-  [freetype](https://github.com/golang/freetype), to load a font for graphics render (use of truetype)
 
 ## Author
 <table>
