@@ -55,6 +55,11 @@ func help_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 				Inline: true,
 			},
 			{
+				Name:	"🧮 /level",
+				Value:	"See your level or someone else's. Reset a level with the option ``reset`` set to true. Reset someone else level is admin only.",
+				Inline: true,
+			},
+			{
 				Name:	"🤖 Automatic actions",
 				Value:	"- Levels for messages posted by each person.\n- Log messages for each of my actions.",
 				Inline: false,

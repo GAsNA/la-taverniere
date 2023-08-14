@@ -19,4 +19,7 @@ re:					fclean all
 image:
 					docker image ls
 
+bash:
+					docker compose exec $(arg) /bin/bash
+
 .PHONY: all stop down clean fclean re image

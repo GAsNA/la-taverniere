@@ -2,8 +2,8 @@ package main
 
 import (
 	"log"
-	"strconv"
 	"strings"
+	"os"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -112,25 +112,49 @@ func display_level(sess *discordgo.Session, i *discordgo.InteractionCreate, auth
 			Scan(ctx)
 	if err != nil { log.Fatal(err) }
 
-	message := ""
 	if len(levels) == 0 {
+		message := ""
 		if user.ID == author.ID {
 			message = "You don't"
 		} else {
 			message = "This person doesn't"
 		}
 		message += " have a level yet."
+		
+		ephemeral_response_for_interaction(sess, i.Interaction, message)
 	} else {
 		this_level := levels[0]
-		if user.ID == author.ID {
-			message = "You are"
-		} else {
-			message = "This person is"
+
+		username := user.Username
+		guild, err := sess.Guild(guild_id)
+		guild_name := guild.Name
+		name_file := "level-" + username + "-" + guild_name + ".png"
+		link_image_level := get_image_level(name_file, username, user.AvatarURL("80"), guild_name, this_level.Level)
+
+		reader_file, err := os.Open(link_image_level)
+		if err != nil { log.Fatal(err) }
+
+		files := []*discordgo.File{
+			{
+				Name:			name_file,
+				ContentType:	"image/png",
+				Reader:			reader_file,
+			},
 		}
-		message += " lvl." + strconv.Itoa(int(this_level.Level)) + "."
+
+		err = sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
+				Type:	discordgo.InteractionResponseChannelMessageWithSource,
+				Data:	&discordgo.InteractionResponseData {
+					Files:	files,
+				},
+			},)
+
+		// DELETE LOCAL FILE
+		err = reader_file.Close()
+		if err != nil { log.Fatal(err) }
+		err = os.Remove(link_image_level)
+		if err != nil { log.Fatal(err) }
 	}
-	
-	ephemeral_response_for_interaction(sess, i.Interaction, message)
 }
 
 func level_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
