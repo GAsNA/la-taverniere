@@ -37,6 +37,7 @@ Run with ```make```.
 - [ ]  Modif func ephemeral_message_in_response to add options
 - [ ]  Pass log to first person
 - [ ]  Log begin bot
+- [ ]  quit server, must supp all information from this guild
 
 ## Libraries
 -  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord
