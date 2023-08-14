@@ -28,7 +28,7 @@ Run with ```make```.
 - [x]  Command to add or delete a handler to add a role to a user when a reaction is made on a specific message - admin only
     - [ ] Reaction are optionnal (all reaction taken in account if not specified)
 - [x]  No youtube live command for 'today' or until a specified date - admin only - NOT PUBLICLY OPEN TO EVERY GUILD FOR NOW
-- [x]  Level command to see someone's level or reinit it - reinit someone else level is admin only
+- [x]  Level command to see someone's level or reset it - reset someone else level is admin only
 
 ## TODO
 - [ ]  Personalized join and leave message
@@ -36,7 +36,7 @@ Run with ```make```.
 - [ ]  Verification all log error
 - [ ]  Modif func ephemeral_message_in_response to add options
 - [ ]  Pass log to first person
-- [ ]  Add level command in help command
+- [ ]  Log begin bot
 
 ## Libraries
 -  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord
