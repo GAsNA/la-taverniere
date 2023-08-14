@@ -4,6 +4,7 @@ import (
 	"log"
 	"strings"
 	"os"
+	"fmt"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -176,7 +177,7 @@ func level_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 	user := author
 	if _, ok := optionMap["user"]; ok {
-		user = optionMap["user"].UserValue(nil)
+		user = optionMap["user"].UserValue(sess)
 	}
 
 	if reset {
