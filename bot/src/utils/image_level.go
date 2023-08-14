@@ -7,6 +7,7 @@ import (
 	"image"
 	"net/http"
 	"errors"
+	"math"
 
 	"github.com/fogleman/gg"
 	"github.com/golang/freetype/truetype"
@@ -32,12 +33,14 @@ func load_image_from_url(URL string) (image.Image, error) {
     return img, nil
 }
 
-func get_image_level(name_file, username, pp_link, guild_name string, level, percent int64) string {
+func get_image_level(name_file, username, pp_link, guild_name string, level float64) string {
 	img, err := gg.LoadImage("./images/template-level.png")
     if err != nil { log.Fatal(err) }
 
 	w_img := img.Bounds().Max.X
 	h_img := img.Bounds().Max.Y
+
+	percent := int64(math.Mod(level, 1.0) * 100)
 
 	len_str_max := 24
 	name := truncate_str(username, len_str_max)

@@ -152,8 +152,8 @@ func calcul_level_with_nb_messages(nb_msg int64) float64 {
 	return (1.0 + math.Sqrt(1.0 + (8.0 * 8.0 * float64(nb_msg) / 50.0))) / 2.0
 }
 
-func levels_message(sess *discordgo.Session, levels_chan_id string, user *level) {
-	message := "<@" + user.User_ID + "> reached lvl." + strconv.Itoa(int(user.Level)) + "!"
+func levels_message(sess *discordgo.Session, levels_chan_id string, user *level, level int) {
+	message := "<@" + user.User_ID + "> reached lvl." + strconv.Itoa(level) + "!"
 	embed := discordgo.MessageEmbed{
 		Title:       "New level!",
 		Description: message,
