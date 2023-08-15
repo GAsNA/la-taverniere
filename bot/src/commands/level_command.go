@@ -4,7 +4,6 @@ import (
 	"log"
 	"strings"
 	"os"
-	"fmt"
 
 	"github.com/bwmarrin/discordgo"
 )

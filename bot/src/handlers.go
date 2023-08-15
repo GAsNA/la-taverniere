@@ -6,7 +6,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func new_guild_joined(sess *discordgo.Session, gc *discordgo.GuildCreate) {
+func guild_joined(sess *discordgo.Session, gc *discordgo.GuildCreate) {
 	guild_id := gc.Guild.ID
 
 	var guilds []guild
@@ -21,7 +21,60 @@ func new_guild_joined(sess *discordgo.Session, gc *discordgo.GuildCreate) {
 	}
 }
 
-func new_message_posted(sess *discordgo.Session, m *discordgo.MessageCreate) {
+func guild_left(sess *discordgo.Session, gd *discordgo.GuildDelete) {
+	guild_id := gd.Guild.ID
+
+	var guilds []guild
+	err := db.NewSelect().Model(&guilds).Where("guild_id = ?", guild_id).Scan(ctx)
+	if err != nil { log.Println(err) }
+
+	if len(guilds) > 0 {
+		del_level := &level{}
+		_, err = db.NewDelete().Model(del_level).
+					Where("guild_id = ?", guild_id).
+					Exec(ctx)
+		if err != nil { log.Fatal(err) }
+
+		del_handler_reaction_role := &handler_reaction_role{}
+		_, err = db.NewDelete().Model(del_handler_reaction_role).
+					Where("guild_id = ?", guild_id).
+					Exec(ctx)
+		if err != nil { log.Fatal(err) }
+
+		del_channel_for_action := &channel_for_action{}
+		_, err = db.NewDelete().Model(del_channel_for_action).
+					Where("guild_id = ?", guild_id).
+					Exec(ctx)
+		if err != nil { log.Fatal(err) }
+
+		del_role_admin := &role_admin{}
+		_, err = db.NewDelete().Model(del_role_admin).
+					Where("guild_id = ?", guild_id).
+					Exec(ctx)
+		if err != nil { log.Fatal(err) }
+
+		del_youtube_live_role := &youtube_live_role{}
+		_, err = db.NewDelete().Model(del_youtube_live_role).
+					Where("guild_id = ?", guild_id).
+					Exec(ctx)
+		if err != nil { log.Fatal(err) }
+
+		del_youtube_video_role := &youtube_video_role{}
+		_, err = db.NewDelete().Model(del_youtube_video_role).
+					Where("guild_id = ?", guild_id).
+					Exec(ctx)
+		if err != nil { log.Fatal(err) }
+
+		del_guild := guilds[0]
+		_, err = db.NewDelete().Model(&del_guild).
+					Where("guild_id = ?", del_guild.Guild_ID).
+					Exec(ctx)
+		if err != nil { log.Fatal(err) }
+		if err == nil { log.Println("Guild id " + guild_id + " deleted.") }
+	}
+}
+
+func message_posted(sess *discordgo.Session, m *discordgo.MessageCreate) {
 	guild_id := m.Message.GuildID
 	author := m.Message.Author
 	user_id := author.ID

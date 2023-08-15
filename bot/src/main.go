@@ -63,8 +63,9 @@ func main() {
 	})
 
 	// HANDLERS
-	sess.AddHandler(new_guild_joined)
-	sess.AddHandler(new_message_posted)
+	sess.AddHandler(guild_joined)
+	sess.AddHandler(guild_left)
+	sess.AddHandler(message_posted)
 	sess.AddHandler(handler_reaction_to_add_role)
 	sess.AddHandler(handler_reaction_to_delete_role)
 
