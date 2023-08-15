@@ -21,7 +21,7 @@ func log_message(sess *discordgo.Session, guild_id string, log_str string, user 
 	// LOG MESSAGE
 	logs_chan_id := channels_for_actions[0].Channel_ID
 	
-	message := sess.State.User.Username + " " + log_str
+	message := "I " + log_str
 
 	if len(user) > 0 {
 		message += "\nRequested by <@" + user[0].ID + ">"

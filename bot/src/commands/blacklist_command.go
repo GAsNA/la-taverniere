@@ -34,8 +34,6 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 	//CAN'T BAN IF USER TO BLACKLIST IS THE BOT
 	if user_to_blacklist_id == sess.State.User.ID {
 		ephemeral_response_for_interaction(sess, i.Interaction, "You can't ban and add to the blacklist the bot.")
-		log_message(sess, guild_id, "can't ban and add themself to the blacklist.", author)
-
 		return 
 	}
 

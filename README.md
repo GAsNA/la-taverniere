@@ -12,7 +12,6 @@ Run with ```make```.
 
 - [x]  Announcement for newly posted youtube videos and youtube live - NOT PUBLICLY OPEN TO EVERY GUILD FOR NOW
     - [ ]  Add reel in youtube announcements. See if /shorts/{idvideo} return something if shorts or error if not ou l'inverse
-    - [ ]  Stop bot properly
 - [x]  Log message for each bot action
 - [x]  Levels for conversation and messages
 
@@ -35,8 +34,8 @@ Run with ```make```.
 - [ ]  Handler-reaction-role: choice to make the message
 - [ ]  Verification all log error
 - [ ]  Modif func ephemeral_message_in_response to add options
-- [ ]  Pass log to first person
 - [ ]  Log begin bot
+- [ ]  Stop bot properly
 
 ## Libraries
 -  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord

@@ -33,8 +33,6 @@ func kick_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	//CAN'T BAN IF USER TO BLACKLIST IS THE BOT
 	if user_to_kick_id == sess.State.User.ID {
 		ephemeral_response_for_interaction(sess, i.Interaction, "You can't kick the bot.")
-		log_message(sess, guild_id, "tried to kick someone but can't kick themself.", author)
-
 		return 
 	}
 

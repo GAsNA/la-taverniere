@@ -34,7 +34,6 @@ func no_live_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	if len(channels_for_actions) == 0 {
 		ephemeral_response_for_interaction(sess, i.Interaction, "This command needs to be configurate with ``/config``. Choose the action ``Youtube Live Announcements``.")
-		log_message(sess, guild_id, "tried make a no live announcement, but the channel is not set.")
 		return
 	}
 

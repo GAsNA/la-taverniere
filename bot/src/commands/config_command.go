@@ -45,7 +45,6 @@ func config_channels(sess *discordgo.Session, i *discordgo.InteractionCreate, au
 			log_message(sess, guild_id, "updated a channel for an action", author)
 		} else {
 			ephemeral_response_for_interaction(sess, i.Interaction, "This configuration already exists.")
-			log_message(sess, guild_id, "tried to add a configuration for the channel <#" + channel_id + ">, but the configuration already exists.", author)
 		}
 		return
 	}
@@ -98,7 +97,7 @@ func config_admins(sess *discordgo.Session, i *discordgo.InteractionCreate, auth
 	if err != nil { log.Fatal(err) }
 
 	ephemeral_response_for_interaction(sess, i.Interaction, "Role <@&" + role_id + "> is now removed from admin roles.")
-	log_message(sess, guild_id, "removes role <@&" + role_id + "> from admin.", author)
+	log_message(sess, guild_id, "removed role <@&" + role_id + "> from admin.", author)
 }
 
 func config_youtube_roles_live(sess *discordgo.Session, i *discordgo.InteractionCreate, author *discordgo.User, guild_id string, role_id string) {
@@ -128,7 +127,7 @@ func config_youtube_roles_live(sess *discordgo.Session, i *discordgo.Interaction
 	if err != nil { log.Fatal(err) }
 
 	ephemeral_response_for_interaction(sess, i.Interaction, "Role <@&" + role_id + "> will no longer be ping for youtube live announcements.")
-	log_message(sess, guild_id, "removes role <@&" + role_id + "> from list of role ping for youtube live announcements.", author)
+	log_message(sess, guild_id, "removed role <@&" + role_id + "> from list of role ping for youtube live announcements.", author)
 }
 
 func config_youtube_roles_video(sess *discordgo.Session, i *discordgo.InteractionCreate, author *discordgo.User, guild_id string, role_id string) {
@@ -158,7 +157,7 @@ func config_youtube_roles_video(sess *discordgo.Session, i *discordgo.Interactio
 	if err != nil { log.Fatal(err) }
 
 	ephemeral_response_for_interaction(sess, i.Interaction, "Role <@&" + role_id + "> will no longer be ping for youtube video announcements.")
-	log_message(sess, guild_id, "removes role <@&" + role_id + "> from list of role ping for youtube video announcements.", author)
+	log_message(sess, guild_id, "removed role <@&" + role_id + "> from list of role ping for youtube video announcements.", author)
 }
 
 func config_youtube_roles(sess *discordgo.Session, i *discordgo.InteractionCreate, author *discordgo.User, guild_id string) {
