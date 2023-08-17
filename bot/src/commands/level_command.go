@@ -22,7 +22,7 @@ func reset_level(sess *discordgo.Session, i *discordgo.InteractionCreate, reset 
 
 	// CAN'T USE THIS COMMAND IF NOT ADMIN
 	if author.ID != user_id && !is_admin(sess, i.Member, guild_id) {
-		ephemeral_response_for_interaction(sess, i.Interaction, "You do not have the right to use this command.")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "You do not have the right to use this command.")
 		log_message(sess, guild_id, "tried to use the config command, but <@" + author.ID + "> to not have the right.")
 
 		return
@@ -55,14 +55,7 @@ func reset_level(sess *discordgo.Session, i *discordgo.InteractionCreate, reset 
 		}
 	}
 
-	err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-				Type: discordgo.InteractionResponseUpdateMessage,
-				Data: &discordgo.InteractionResponseData{
-					Content: message,
-					Flags: discordgo.MessageFlagsEphemeral,
-				},
-			})
-	if err != nil { log.Fatal(err) }
+	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseUpdateMessage, true, message)
 }
 
 func ask_reset_level(sess *discordgo.Session, i *discordgo.InteractionCreate, author *discordgo.User, user *discordgo.User) {
@@ -73,36 +66,32 @@ func ask_reset_level(sess *discordgo.Session, i *discordgo.InteractionCreate, au
 		message += " the level of <@" + user.ID + ">?"
 	}
 
-	err := sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-				Type: discordgo.InteractionResponseChannelMessageWithSource,
-				Data: &discordgo.InteractionResponseData{
-					Content: message,
-					Flags: discordgo.MessageFlagsEphemeral,
-					Components: []discordgo.MessageComponent{
-						discordgo.ActionsRow{
-							Components: []discordgo.MessageComponent{
-								discordgo.Button{
-									Emoji: discordgo.ComponentEmoji{
-										Name: "✅",
-									},
-									Label: "Yes, I'm sure.",
-									Style: discordgo.SuccessButton,
-									CustomID: "success-reset-level",
-								},
-								discordgo.Button{
-									Emoji: discordgo.ComponentEmoji{
-										Name: "❌",
-									},
-									Label: "No, I'm not.",
-									Style: discordgo.SecondaryButton,
-									CustomID: "fail-reset-level",
-								},
-							},
+	success_button := discordgo.Button{
+						Emoji: discordgo.ComponentEmoji{
+							Name: "✅",
 						},
+						Label: "Yes, I'm sure.",
+						Style: discordgo.SuccessButton,
+						CustomID: "success-reset-level",
+					}
+
+	fail_button := discordgo.Button{
+						Emoji: discordgo.ComponentEmoji{
+							Name: "❌",
+						},
+						Label: "No, I'm not.",
+						Style: discordgo.SecondaryButton,
+						CustomID: "fail-reset-level",
+					}
+
+	component := discordgo.ActionsRow {
+					Components: []discordgo.MessageComponent{
+						success_button,
+						fail_button,
 					},
-				},
-			})
-	if err != nil { log.Fatal(err) }
+				}
+
+	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, false, message, component)
 }
 
 func display_level(sess *discordgo.Session, i *discordgo.InteractionCreate, author *discordgo.User, guild_id string, user *discordgo.User) {
@@ -121,40 +110,43 @@ func display_level(sess *discordgo.Session, i *discordgo.InteractionCreate, auth
 		}
 		message += " have a level yet."
 		
-		ephemeral_response_for_interaction(sess, i.Interaction, message)
-	} else {
-		this_level := levels[0]
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, message)
 
-		username := user.Username
-		guild, err := sess.Guild(guild_id)
-		guild_name := guild.Name
-		name_file := "level-" + username + "-" + guild_name + ".png"
-		link_image_level := get_image_level(name_file, username, user.AvatarURL("80"), guild_name, this_level.Level)
-
-		reader_file, err := os.Open(link_image_level)
-		if err != nil { log.Fatal(err) }
-
-		files := []*discordgo.File{
-			{
-				Name:			name_file,
-				ContentType:	"image/png",
-				Reader:			reader_file,
-			},
-		}
-
-		err = sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
-				Type:	discordgo.InteractionResponseChannelMessageWithSource,
-				Data:	&discordgo.InteractionResponseData {
-					Files:	files,
-				},
-			},)
-
-		// DELETE LOCAL FILE
-		err = reader_file.Close()
-		if err != nil { log.Fatal(err) }
-		err = os.Remove(link_image_level)
-		if err != nil { log.Fatal(err) }
+		return
 	}
+	
+	this_level := levels[0]
+
+	username := user.Username
+	guild, err := sess.Guild(guild_id)
+	guild_name := guild.Name
+	name_file := "level-" + username + "-" + guild_name + ".png"
+	link_image_level := get_image_level(name_file, username, user.AvatarURL("80"), guild_name, this_level.Level)
+
+	reader_file, err := os.Open(link_image_level)
+	if err != nil { log.Fatal(err) }
+
+	files := []*discordgo.File{
+		{
+			Name:			name_file,
+			ContentType:	"image/png",
+			Reader:			reader_file,
+		},
+	}
+
+	err = sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
+			Type:	discordgo.InteractionResponseChannelMessageWithSource,
+			Data:	&discordgo.InteractionResponseData {
+				Files:	files,
+			},
+		},)
+	if err != nil { log.Fatal(err) }
+
+	// DELETE LOCAL FILE
+	err = reader_file.Close()
+	if err != nil { log.Fatal(err) }
+	err = os.Remove(link_image_level)
+	if err != nil { log.Fatal(err) }
 }
 
 func level_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {

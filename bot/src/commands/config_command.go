@@ -19,7 +19,7 @@ func config_channels(sess *discordgo.Session, i *discordgo.InteractionCreate, au
 
 	// PROVISIONAL
 	if guild_id != get_env_var("GUILD_ID") && (action_id == get_action_db_by_name("Youtube Live Announcements").id || action_id == get_action_db_by_name("Youtube Video Announcements").id) {
-		ephemeral_response_for_interaction(sess, i.Interaction, "This option in this command is not open for now...")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "This option in this command is not open for now...")
 		return
 	}
 
@@ -41,10 +41,10 @@ func config_channels(sess *discordgo.Session, i *discordgo.InteractionCreate, au
 						Exec(ctx)
 			if err != nil { log.Fatal(err) }
 
-			ephemeral_response_for_interaction(sess, i.Interaction, "Channel updated for this action.")
+			interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Channel updated for this action.")
 			log_message(sess, guild_id, "updated a channel for an action", author)
 		} else {
-			ephemeral_response_for_interaction(sess, i.Interaction, "This configuration already exists.")
+			interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "This configuration already exists.")
 		}
 		return
 	}
@@ -57,7 +57,7 @@ func config_channels(sess *discordgo.Session, i *discordgo.InteractionCreate, au
 	_, err = db.NewInsert().Model(new_channel_for_action).Ignore().Exec(ctx)
 	if err != nil { log.Fatal(err) }
 
-	ephemeral_response_for_interaction(sess, i.Interaction, "Channel added for this action.")
+	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Channel added for this action.")
 	log_message(sess, guild_id, "added a channel for an action", author)
 }
 
@@ -84,7 +84,7 @@ func config_admins(sess *discordgo.Session, i *discordgo.InteractionCreate, auth
 		_, err = db.NewInsert().Model(new_role_admin).Ignore().Exec(ctx)
 		if err != nil { log.Fatal(err) }
 
-		ephemeral_response_for_interaction(sess, i.Interaction, "Role <@&" + role_id + "> is now concidered as admin.")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Role <@&" + role_id + "> is now concidered as admin.")
 		log_message(sess, guild_id, "added role <@&" + role_id + "> as admin.", author)
 		return
 	}
@@ -96,7 +96,7 @@ func config_admins(sess *discordgo.Session, i *discordgo.InteractionCreate, auth
 				Exec(ctx)
 	if err != nil { log.Fatal(err) }
 
-	ephemeral_response_for_interaction(sess, i.Interaction, "Role <@&" + role_id + "> is now removed from admin roles.")
+	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Role <@&" + role_id + "> is now removed from admin roles.")
 	log_message(sess, guild_id, "removed role <@&" + role_id + "> from admin.", author)
 }
 
@@ -114,7 +114,7 @@ func config_youtube_roles_live(sess *discordgo.Session, i *discordgo.Interaction
 		_, err = db.NewInsert().Model(new_youtube_live_role).Ignore().Exec(ctx)
 		if err != nil { log.Fatal(err) }
 
-		ephemeral_response_for_interaction(sess, i.Interaction, "Role <@&" + role_id + "> will now be ping for each youtube live announcements.")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Role <@&" + role_id + "> will now be ping for each youtube live announcements.")
 		log_message(sess, guild_id, "added role <@&" + role_id + "> as ping for youtube live announcements.", author)
 		return
 	}
@@ -126,7 +126,7 @@ func config_youtube_roles_live(sess *discordgo.Session, i *discordgo.Interaction
 				Exec(ctx)
 	if err != nil { log.Fatal(err) }
 
-	ephemeral_response_for_interaction(sess, i.Interaction, "Role <@&" + role_id + "> will no longer be ping for youtube live announcements.")
+	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Role <@&" + role_id + "> will no longer be ping for youtube live announcements.")
 	log_message(sess, guild_id, "removed role <@&" + role_id + "> from list of role ping for youtube live announcements.", author)
 }
 
@@ -144,7 +144,7 @@ func config_youtube_roles_video(sess *discordgo.Session, i *discordgo.Interactio
 		_, err = db.NewInsert().Model(new_youtube_video_role).Ignore().Exec(ctx)
 		if err != nil { log.Fatal(err) }
 
-		ephemeral_response_for_interaction(sess, i.Interaction, "Role <@&" + role_id + "> will now be ping for each youtube video announcements.")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Role <@&" + role_id + "> will now be ping for each youtube video announcements.")
 		log_message(sess, guild_id, "added role <@&" + role_id + "> as ping for youtube video announcements.", author)
 		return
 	}
@@ -156,7 +156,7 @@ func config_youtube_roles_video(sess *discordgo.Session, i *discordgo.Interactio
 				Exec(ctx)
 	if err != nil { log.Fatal(err) }
 
-	ephemeral_response_for_interaction(sess, i.Interaction, "Role <@&" + role_id + "> will no longer be ping for youtube video announcements.")
+	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Role <@&" + role_id + "> will no longer be ping for youtube video announcements.")
 	log_message(sess, guild_id, "removed role <@&" + role_id + "> from list of role ping for youtube video announcements.", author)
 }
 
@@ -187,7 +187,7 @@ func config_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	// CAN'T USE THIS COMMAND IF NOT ADMIN
 	if !is_admin(sess, i.Member, guild_id) {
-		ephemeral_response_for_interaction(sess, i.Interaction, "You do not have the right to use this command.")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "You do not have the right to use this command.")
 		log_message(sess, guild_id, "tried to use the config command, but <@" + author.ID + "> to not have the right.")
 
 		return
@@ -202,7 +202,7 @@ func config_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 		case "youtube-roles":
 			// PROVISIONAL
 			if guild_id != get_env_var("GUILD_ID") {
-				ephemeral_response_for_interaction(sess, i.Interaction, "This command is not open for now...")
+				interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "This command is not open for now...")
 				return
 			}
 			config_youtube_roles(sess, i, author, guild_id)

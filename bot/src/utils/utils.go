@@ -87,13 +87,22 @@ func get_discord_message_ids(link string, guild_id *string, channel_id *string, 
 	return true
 }
 
-func ephemeral_response_for_interaction(sess *discordgo.Session, interaction *discordgo.Interaction, message string) {
+func interaction_respond(sess *discordgo.Session, interaction *discordgo.Interaction, type_res discordgo.InteractionResponseType, is_ephemeral bool, message string, components ... discordgo.MessageComponent) {
+	data := &discordgo.InteractionResponseData {
+		Content: message,
+	}
+
+	if is_ephemeral { data.Flags = discordgo.MessageFlagsEphemeral }
+
+	if len(components) > 0 {
+		data.Components = []discordgo.MessageComponent{}
+
+		for i := 0; i < len(components); i++ { data.Components = append(data.Components, components[i]) }
+	}
+
 	err := sess.InteractionRespond(interaction, &discordgo.InteractionResponse {
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData {
-				Flags:		discordgo.MessageFlagsEphemeral,
-				Content:	message,
-			},
+			Type: type_res,
+			Data: data,
 		},)
 	if err != nil { log.Fatal(err) }
 }

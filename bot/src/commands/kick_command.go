@@ -13,7 +13,7 @@ func kick_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	// CAN'T USE THIS COMMAND IF NOT ADMIN
 	if !is_admin(sess, i.Member, guild_id) {
-		ephemeral_response_for_interaction(sess, i.Interaction, "You do not have the right to use this command.")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "You do not have the right to use this command.")
 		log_message(sess, guild_id, "tried to kick someone, but <@" + author.ID + "> to not have the right.")
 
 		return
@@ -32,7 +32,7 @@ func kick_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	//CAN'T BAN IF USER TO BLACKLIST IS THE BOT
 	if user_to_kick_id == sess.State.User.ID {
-		ephemeral_response_for_interaction(sess, i.Interaction, "You can't kick the bot.")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "You can't kick the bot.")
 		return 
 	}
 
@@ -41,7 +41,7 @@ func kick_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	if err != nil { log.Fatal(err) }
 
 	// RESPOND TO USER WITH EPHEMERAL MESSAGE
-	ephemeral_response_for_interaction(sess, i.Interaction, "User " + user_to_kick + " has been kick.")
+	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "User " + user_to_kick + " has been kick.")
 
 	// ADD LOG IN LOGS CHANNEL
 	log_message(sess, guild_id, "kicked " + user_to_kick + ".", author)

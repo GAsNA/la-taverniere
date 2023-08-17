@@ -13,7 +13,7 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 
 	// CAN'T USE THIS COMMAND IF NOT ADMIN
 	if !is_admin(sess, i.Member, guild_id) {
-		ephemeral_response_for_interaction(sess, i.Interaction, "You do not have the right to use this command.")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "You do not have the right to use this command.")
 		log_message(sess, guild_id, "tried to add a handler to a message to add a role with reaction, but <@" + author.ID + "> to not have the right.")
 
 		return
@@ -35,21 +35,21 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 	var message_channel_id string
 	var message_id string
 	if !get_discord_message_ids(link_message, &message_guild_id, &message_channel_id, &message_id) {
-		ephemeral_response_for_interaction(sess, i.Interaction, "The link of the message is not at the good format.")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "The link of the message is not at the good format.")
 		return
 	}
 	if message_guild_id != guild_id {
-		ephemeral_response_for_interaction(sess, i.Interaction, "The message linked is not from this guild.")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "The message linked is not from this guild.")
 		return
 	}
 	channel, err := sess.Channel(message_channel_id)
 	if err != nil || channel.GuildID != guild_id {
-		ephemeral_response_for_interaction(sess, i.Interaction, "The message linked is not from an existing channel in this guild.")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "The message linked is not from an existing channel in this guild.")
 		return
 	}
 	_, err = sess.ChannelMessage(message_channel_id, message_id)
 	if err != nil {
-		ephemeral_response_for_interaction(sess, i.Interaction, "The message linked does not exist.")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "The message linked does not exist.")
 		return
 	}
 
@@ -57,14 +57,14 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 	emoji_name := ""
 	emoji_id := *new(string)
 	if !check_reaction(reaction, &emoji_name, &emoji_id) {
-		ephemeral_response_for_interaction(sess, i.Interaction, "The reaction is not at the good format.")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "The reaction is not at the good format.")
 		return
 	}
 
 	// VERIF IF ROLE IS @everyone
 	role_id := role.ID
 	if role_id == guild_id {
-		ephemeral_response_for_interaction(sess, i.Interaction, "You can't choose the @everyone for the role")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "You can't choose the @everyone for the role")
 		return
 	}
 
@@ -87,7 +87,7 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 		log.Println("Handler deleted in table!")
 	
 		// RESPOND TO USER WITH EPHEMERAL MESSAGE
-		ephemeral_response_for_interaction(sess, i.Interaction, "Handler deleted to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Handler deleted to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
 
 		// ADD LOG IN LOGS CHANNEL
 		log_message(sess, guild_id, "deleted a handler on " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">.", author)
@@ -106,7 +106,7 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 		log.Println("New Handler inserted in table!")
 	
 		// RESPOND TO USER WITH EPHEMERAL MESSAGE
-		ephemeral_response_for_interaction(sess, i.Interaction, "Handler added to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Handler added to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
 
 		// ADD LOG IN LOGS CHANNEL
 		log_message(sess, guild_id, "added a handler to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">.", author)

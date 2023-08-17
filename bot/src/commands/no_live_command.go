@@ -13,7 +13,7 @@ func no_live_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	// CAN'T USE THIS COMMAND
 	if !is_admin(sess, i.Member, guild_id) {
-		ephemeral_response_for_interaction(sess, i.Interaction, "You do not have the right to use this command.")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "You do not have the right to use this command.")
 		log_message(sess, guild_id, "tried make a no live announcement, but <@" + author.ID + "> to not have the right.")
 
 		return
@@ -21,7 +21,7 @@ func no_live_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	// PROVISIONAL
 	if guild_id != get_env_var("GUILD_ID") {
-		ephemeral_response_for_interaction(sess, i.Interaction, "This command is not open for now...")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "This command is not open for now...")
 		return
 	}
 	
@@ -33,7 +33,7 @@ func no_live_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	if err != nil { log.Fatal(err) }
 
 	if len(channels_for_actions) == 0 {
-		ephemeral_response_for_interaction(sess, i.Interaction, "This command needs to be configurate with ``/config``. Choose the action ``Youtube Live Announcements``.")
+		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "This command needs to be configurate with ``/config``. Choose the action ``Youtube Live Announcements``.")
 		return
 	}
 
@@ -71,7 +71,7 @@ func no_live_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 		date := optionMap["date"].StringValue()
 
 		if !is_good_format_date(date) {
-			ephemeral_response_for_interaction(sess, i.Interaction, "The date does not have the good format. Use dd/mm/yyyy.")
+			interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "The date does not have the good format. Use dd/mm/yyyy.")
 
 			return
 		}
@@ -87,7 +87,7 @@ func no_live_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 		if err != nil { log.Fatal(err) }
 	}
 
-	ephemeral_response_for_interaction(sess, i.Interaction, "No live message made.")
+	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "No live message made.")
 
 	log_message(sess, guild_id, "added a no live message to <#" + no_live_chan_id + ">.", author)
 }

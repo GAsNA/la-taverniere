@@ -30,6 +30,7 @@ Run with ```make```.
 - [x]  Level command to see someone's level or reset it - reset someone else level is admin only
 
 ## TODO
+- [ ]  Vote command with limited time
 - [ ]  Personalized join and leave message
 - [ ]  Handler-reaction-role: choice to make the message
 - [ ]  Verification all log error
