@@ -326,5 +326,5 @@ func list_slash_commands(sess *discordgo.Session) {
 
 func set_activity(sess *discordgo.Session, idle int, name string) {
 	err := sess.UpdateGameStatus(idle, name)
-	if err != nil { log.Fatal(err) }
+	if err != nil { log.Println(err) }
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"io/ioutil"
 	"strconv"
 	"image"
@@ -22,7 +21,7 @@ func load_image_from_url(URL string) (image.Image, error) {
     defer response.Body.Close()
 
     if response.StatusCode != 200 {
-        return nil, errors.New("received non 200 response code")
+        return nil, errors.New("load_image_from_url: ERROR: receiving non 200 response code")
     }
 
     img, _, err := image.Decode(response.Body)
@@ -33,9 +32,9 @@ func load_image_from_url(URL string) (image.Image, error) {
     return img, nil
 }
 
-func get_image_level(name_file, username, pp_link, guild_name string, level float64) string {
+func get_image_level(name_file, username, pp_link, guild_name string, level float64) (string, error) {
 	img, err := gg.LoadImage("./images/template-level.png")
-    if err != nil { log.Fatal(err) }
+	if err != nil { return "", errors.New("get_image_level: ERROR while loading image") }
 
 	w_img := img.Bounds().Max.X
 	h_img := img.Bounds().Max.Y
@@ -70,16 +69,16 @@ func get_image_level(name_file, username, pp_link, guild_name string, level floa
 
 	// draw profile picture
 	pp, err := load_image_from_url(pp_link) //80
-    if err != nil { log.Fatal(err) }
+	if err != nil { return "", err }
 	dc.DrawImage(pp, x_pp, y_pp)
 
 	// set font
 	fontFilePath := "./fonts/TavernSBold/TavernSBold.ttf"
 	fontBytes, err := ioutil.ReadFile(fontFilePath)
-    if err != nil { log.Fatal(err) }
+	if err != nil { return "", err }
 		// parse font
 	f, err := truetype.Parse(fontBytes)
-    if err != nil { log.Fatal(err) }
+	if err != nil { return "", err }
 		// define new font face and set it on the context
 	dc.SetFontFace(truetype.NewFace(f, &truetype.Options{Size: 17}))
 
@@ -99,5 +98,5 @@ func get_image_level(name_file, username, pp_link, guild_name string, level floa
 	dc.Fill()
 	dc.SavePNG(name_output)
 
-	return name_output
+	return name_output, nil
 }

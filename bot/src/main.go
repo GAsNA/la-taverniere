@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -73,7 +72,7 @@ func main() {
 	err = sess.Open()
 	if err != nil { log.Fatal(err) }
 
-	fmt.Println("The bot is online!")
+	log.Println("The bot is online!")
 
 	// SET ACTIVITY
 	set_activity(sess, 0, "Running the tavern")

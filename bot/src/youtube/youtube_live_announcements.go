@@ -16,7 +16,7 @@ func send_youtube_live_announcement(sess *discordgo.Session, live *youtube.Searc
 	err := db.NewSelect().Model(&youtube_live_roles).
 			Where("guild_id = ?", guild_id).
 			Scan(ctx)
-	if err != nil { log.Fatal(err) }
+	if err != nil { log.Println(err); return }
 
 	var ping_role_ids []string
 	for i := 0; i < len(youtube_live_roles); i++ {
@@ -40,7 +40,7 @@ func send_youtube_live_announcement(sess *discordgo.Session, live *youtube.Searc
 
 	message += get_env_var("YOUTUBE_LINK") + "/watch?v=" + live.Id.VideoId
 	_, err = sess.ChannelMessageSend(channel_id, message)
-	if err != nil { log.Fatal(err) }
+	if err != nil { log.Println(err); return }
 
 	log_message(sess, guild_id, "made a live announcement in <#" + channel_id + ">.")
 }
@@ -53,7 +53,7 @@ func call_api_youtube_live(service *youtube.Service, youtube_channel_id string, 
 		EventType("live").
 		Type("video")
 	response, err := call.Do()
-	if err != nil { log.Fatal(err) }
+	if err != nil { log.Println(err); return }
 
 	if len(response.Items) > 0 {
 		live := response.Items[0]

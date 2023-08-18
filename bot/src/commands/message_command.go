@@ -6,17 +6,18 @@ import (
 	"strings"
 	"net/http"
 	"io"
+	"errors"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-func get_io_reader_by_url(URL string) io.Reader {
+func get_io_reader_by_url(URL string) (io.Reader, error) {
 	response, err := http.Get(URL)
-	if err != nil { log.Fatal(err) }
+	if err != nil { return nil, err }
 
-	if response.StatusCode != 200 { log.Fatal("Received non 200 response code")	}
+	if response.StatusCode != 200 { return nil, errors.New("Received non 200 response code")	}
 	
-	return response.Body
+	return response.Body, nil
 }
 
 func message_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
@@ -25,7 +26,9 @@ func message_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	guild_id := i.Interaction.GuildID
 
 	// CAN'T USE THIS COMMAND IF NOT ADMIN
-	if !is_admin(sess, i.Member, guild_id) {
+	admin, err := is_admin(sess, i.Member, guild_id)
+	if err != nil { log.Println(err); return }
+	if !admin {
 		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "You do not have the right to use this command.")
 		log_message(sess, guild_id, "tried to send a message via the bot, but <@" + author.ID + "> to not have the right.")
 
@@ -91,13 +94,16 @@ func message_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 		message_to_send += message
 	}
 
+	reader, err := get_io_reader_by_url(attachment.URL)
+	if err != nil { log.Println(err); return }
+
 	files := []*discordgo.File {}
 	if attachment != nil {
 		files = []*discordgo.File {
 			{
 				Name:			attachment.Filename,
 				ContentType:	attachment.ContentType,
-				Reader:			get_io_reader_by_url(attachment.URL),
+				Reader:			reader,
 			},
 		}
 	}
@@ -111,7 +117,7 @@ func message_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 
 	msg_send, err := sess.ChannelMessageSendComplex(channel_id, &data_to_send)
-	if err != nil { log.Fatal(err) }
+	if err != nil { log.Println(err); return }
 
 	// RESPONSE MESSAGE FOR SUCCESSFULLY SENT
 	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Message successfully send to " + channel + ".")

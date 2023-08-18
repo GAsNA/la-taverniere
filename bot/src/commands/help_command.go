@@ -70,7 +70,7 @@ func help_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	channel_id := i.ChannelID
 
 	_, err := sess.ChannelMessageSendEmbed(channel_id, &embed)
-	if err != nil { log.Fatal(err) }
+	if err != nil { log.Println(err); return }
 
 	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Check out my presentation!")
 }

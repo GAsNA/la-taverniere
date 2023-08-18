@@ -33,9 +33,13 @@ Run with ```make```.
 - [ ]  Vote command with limited time
 - [ ]  Personalized join and leave message
 - [ ]  Handler-reaction-role: choice to make the message
-- [ ]  Verification all log error
-- [ ]  Log begin bot
 - [ ]  Stop bot properly
+- [ ]  Check if channel is delete, delete in db + for log set another default channel
+- [ ]  Set default channel for log
+- [ ]  Warn user of an error by response or log message
+- [ ]  Detailled log in back
+- [ ]  Comment some codes...
+- [ ]  Regorganisation utils files
 
 ## Libraries
 -  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord

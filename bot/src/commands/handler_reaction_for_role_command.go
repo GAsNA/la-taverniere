@@ -12,7 +12,9 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 	guild_id := i.Interaction.GuildID
 
 	// CAN'T USE THIS COMMAND IF NOT ADMIN
-	if !is_admin(sess, i.Member, guild_id) {
+	admin, err := is_admin(sess, i.Member, guild_id)
+	if err != nil { log.Println(err); return }
+	if !admin {
 		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "You do not have the right to use this command.")
 		log_message(sess, guild_id, "tried to add a handler to a message to add a role with reaction, but <@" + author.ID + "> to not have the right.")
 
@@ -69,7 +71,9 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 	}
 
 	// VERIF IF HANDLER ALREADY EXISTS
-	if is_a_registered_handler(link_message, reaction, role) {
+	registered_handler, err := is_a_registered_handler(link_message, reaction, role)
+	if err != nil { log.Println(err); return }
+	if registered_handler {
 		// DELETE HANDLER IN DB
 		del_handler := &handler_reaction_role {
 			Msg_Link: link_message, Msg_ID: message_id,
@@ -82,7 +86,7 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 					Model(del_handler).
 					Where("msg_link = ? AND reaction = ? AND role_id = ?", link_message, reaction, role_id).
 					Exec(ctx)
-		if err != nil { log.Fatal(err) }
+		if err != nil { log.Println(err); return }
 
 		log.Println("Handler deleted in table!")
 	
@@ -101,7 +105,7 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 			Guild_ID: guild_id,
 		}
 		_, err = db.NewInsert().Model(new_handler).Ignore().Exec(ctx)
-		if err != nil { log.Fatal(err) }
+		if err != nil { log.Println(err); return }
 
 		log.Println("New Handler inserted in table!")
 	

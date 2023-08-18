@@ -21,7 +21,9 @@ func reset_level(sess *discordgo.Session, i *discordgo.InteractionCreate, reset 
 	}
 
 	// CAN'T USE THIS COMMAND IF NOT ADMIN
-	if author.ID != user_id && !is_admin(sess, i.Member, guild_id) {
+	admin, err := is_admin(sess, i.Member, guild_id)
+	if err != nil { log.Println(err); return }
+	if author.ID != user_id && !admin {
 		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "You do not have the right to use this command.")
 		log_message(sess, guild_id, "tried to use the config command, but <@" + author.ID + "> to not have the right.")
 
@@ -31,10 +33,10 @@ func reset_level(sess *discordgo.Session, i *discordgo.InteractionCreate, reset 
 	message := "Action canceled..."
 	if reset {
 		var levels []level
-		err := db.NewSelect().Model(&levels).
+		err = db.NewSelect().Model(&levels).
 				Where("user_id = ? AND guild_id = ?", user_id, guild_id).
 				Scan(ctx)
-		if err != nil { log.Fatal(err) }
+		if err != nil { log.Println(err); return }
 
 		if len(levels) == 0 {
 			if author.ID == user_id {
@@ -48,7 +50,7 @@ func reset_level(sess *discordgo.Session, i *discordgo.InteractionCreate, reset 
 			_, err = db.NewDelete().Model(&del_level).
 						Where("id = ?", del_level.ID).
 						Exec(ctx)
-			if err != nil { log.Fatal(err) }
+			if err != nil { log.Println(err); return }
 
 			message = "The level has been reset!"
 			log_message(sess, guild_id, "reset the level of <@" + user_id + ">.", author)
@@ -97,7 +99,7 @@ func display_level(sess *discordgo.Session, i *discordgo.InteractionCreate, auth
 	err := db.NewSelect().Model(&levels).
 			Where("user_id = ? AND guild_id = ?", user.ID, guild_id).
 			Scan(ctx)
-	if err != nil { log.Fatal(err) }
+	if err != nil { log.Println(err); return }
 
 	if len(levels) == 0 {
 		message := ""
@@ -119,10 +121,11 @@ func display_level(sess *discordgo.Session, i *discordgo.InteractionCreate, auth
 	guild, err := sess.Guild(guild_id)
 	guild_name := guild.Name
 	name_file := "level-" + username + "-" + guild_name + ".png"
-	link_image_level := get_image_level(name_file, username, user.AvatarURL("80"), guild_name, this_level.Level)
+	link_image_level, err := get_image_level(name_file, username, user.AvatarURL("80"), guild_name, this_level.Level)
+	if err != nil { log.Println(err); return }
 
 	reader_file, err := os.Open(link_image_level)
-	if err != nil { log.Fatal(err) }
+	if err != nil { log.Println(err); return }
 
 	file :=	&discordgo.File{
 				Name:			name_file,
@@ -136,9 +139,9 @@ func display_level(sess *discordgo.Session, i *discordgo.InteractionCreate, auth
 	
 	// DELETE LOCAL FILE
 	err = reader_file.Close()
-	if err != nil { log.Fatal(err) }
+	if err != nil { log.Println(err); return }
 	err = os.Remove(link_image_level)
-	if err != nil { log.Fatal(err) }
+	if err != nil { log.Println(err); return }
 }
 
 func level_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {

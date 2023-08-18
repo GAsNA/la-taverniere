@@ -10,7 +10,7 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
-func get_service() *youtube.Service {
+func get_service() (*youtube.Service, error) {
 	developerKey := get_env_var("YOUTUBE_API_KEY")
 
 	youtube_client := &http.Client{
@@ -18,16 +18,18 @@ func get_service() *youtube.Service {
 	}
 
 	service, err := youtube.New(youtube_client)
-	if err != nil { log.Fatal(err) }
+	if err != nil { return nil, err }
 
-	return service
+	return service, nil
 }
 
 func youtube_announcements(sess *discordgo.Session) {
 	var last_video *youtube.SearchResult
 	var last_live *youtube.SearchResult
 
-	service := get_service()
+	service, err := get_service()
+	if err != nil { log.Println(err); return }
+	
 	youtube_channel_id := get_env_var("YOUTUBE_CHANNEL_ID")
 	
 	for true {

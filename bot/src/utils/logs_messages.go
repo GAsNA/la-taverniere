@@ -14,7 +14,7 @@ func log_message(sess *discordgo.Session, guild_id string, log_str string, user 
 	err := db.NewSelect().Model(&channels_for_actions).
 			Where("action_id = ? AND guild_id = ?", action.id, guild_id).
 			Scan(ctx)
-	if err != nil { log.Fatal(err) }
+	if err != nil { log.Println(err); return }
 
 	if len(channels_for_actions) == 0 { return }
 
@@ -36,5 +36,5 @@ func log_message(sess *discordgo.Session, guild_id string, log_str string, user 
 	}
 
 	_, err = sess.ChannelMessageSendEmbed(logs_chan_id, &embed)
-	if err != nil { log.Fatal(err) }
+	if err != nil { log.Println(err) }
 }

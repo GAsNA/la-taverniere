@@ -11,13 +11,14 @@ func guild_joined(sess *discordgo.Session, gc *discordgo.GuildCreate) {
 
 	var guilds []guild
 	err := db.NewSelect().Model(&guilds).Where("guild_id = ?", guild_id).Scan(ctx)
-	if err != nil { log.Println(err) }
+	if err != nil { log.Fatal(err) }
 
 	if len(guilds) == 0 {
 		new_guild := &guild{Guild_ID: guild_id}
 		_, err = db.NewInsert().Model(new_guild).Ignore().Exec(ctx)
-		if err != nil { log.Println(err) }
-		if err == nil { log.Println("Guild id " + guild_id + " registered!") }
+		if err != nil { log.Fatal(err) }
+		
+		log.Println("Guild id " + guild_id + " registered!")
 	}
 }
 
@@ -26,7 +27,7 @@ func guild_left(sess *discordgo.Session, gd *discordgo.GuildDelete) {
 
 	var guilds []guild
 	err := db.NewSelect().Model(&guilds).Where("guild_id = ?", guild_id).Scan(ctx)
-	if err != nil { log.Println(err) }
+	if err != nil { log.Fatal(err) }
 
 	if len(guilds) > 0 {
 		del_level := &level{}
@@ -70,7 +71,8 @@ func guild_left(sess *discordgo.Session, gd *discordgo.GuildDelete) {
 					Where("guild_id = ?", del_guild.Guild_ID).
 					Exec(ctx)
 		if err != nil { log.Fatal(err) }
-		if err == nil { log.Println("Guild id " + guild_id + " deleted.") }
+		
+		log.Println("Guild id " + guild_id + " deleted.")
 	}
 }
 
@@ -87,7 +89,7 @@ func message_posted(sess *discordgo.Session, m *discordgo.MessageCreate) {
 	err := db.NewSelect().Model(&channels_for_actions).
 			Where("action_id = ? AND guild_id = ?", get_action_db_by_name("Levels").id, guild_id).
 			Scan(ctx)
-	if err != nil { log.Fatal(err) }
+	if err != nil { log.Println(err); return }
 
 	if len(channels_for_actions) == 0 { return }
 
@@ -97,16 +99,16 @@ func message_posted(sess *discordgo.Session, m *discordgo.MessageCreate) {
 	err = db.NewSelect().Model(&users).
 			Where("user_id = ? AND guild_id = ?", user_id, guild_id).
 			Scan(ctx)
-	if err != nil { log.Fatal(err) }
+	if err != nil { log.Println(err); return }
 
 	if len(users) == 0 {
 		level_calculated := calcul_level_with_nb_messages(1)
 
 		new_user := &level{User_ID: user_id, Guild_ID: guild_id, Level: level_calculated}
 		_, err = db.NewInsert().Model(new_user).Ignore().Exec(ctx)
-		if err != nil {
-			log.Println(err)
-		} else { log.Println("User id " + user_id + " registered with guild id " + guild_id + " in level table!") }
+		if err != nil { log.Println(err); return }
+		
+		log.Println("User id " + user_id + " registered with guild id " + guild_id + " in level table!")
 
 		if int(level_calculated) > 0 { levels_message(sess, channel_id, new_user, int(level_calculated)) }
 	} else {
@@ -121,8 +123,9 @@ func message_posted(sess *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		
 		_, err := db.NewUpdate().Model(&user).Column("nb_msg", "level").Where("id = ?", user.ID).Exec(ctx)
-		if err != nil { log.Println(err) }
-		if err == nil { log.Println("Nb messages of user id " + user_id + " with guild id " + guild_id + " updated in level table!") }
+		if err != nil { log.Println(err); return }
+		
+		log.Println("Nb messages of user id " + user_id + " with guild id " + guild_id + " updated in level table!")
 	}
 }
 
@@ -139,7 +142,7 @@ func handler_reaction_to_add_role(sess *discordgo.Session, m *discordgo.MessageR
 	err := db.NewSelect().Model(&handlers).
 			Where("msg_id = ? AND ((reaction_id IS NOT NULL AND reaction_id = ?) AND reaction_name = ?)", msg_id, reaction_id, reaction_name).
 			Scan(ctx)
-	if err != nil { log.Fatal(err) }
+	if err != nil { log.Println(err); return }
 
 	if len(handlers) > 0 {
 		this_handler := handlers[0]
@@ -147,8 +150,7 @@ func handler_reaction_to_add_role(sess *discordgo.Session, m *discordgo.MessageR
 		err = sess.GuildMemberRoleAdd(this_handler.Guild_ID, user_id, this_handler.Role_ID)
 		if err != nil {
 			log_message(sess, guild_id, "is probably too low in the guild and can't give the role <@&" + this_handler.Role_ID + ">. Try to give her a higher place.\nIf the problem persists, please try to contact her owner.")
-			log.Println(err)
-			return
+			log.Println(err); return
 		}
 
 		log_message(sess, guild_id, "added the role <@&" + this_handler.Role_ID + "> to <@" + user_id + ">")
@@ -168,7 +170,7 @@ func handler_reaction_to_delete_role(sess *discordgo.Session, m *discordgo.Messa
 	err := db.NewSelect().Model(&handlers).
 			Where("msg_id = ? AND ((reaction_id IS NOT NULL AND reaction_id = ?) AND reaction_name = ?)", msg_id, reaction_id, reaction_name).
 			Scan(ctx)
-	if err != nil { log.Fatal(err) }
+	if err != nil { log.Println(err); return }
 
 	if len(handlers) > 0 {
 		this_handler := handlers[0]
@@ -176,8 +178,7 @@ func handler_reaction_to_delete_role(sess *discordgo.Session, m *discordgo.Messa
 		err = sess.GuildMemberRoleRemove(this_handler.Guild_ID, user_id, this_handler.Role_ID)
 		if err != nil {
 			log_message(sess, guild_id, "is probably too low in the guild and can't remove the role <@&" + this_handler.Role_ID + ">. Try to give her a higher place.\nIf the problem persists, please try to contact her owner.")
-			log.Println(err)
-			return
+			log.Println(err); return
 		}
 
 		log_message(sess, guild_id, "removed the role <@&" + this_handler.Role_ID + "> to <@" + user_id + ">")
