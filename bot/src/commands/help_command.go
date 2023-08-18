@@ -72,5 +72,5 @@ func help_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 	_, err := sess.ChannelMessageSendEmbed(channel_id, &embed)
 	if err != nil { log.Fatal(err) }
 
-	ephemeral_response_for_interaction(sess, i.Interaction, "Check out my presentation!")
+	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Check out my presentation!")
 }
