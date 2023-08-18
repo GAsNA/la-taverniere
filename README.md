@@ -34,7 +34,6 @@ Run with ```make```.
 - [ ]  Personalized join and leave message
 - [ ]  Handler-reaction-role: choice to make the message
 - [ ]  Verification all log error
-- [ ]  Modif func ephemeral_message_in_response to add options
 - [ ]  Log begin bot
 - [ ]  Stop bot properly
 

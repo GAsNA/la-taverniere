@@ -87,17 +87,25 @@ func get_discord_message_ids(link string, guild_id *string, channel_id *string, 
 	return true
 }
 
-func interaction_respond(sess *discordgo.Session, interaction *discordgo.Interaction, type_res discordgo.InteractionResponseType, is_ephemeral bool, message string, components ... discordgo.MessageComponent) {
+func interaction_respond(sess *discordgo.Session, interaction *discordgo.Interaction, type_res discordgo.InteractionResponseType, is_ephemeral bool, message string, opt ...interface{}) {
 	data := &discordgo.InteractionResponseData {
 		Content: message,
 	}
 
 	if is_ephemeral { data.Flags = discordgo.MessageFlagsEphemeral }
 
-	if len(components) > 0 {
-		data.Components = []discordgo.MessageComponent{}
+	data.Components = []discordgo.MessageComponent {}
+	data.Files = []*discordgo.File {}
 
-		for i := 0; i < len(components); i++ { data.Components = append(data.Components, components[i]) }
+	for i := 0; i < len(opt); i++ {
+		if _, ok := opt[i].(discordgo.MessageComponent); ok {
+			data.Components = append(data.Components, opt[i].(discordgo.MessageComponent))
+		} else if _, ok := opt[i].(*discordgo.File); ok {
+			data.Files = append(data.Files, opt[i].(*discordgo.File))
+		} else {
+			log.Println("Type not known")
+			log.Println(opt[i])
+		}
 	}
 
 	err := sess.InteractionRespond(interaction, &discordgo.InteractionResponse {

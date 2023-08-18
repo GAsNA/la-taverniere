@@ -66,32 +66,30 @@ func ask_reset_level(sess *discordgo.Session, i *discordgo.InteractionCreate, au
 		message += " the level of <@" + user.ID + ">?"
 	}
 
-	success_button := discordgo.Button{
-						Emoji: discordgo.ComponentEmoji{
-							Name: "✅",
-						},
-						Label: "Yes, I'm sure.",
-						Style: discordgo.SuccessButton,
-						CustomID: "success-reset-level",
-					}
 
-	fail_button := discordgo.Button{
-						Emoji: discordgo.ComponentEmoji{
-							Name: "❌",
-						},
-						Label: "No, I'm not.",
-						Style: discordgo.SecondaryButton,
-						CustomID: "fail-reset-level",
-					}
 
 	component := discordgo.ActionsRow {
 					Components: []discordgo.MessageComponent{
-						success_button,
-						fail_button,
+						discordgo.Button{
+							Emoji: discordgo.ComponentEmoji{
+								Name: "✅",
+							},
+							Label: "Yes, I'm sure.",
+							Style: discordgo.SuccessButton,
+							CustomID: "success-reset-level",
+						},
+						discordgo.Button{
+							Emoji: discordgo.ComponentEmoji{
+								Name: "❌",
+							},
+							Label: "No, I'm not.",
+							Style: discordgo.SecondaryButton,
+							CustomID: "fail-reset-level",
+						},
 					},
 				}
 
-	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, false, message, component)
+	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, message, component)
 }
 
 func display_level(sess *discordgo.Session, i *discordgo.InteractionCreate, author *discordgo.User, guild_id string, user *discordgo.User) {
@@ -126,22 +124,16 @@ func display_level(sess *discordgo.Session, i *discordgo.InteractionCreate, auth
 	reader_file, err := os.Open(link_image_level)
 	if err != nil { log.Fatal(err) }
 
-	files := []*discordgo.File{
-		{
-			Name:			name_file,
-			ContentType:	"image/png",
-			Reader:			reader_file,
-		},
-	}
+	file :=	&discordgo.File{
+				Name:			name_file,
+				ContentType:	"image/png",
+				Reader:			reader_file,
+			}
 
-	err = sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse {
-			Type:	discordgo.InteractionResponseChannelMessageWithSource,
-			Data:	&discordgo.InteractionResponseData {
-				Files:	files,
-			},
-		},)
-	if err != nil { log.Fatal(err) }
+	message := ""
 
+	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, false, message, file)
+	
 	// DELETE LOCAL FILE
 	err = reader_file.Close()
 	if err != nil { log.Fatal(err) }
