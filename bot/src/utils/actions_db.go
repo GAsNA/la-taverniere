@@ -15,10 +15,14 @@ var actions_db = []action_db {
 
 func get_action_db_by_name(name string) action_db {
 	for i := 0; i < len(actions_db); i++ {
-		if actions_db[i].name == name {
-			return actions_db[i]
-		}
+		if actions_db[i].name == name { return actions_db[i] }
 	}
+	return actions_db[0]
+}
 
+func get_action_db_by_id(id int64) action_db {
+	for i := 0; i < len(actions_db); i++ {
+		if actions_db[i].id == id { return actions_db[i] }
+	}
 	return actions_db[0]
 }

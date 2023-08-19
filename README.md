@@ -37,7 +37,6 @@ Run with ```make```.
 - [ ]  Check if channel is delete, delete in db + for log set another default channel
 - [ ]  Set default channel for log
 - [ ]  Warn user of an error by response or log message
-- [ ]  Detailled log in back
 - [ ]  Comment some codes...
 - [ ]  Regorganisation utils files
 

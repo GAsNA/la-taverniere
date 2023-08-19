@@ -47,4 +47,6 @@ func kick_command(sess *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	// ADD LOG IN LOGS CHANNEL
 	log_message(sess, guild_id, "kicked " + user_to_kick + ".", author)
+
+	log.Println("User id " + user_to_kick_id + " has been kick from guild id " + guild_id)
 }

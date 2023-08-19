@@ -87,32 +87,33 @@ func handler_reaction_for_role_command(sess *discordgo.Session, i *discordgo.Int
 					Where("msg_link = ? AND reaction = ? AND role_id = ?", link_message, reaction, role_id).
 					Exec(ctx)
 		if err != nil { log.Println(err); return }
-
-		log.Println("Handler deleted in table!")
 	
 		// RESPOND TO USER WITH EPHEMERAL MESSAGE
 		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Handler deleted to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
 
 		// ADD LOG IN LOGS CHANNEL
 		log_message(sess, guild_id, "deleted a handler on " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">.", author)
+
+		log.Println("Handler has been removed with reaction name " + emoji_name + " on link message " + link_message + " for role id " + role_id + " on guild id " + guild_id)
 		return
-	} else {
-		// ADD HANDLER IN DB
-		new_handler := &handler_reaction_role{
-			Msg_Link: link_message, Msg_ID: message_id,
-			Reaction: reaction, Reaction_ID: emoji_id, Reaction_Name: emoji_name,
-			Role_ID: role_id,
-			Guild_ID: guild_id,
-		}
-		_, err = db.NewInsert().Model(new_handler).Ignore().Exec(ctx)
-		if err != nil { log.Println(err); return }
-
-		log.Println("New Handler inserted in table!")
-	
-		// RESPOND TO USER WITH EPHEMERAL MESSAGE
-		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Handler added to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
-
-		// ADD LOG IN LOGS CHANNEL
-		log_message(sess, guild_id, "added a handler to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">.", author)
 	}
+	
+	// ADD HANDLER IN DB
+	new_handler := &handler_reaction_role{
+		Msg_Link: link_message, Msg_ID: message_id,
+		Reaction: reaction, Reaction_ID: emoji_id, Reaction_Name: emoji_name,
+		Role_ID: role_id,
+		Guild_ID: guild_id,
+	}
+	_, err = db.NewInsert().Model(new_handler).Ignore().Exec(ctx)
+	if err != nil { log.Println(err); return }
+
+	log.Println("New Handler inserted in table!")
+	
+	// RESPOND TO USER WITH EPHEMERAL MESSAGE
+	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Handler added to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">")
+
+	// ADD LOG IN LOGS CHANNEL
+	log_message(sess, guild_id, "added a handler to " + link_message + " with reaction " + reaction + " for role <@&" + role_id + ">.", author)
+	log.Println("Handler has been added with reaction name " + emoji_name + " on link message " + link_message + " for role id " + role_id + " on guild id " + guild_id)
 }

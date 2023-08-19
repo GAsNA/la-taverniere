@@ -39,41 +39,49 @@ func run_database() {
 		// Guild
 	_, err = db.NewCreateTable().Model((*guild)(nil)).IfNotExists().Exec(ctx)
 	if err != nil { log.Fatal(err) }
+	log.Println("Table \"guild\" is created")
 		// Handler_Reaction_Role
 	_, err = db.NewCreateTable().Model((*handler_reaction_role)(nil)).
 				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
 				IfNotExists().Exec(ctx)
 	if err != nil { log.Fatal(err) }
+	log.Println("Table \"handler_reaction_role\" is created")
 		// Level
 	_, err = db.NewCreateTable().Model((*level)(nil)).
 				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
 				IfNotExists().Exec(ctx)
 	if err != nil { log.Fatal(err) }
+	log.Println("Table \"level\" is created")
 		// Action
 	_, err = db.NewCreateTable().Model((*action)(nil)).
 				IfNotExists().Exec(ctx)
 	if err != nil { log.Fatal(err) }
+	log.Println("Table \"action\" is created")
 		// Channel_For_Action
 	_, err = db.NewCreateTable().Model((*channel_for_action)(nil)).
 				ForeignKey(`("action_id") REFERENCES "action" ("id") ON DELETE CASCADE`).
 				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
 				IfNotExists().Exec(ctx)
 	if err != nil { log.Fatal(err) }
+	log.Println("Table \"channel_for_action\" is created")
 		// Role_Admin
 	_, err = db.NewCreateTable().Model((*role_admin)(nil)).
 				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
 				IfNotExists().Exec(ctx)
 	if err != nil { log.Fatal(err) }
+	log.Println("Table \"role_admin\" is created")
 		// Youtube_Live_Role
 	_, err = db.NewCreateTable().Model((*youtube_live_role)(nil)).
 				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
 				IfNotExists().Exec(ctx)
 	if err != nil { log.Fatal(err) }
+	log.Println("Table \"youtube_live_role\" is created")
 		// Youtube_Video_Role
 	_, err = db.NewCreateTable().Model((*youtube_video_role)(nil)).
 				ForeignKey(`("guild_id") REFERENCES "guild" ("guild_id") ON DELETE CASCADE`).
 				IfNotExists().Exec(ctx)
 	if err != nil { log.Fatal(err) }
+	log.Println("Table \"youtube_video_role\" is created")
 
 	// ENTER ACTIONS IN DB
 	for i := 0; i < len(actions_db); i++ {
@@ -96,6 +104,7 @@ func run_database() {
 
 		actions_db[i].id = actions[0].ID
 	}
+	log.Println("Actions has been added in DB")
 }
 
 func list_slash_commands(sess *discordgo.Session) {
@@ -322,9 +331,11 @@ func list_slash_commands(sess *discordgo.Session) {
 		},
 	})
 	if err != nil { log.Fatal(err) }
+	log.Println("Slash commands created")
 }
 
 func set_activity(sess *discordgo.Session, idle int, name string) {
 	err := sess.UpdateGameStatus(idle, name)
-	if err != nil { log.Println(err) }
+	if err != nil { log.Println(err); return }
+	log.Println("Activity is set")
 }

@@ -101,6 +101,7 @@ func message_posted(sess *discordgo.Session, m *discordgo.MessageCreate) {
 			Scan(ctx)
 	if err != nil { log.Println(err); return }
 
+	// Is first message of this user
 	if len(users) == 0 {
 		level_calculated := calcul_level_with_nb_messages(1)
 
@@ -110,23 +111,32 @@ func message_posted(sess *discordgo.Session, m *discordgo.MessageCreate) {
 		
 		log.Println("User id " + user_id + " registered with guild id " + guild_id + " in level table!")
 
-		if int(level_calculated) > 0 { levels_message(sess, channel_id, new_user, int(level_calculated)) }
-	} else {
-		user := users[0]
-		user.Nb_Msg += 1
-		
-		level_calculated := calcul_level_with_nb_messages(user.Nb_Msg)
-
-		if level_calculated > user.Level {
-			if int(level_calculated) > int(user.Level) { levels_message(sess, channel_id, &user, int(level_calculated)) }
-			user.Level = level_calculated
+		if int(level_calculated) > 0 {
+			err = levels_message(sess, channel_id, new_user, int(level_calculated))
+			if err != nil { log.Println(err) }
 		}
-		
-		_, err := db.NewUpdate().Model(&user).Column("nb_msg", "level").Where("id = ?", user.ID).Exec(ctx)
-		if err != nil { log.Println(err); return }
-		
-		log.Println("Nb messages of user id " + user_id + " with guild id " + guild_id + " updated in level table!")
+	
+		return
 	}
+	
+	// Is not first message of this user
+	user := users[0]
+	user.Nb_Msg += 1
+		
+	level_calculated := calcul_level_with_nb_messages(user.Nb_Msg)
+
+	if level_calculated > user.Level {
+		if int(level_calculated) > int(user.Level) {
+			err = levels_message(sess, channel_id, &user, int(level_calculated))
+			if err != nil { log.Println(err) }
+		}
+		user.Level = level_calculated
+	}
+		
+	_, err = db.NewUpdate().Model(&user).Column("nb_msg", "level").Where("id = ?", user.ID).Exec(ctx)
+	if err != nil { log.Println(err); return }
+		
+	log.Println("Nb messages of user id " + user_id + " with guild id " + guild_id + " updated in level table!")
 }
 
 func handler_reaction_to_add_role(sess *discordgo.Session, m *discordgo.MessageReactionAdd,) {	
@@ -144,15 +154,17 @@ func handler_reaction_to_add_role(sess *discordgo.Session, m *discordgo.MessageR
 			Scan(ctx)
 	if err != nil { log.Println(err); return }
 
+	// If reaction is handled on this message, add role
 	if len(handlers) > 0 {
 		this_handler := handlers[0]
 
 		err = sess.GuildMemberRoleAdd(this_handler.Guild_ID, user_id, this_handler.Role_ID)
 		if err != nil {
-			log_message(sess, guild_id, "is probably too low in the guild and can't give the role <@&" + this_handler.Role_ID + ">. Try to give her a higher place.\nIf the problem persists, please try to contact her owner.")
+			log_message(sess, guild_id, "am probably too low in the guild and can't give the role <@&" + this_handler.Role_ID + ">. Try to give me a higher place.\nIf the problem persists, please try to contact my owner.")
 			log.Println(err); return
 		}
 
+		log.Println("Role id " + this_handler.Role_ID + "> has been added to user id " + user_id + " on guild id " + guild_id + " for reaction on message id " + msg_id)
 		log_message(sess, guild_id, "added the role <@&" + this_handler.Role_ID + "> to <@" + user_id + ">")
 	}
 }
@@ -177,10 +189,11 @@ func handler_reaction_to_delete_role(sess *discordgo.Session, m *discordgo.Messa
 
 		err = sess.GuildMemberRoleRemove(this_handler.Guild_ID, user_id, this_handler.Role_ID)
 		if err != nil {
-			log_message(sess, guild_id, "is probably too low in the guild and can't remove the role <@&" + this_handler.Role_ID + ">. Try to give her a higher place.\nIf the problem persists, please try to contact her owner.")
+			log_message(sess, guild_id, "am probably too low in the guild and can't remove the role <@&" + this_handler.Role_ID + ">. Try to give me a higher place.\nIf the problem persists, please try to contact my owner.")
 			log.Println(err); return
 		}
 
+		log.Println("Role id " + this_handler.Role_ID + "> has been removed to user id " + user_id + " on guild id " + guild_id + " for reaction on message id " + msg_id)
 		log_message(sess, guild_id, "removed the role <@&" + this_handler.Role_ID + "> to <@" + user_id + ">")
 	}
 }

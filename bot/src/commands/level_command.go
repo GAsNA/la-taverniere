@@ -54,6 +54,7 @@ func reset_level(sess *discordgo.Session, i *discordgo.InteractionCreate, reset 
 
 			message = "The level has been reset!"
 			log_message(sess, guild_id, "reset the level of <@" + user_id + ">.", author)
+			log.Println("Level if user id " + user_id + " has been reset on guild id " + guild_id)
 		}
 	}
 

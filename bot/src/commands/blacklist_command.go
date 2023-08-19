@@ -49,6 +49,8 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 	// ADD LOG IN LOGS CHANNEL
 	log_message(sess, guild_id, "banned " + user_to_blacklist + ".", author)
 
+	log.Println("User id " + user_to_blacklist_id + " has been ban of guild id " + guild_id)
+
 	// SEND BLACKLIST MESSAGE IN APPROPRIATE CHANNEL
 	var channels_for_actions []channel_for_action
 	err = db.NewSelect().Model(&channels_for_actions).

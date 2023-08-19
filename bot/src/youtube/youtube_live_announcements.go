@@ -43,6 +43,7 @@ func send_youtube_live_announcement(sess *discordgo.Session, live *youtube.Searc
 	if err != nil { log.Println(err); return }
 
 	log_message(sess, guild_id, "made a live announcement in <#" + channel_id + ">.")
+	log.Println("A yt live announcement has been made in channel <#" + channel_id + "> on guild id " + guild_id)
 }
 
 func call_api_youtube_live(service *youtube.Service, youtube_channel_id string, last_live **youtube.SearchResult, sess *discordgo.Session) {

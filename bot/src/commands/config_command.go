@@ -17,6 +17,8 @@ func config_channels(sess *discordgo.Session, i *discordgo.InteractionCreate, au
 	action_id := optionMap["action"].IntValue()
 	channel_id := optionMap["channel"].ChannelValue(nil).ID
 
+	action := get_action_db_by_id(action_id)
+
 	// PROVISIONAL
 	if guild_id != get_env_var("GUILD_ID") && (action_id == get_action_db_by_name("Youtube Live Announcements").id || action_id == get_action_db_by_name("Youtube Video Announcements").id) {
 		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "This option in this command is not open for now...")
@@ -41,8 +43,9 @@ func config_channels(sess *discordgo.Session, i *discordgo.InteractionCreate, au
 						Exec(ctx)
 			if err != nil { log.Println(err); return }
 
-			interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Channel updated for this action.")
-			log_message(sess, guild_id, "updated a channel for an action", author)
+			interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Channel <# " + channel_id + "> updated for action \"" + action.name + "\".")
+			log_message(sess, guild_id, "changed to channel <#" + channel_id + "> for action \"" + action.name + "\"", author)
+			log.Println("Channel id <#" + channel_id + " has been added for action \"" + action.name + "\" on guild id " + guild_id)
 		} else {
 			interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "This configuration already exists.")
 		}
@@ -57,8 +60,10 @@ func config_channels(sess *discordgo.Session, i *discordgo.InteractionCreate, au
 	_, err = db.NewInsert().Model(new_channel_for_action).Ignore().Exec(ctx)
 	if err != nil { log.Println(err); return }
 
-	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Channel added for this action.")
-	log_message(sess, guild_id, "added a channel for an action", author)
+	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Channel <# " + channel_id + "> added for action \"" + action.name + "\".")
+	log_message(sess, guild_id, "added channel <#" + channel_id + "> for action \"" + action.name + "\"", author)
+
+	log.Println("Channel id <#" + channel_id + " has been had for action \"" + action.name + "\" on guild id " + guild_id)
 }
 
 func config_admins(sess *discordgo.Session, i *discordgo.InteractionCreate, author *discordgo.User, guild_id string) {
@@ -86,6 +91,7 @@ func config_admins(sess *discordgo.Session, i *discordgo.InteractionCreate, auth
 
 		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Role <@&" + role_id + "> is now concidered as admin.")
 		log_message(sess, guild_id, "added role <@&" + role_id + "> as admin.", author)
+		log.Println("Role id <@&" + role_id + "> has been added as admin on guild id " + guild_id)
 		return
 	}
 
@@ -98,6 +104,7 @@ func config_admins(sess *discordgo.Session, i *discordgo.InteractionCreate, auth
 
 	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Role <@&" + role_id + "> is now removed from admin roles.")
 	log_message(sess, guild_id, "removed role <@&" + role_id + "> from admin.", author)
+	log.Println("Role id <@&" + role_id + "> has been removed from admin on guild id " + guild_id)
 }
 
 func config_youtube_roles_live(sess *discordgo.Session, i *discordgo.InteractionCreate, author *discordgo.User, guild_id string, role_id string) {
@@ -116,6 +123,7 @@ func config_youtube_roles_live(sess *discordgo.Session, i *discordgo.Interaction
 
 		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Role <@&" + role_id + "> will now be ping for each youtube live announcements.")
 		log_message(sess, guild_id, "added role <@&" + role_id + "> as ping for youtube live announcements.", author)
+		log.Println("Role id <@&" + role_id + "> has been added as ping for yt live announcements on guild id " + guild_id)
 		return
 	}
 
@@ -128,6 +136,7 @@ func config_youtube_roles_live(sess *discordgo.Session, i *discordgo.Interaction
 
 	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Role <@&" + role_id + "> will no longer be ping for youtube live announcements.")
 	log_message(sess, guild_id, "removed role <@&" + role_id + "> from list of role ping for youtube live announcements.", author)
+	log.Println("Role id <@&" + role_id + "> has been removed as ping for yt live announcements on guild id " + guild_id)
 }
 
 func config_youtube_roles_video(sess *discordgo.Session, i *discordgo.InteractionCreate, author *discordgo.User, guild_id string, role_id string) {
@@ -146,6 +155,7 @@ func config_youtube_roles_video(sess *discordgo.Session, i *discordgo.Interactio
 
 		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Role <@&" + role_id + "> will now be ping for each youtube video announcements.")
 		log_message(sess, guild_id, "added role <@&" + role_id + "> as ping for youtube video announcements.", author)
+		log.Println("Role id <@&" + role_id + "> has been added as ping for yt video announcements on guild id " + guild_id)
 		return
 	}
 
@@ -158,6 +168,7 @@ func config_youtube_roles_video(sess *discordgo.Session, i *discordgo.Interactio
 
 	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Role <@&" + role_id + "> will no longer be ping for youtube video announcements.")
 	log_message(sess, guild_id, "removed role <@&" + role_id + "> from list of role ping for youtube video announcements.", author)
+	log.Println("Role id <@&" + role_id + "> has been removed as ping for yt video announcements on guild id " + guild_id)
 }
 
 func config_youtube_roles(sess *discordgo.Session, i *discordgo.InteractionCreate, author *discordgo.User, guild_id string) {

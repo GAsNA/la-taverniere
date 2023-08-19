@@ -45,6 +45,7 @@ func send_youtube_video_announcement(sess *discordgo.Session, video *youtube.Sea
 	if err != nil { log.Println(err); return }
 
 	log_message(sess, guild_id, "made a youtube announcement in <#" + channel_id + ">.")
+	log.Println("A yt video announcement has been made in channel <#" + channel_id + "> on guild id " + guild_id)
 }
 
 func call_api_youtube_video(service *youtube.Service, youtube_channel_id string, last_video **youtube.SearchResult, sess *discordgo.Session) {
@@ -53,7 +54,8 @@ func call_api_youtube_video(service *youtube.Service, youtube_channel_id string,
 		ChannelId(youtube_channel_id).
 		Order("date")
 	response, err := call.Do()
-	if err != nil { log.Println(err); return }
+	if err != nil { log.Println(err); return
+	 }
 
 	if len(response.Items) > 0 {
 		video := response.Items[0]

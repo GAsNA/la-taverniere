@@ -19,6 +19,7 @@ func main() {
 
 	sess, err := discordgo.New("Bot " + token)
 	if err != nil { log.Fatal(err) }
+	log.Println("Bot created")
 
 	// LIST SLASH COMMANDS
 	list_slash_commands(sess)
