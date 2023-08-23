@@ -13,7 +13,9 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 	guild_id := i.Interaction.GuildID
 
 	// CAN'T USE THIS COMMAND IF NOT ADMIN
-	if !is_admin(sess, i.Member, guild_id) {
+	admin, err := is_admin(sess, i.Member, guild_id)
+	if err != nil { log.Println(err); return }
+	if !admin {
 		interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "You do not have the right to use this command.")
 		log_message(sess, guild_id, "tried to add someone to the blacklist, but <@" + author.ID + "> to not have the right.")
 
@@ -38,8 +40,8 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 	}
 
 	// BAN USER
-	err := sess.GuildBanCreateWithReason(guild_id, user_to_blacklist_id, reason, 0)
-	if err != nil { log.Fatal(err) }
+	err = sess.GuildBanCreateWithReason(guild_id, user_to_blacklist_id, reason, 0)
+	if err != nil { log.Println(err); return }
 
 	// RESPOND TO USER WITH EPHEMERAL MESSAGE
 	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "User " + user_to_blacklist + " has been ban.")
@@ -47,12 +49,14 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 	// ADD LOG IN LOGS CHANNEL
 	log_message(sess, guild_id, "banned " + user_to_blacklist + ".", author)
 
+	log.Println("User id " + user_to_blacklist_id + " has been ban of guild id " + guild_id)
+
 	// SEND BLACKLIST MESSAGE IN APPROPRIATE CHANNEL
 	var channels_for_actions []channel_for_action
 	err = db.NewSelect().Model(&channels_for_actions).
 			Where("action_id = ? AND guild_id = ?", get_action_db_by_name("Blacklist Logs").id, guild_id).
 			Scan(ctx)
-	if err != nil { log.Fatal(err) }
+	if err != nil { log.Println(err); return }
 
 	if len(channels_for_actions) == 0 { return }
 
@@ -80,5 +84,5 @@ func blacklist_command(sess *discordgo.Session, i *discordgo.InteractionCreate) 
 	}
 
 	_, err = sess.ChannelMessageSendEmbed(blacklist_chan_id, &embed)
-	if err != nil { log.Fatal(err) }
+	if err != nil { log.Println(err) }
 }

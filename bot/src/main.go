@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -20,6 +19,7 @@ func main() {
 
 	sess, err := discordgo.New("Bot " + token)
 	if err != nil { log.Fatal(err) }
+	log.Println("Bot created")
 
 	// LIST SLASH COMMANDS
 	list_slash_commands(sess)
@@ -65,6 +65,7 @@ func main() {
 	// HANDLERS
 	sess.AddHandler(guild_joined)
 	sess.AddHandler(guild_left)
+	sess.AddHandler(channel_deleted)
 	sess.AddHandler(message_posted)
 	sess.AddHandler(handler_reaction_to_add_role)
 	sess.AddHandler(handler_reaction_to_delete_role)
@@ -73,7 +74,7 @@ func main() {
 	err = sess.Open()
 	if err != nil { log.Fatal(err) }
 
-	fmt.Println("The bot is online!")
+	log.Println("The bot is online!")
 
 	// SET ACTIVITY
 	set_activity(sess, 0, "Running the tavern")

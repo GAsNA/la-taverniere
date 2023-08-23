@@ -33,9 +33,16 @@ Run with ```make```.
 - [ ]  Vote command with limited time
 - [ ]  Personalized join and leave message
 - [ ]  Handler-reaction-role: choice to make the message
+<<<<<<< HEAD
+- [ ]  Stop bot properly
+- [ ]  Set default channel for log
+- [ ]  Warn user of an error by response or log message
+- [ ]  Profile command (username, name on server, server name, account creation date, server join date, roles, about me, level, nb message, badges, pp, baner)
+=======
 - [ ]  Verification all log error
 - [ ]  Log begin bot
 - [ ]  Stop bot properly
+>>>>>>> main
 
 ## Libraries
 -  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord
