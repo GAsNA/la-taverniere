@@ -1,12 +1,9 @@
 package main
 
 import (
-	"log"
 	"os"
 	"strings"
 	"math"
-	"strconv"
-	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/forPelevin/gomoji"

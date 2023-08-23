@@ -37,6 +37,7 @@ Run with ```make```.
 - [ ]  Check if channel is delete, delete in db + for log set another default channel
 - [ ]  Set default channel for log
 - [ ]  Warn user of an error by response or log message
+- [ ]  Profile command (username, name on server, server name, account creation date, server join date, roles, about me, level, nb message, badges, pp, baner)
 
 ## Libraries
 -  [discordgo](https://github.com/bwmarrin/discordgo), for a simple utilisation of the api discord
