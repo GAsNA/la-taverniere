@@ -76,6 +76,27 @@ func guild_left(sess *discordgo.Session, gd *discordgo.GuildDelete) {
 	}
 }
 
+func channel_deleted(sess *discordgo.Session, cd *discordgo.ChannelDelete) {
+	guild_id := cd.GuildID
+	channel_id := cd.ID
+
+	var channels_for_actions []channel_for_action
+	err := db.NewSelect().Model(&channels_for_actions).
+			Where("channel_id = ? AND guild_id = ?", channel_id, guild_id).
+			Scan(ctx)
+	if err != nil { log.Println(err); return }
+
+	if len(channels_for_actions) == 0 { return }
+
+	del_channel_for_action := &channel_for_action{}
+	_, err = db.NewDelete().Model(del_channel_for_action).
+				Where("channel_id = ? AND guild_id = ?", channel_id, guild_id).
+				Exec(ctx)
+	if err != nil { log.Fatal(err) }
+	
+	log.Println("Channel id " + channel_id + " deleted from guild id " + guild_id + ".")
+}
+
 func message_posted(sess *discordgo.Session, m *discordgo.MessageCreate) {
 	guild_id := m.Message.GuildID
 	author := m.Message.Author

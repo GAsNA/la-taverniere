@@ -43,9 +43,9 @@ func config_channels(sess *discordgo.Session, i *discordgo.InteractionCreate, au
 						Exec(ctx)
 			if err != nil { log.Println(err); return }
 
-			interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Channel <# " + channel_id + "> updated for action \"" + action.name + "\".")
+			interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Channel <#" + channel_id + "> updated for action \"" + action.name + "\".")
 			log_message(sess, guild_id, "changed to channel <#" + channel_id + "> for action \"" + action.name + "\"", author)
-			log.Println("Channel id <#" + channel_id + " has been added for action \"" + action.name + "\" on guild id " + guild_id)
+			log.Println("Channel id " + channel_id + " has been added for action \"" + action.name + "\" on guild id " + guild_id)
 		} else {
 			interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "This configuration already exists.")
 		}
