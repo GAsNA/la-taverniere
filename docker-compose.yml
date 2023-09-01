@@ -21,7 +21,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       GUILD_ID: ${GUILD_ID}
       YOUTUBE_CHANNEL_ID: ${YOUTUBE_CHANNEL_ID}
-      VIDEO_CHAN_ID: ${VIDEO_CHAN_ID}
 
   postgres:
    image: postgres:15

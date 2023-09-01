@@ -9,11 +9,9 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func send_youtube_video_announcement(sess *discordgo.Session, video Video) {
+func send_youtube_video_announcement(sess *discordgo.Session, video Video, channel_id string, guild_id string) {
 	message := ""
-	channel_id := get_env_var("VIDEO_CHAN_ID")
-	guild_id := get_env_var("GUILD_ID")
-
+	
 	var youtube_video_roles []youtube_video_role
 	err := db.NewSelect().Model(&youtube_video_roles).
 			Where("guild_id = ?", guild_id).
@@ -40,6 +38,19 @@ func send_youtube_video_announcement(sess *discordgo.Session, video Video) {
 }
 
 func call_api_youtube_video(youtube_channel_id string, last_video *Video, sess *discordgo.Session) {
+	guild_id := get_env_var("GUILD_ID")
+	
+	// CHECK IF CHANNEL IS SET
+	var channels_for_actions []channel_for_action
+	err := db.NewSelect().Model(&channels_for_actions).
+			Where("action_id = ? AND guild_id = ?", get_action_db_by_name("Youtube Video Announcements").id, guild_id).
+			Scan(ctx)
+	if err != nil { log.Println(err); return }
+
+	if len(channels_for_actions) == 0 { return }
+	channel_id := channels_for_actions[0].Channel_ID
+
+	// SEARCH IF NEW VIDEO UPLOADED
 	response, err := http.Get(get_env_var("YOUTUBE_LINK") + "/feeds/videos.xml?channel_id=" + youtube_channel_id)
 	if err != nil { log.Println(err); return }
 
@@ -56,10 +67,9 @@ func call_api_youtube_video(youtube_channel_id string, last_video *Video, sess *
 
 		if *last_video == (Video{}) {
 			*last_video = video
-			send_youtube_video_announcement(sess, *last_video)
 		} else if video.Link.Href != (*last_video).Link.Href {
 			*last_video = video
-			send_youtube_video_announcement(sess, *last_video)
+			send_youtube_video_announcement(sess, *last_video, channel_id, guild_id)
 		}
 	}
 }
