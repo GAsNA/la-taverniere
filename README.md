@@ -10,7 +10,8 @@ Run with ```make```.
 
 ## Actions
 
-- [x]  Announcement for newly posted youtube videos and youtube live - NOT PUBLICLY OPEN TO EVERY GUILD FOR NOW
+- [x]  Announcement for newly posted youtube videos - NOT PUBLICLY OPEN TO EVERY GUILD FOR NOW
+    - [ ]  Youtube Live Announcements
     - [ ]  Add reel in youtube announcements. See if /shorts/{idvideo} return something if shorts or error if not ou l'inverse
 - [x]  Log message for each bot action
 - [x]  Levels for conversation and messages
