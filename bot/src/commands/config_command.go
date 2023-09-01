@@ -60,10 +60,10 @@ func config_channels(sess *discordgo.Session, i *discordgo.InteractionCreate, au
 	_, err = db.NewInsert().Model(new_channel_for_action).Ignore().Exec(ctx)
 	if err != nil { log.Println(err); return }
 
-	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Channel <# " + channel_id + "> added for action \"" + action.name + "\".")
+	interaction_respond(sess, i.Interaction, discordgo.InteractionResponseChannelMessageWithSource, true, "Channel <#" + channel_id + "> added for action \"" + action.name + "\".")
 	log_message(sess, guild_id, "added channel <#" + channel_id + "> for action \"" + action.name + "\"", author)
 
-	log.Println("Channel id <#" + channel_id + " has been had for action \"" + action.name + "\" on guild id " + guild_id)
+	log.Println("Channel id " + channel_id + " has been had for action \"" + action.name + "\" on guild id " + guild_id)
 }
 
 func config_admins(sess *discordgo.Session, i *discordgo.InteractionCreate, author *discordgo.User, guild_id string) {

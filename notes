@@ -1,2 +1,0 @@
-ALTER TABLE level     
-ALTER COLUMN level SET DATA TYPE decimal;

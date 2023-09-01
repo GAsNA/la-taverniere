@@ -2,16 +2,16 @@ package main
 
 import (
 	"log"
+	"net/http"
+	"io"
+	"encoding/xml"
 
 	"github.com/bwmarrin/discordgo"
-	"google.golang.org/api/youtube/v3"
 )
 
-func send_youtube_video_announcement(sess *discordgo.Session, video *youtube.SearchResult) {
+func send_youtube_video_announcement(sess *discordgo.Session, video Video, channel_id string, guild_id string) {
 	message := ""
-	channel_id := get_env_var("VIDEO_CHAN_ID")
-	guild_id := get_env_var("GUILD_ID")
-
+	
 	var youtube_video_roles []youtube_video_role
 	err := db.NewSelect().Model(&youtube_video_roles).
 			Where("guild_id = ?", guild_id).
@@ -23,48 +23,53 @@ func send_youtube_video_announcement(sess *discordgo.Session, video *youtube.Sea
 		ping_role_ids = append(ping_role_ids, youtube_video_roles[i].Role_ID)
 	}
 
-	for i := 0; i < len(ping_role_ids); i++ {
-		message += "<@&" + ping_role_ids[i] + ">"
-	}
+	for i := 0; i < len(ping_role_ids); i++ { message += "<@&" + ping_role_ids[i] + ">" }
 
-	if len(ping_role_ids) > 0 {
-		message += "\n"
-	}
+	if len(ping_role_ids) > 0 { message += "\n" }
 
-	switch video.Snippet.LiveBroadcastContent {
-		case "upcoming":
-			message += "Une vidéo se prépare sur la chaine de  " + video.Snippet.ChannelTitle + "...\n"
-		case "live":
-			message += "Une vidéo de " + video.Snippet.ChannelTitle + " est en live !\n"
-		default:
-			message += video.Snippet.ChannelTitle + " a posté une nouvelle vidéo. Enjoy!\n"
-	}
-
-	message += get_env_var("YOUTUBE_LINK") + "/watch?v=" + video.Id.VideoId
+	message += video.Author.Name + " a posté une nouvelle vidéo. Enjoy!\n"
+	
+	message += video.Link.Href
 	_, err = sess.ChannelMessageSend(channel_id, message)
 	if err != nil { log.Println(err); return }
 
 	log_message(sess, guild_id, "made a youtube announcement in <#" + channel_id + ">.")
-	log.Println("A yt video announcement has been made in channel <#" + channel_id + "> on guild id " + guild_id)
+	log.Println("A yt video announcement has been made in channel " + channel_id + " on guild id " + guild_id)
 }
 
-func call_api_youtube_video(service *youtube.Service, youtube_channel_id string, last_video **youtube.SearchResult, sess *discordgo.Session) {
-	call := service.Search.List([]string{"snippet"}).
-		MaxResults(1).
-		ChannelId(youtube_channel_id).
-		Order("date")
-	response, err := call.Do()
-	if err != nil { log.Println(err); return
-	 }
+func call_api_youtube_video(youtube_channel_id string, last_video *Video, sess *discordgo.Session) {
+	guild_id := get_env_var("GUILD_ID")
+	
+	// CHECK IF CHANNEL IS SET
+	var channels_for_actions []channel_for_action
+	err := db.NewSelect().Model(&channels_for_actions).
+			Where("action_id = ? AND guild_id = ?", get_action_db_by_name("Youtube Video Announcements").id, guild_id).
+			Scan(ctx)
+	if err != nil { log.Println(err); return }
 
-	if len(response.Items) > 0 {
-		video := response.Items[0]
+	if len(channels_for_actions) == 0 { return }
+	channel_id := channels_for_actions[0].Channel_ID
 
-		if *last_video == nil {
+	// SEARCH IF NEW VIDEO UPLOADED
+	response, err := http.Get(get_env_var("YOUTUBE_LINK") + "/feeds/videos.xml?channel_id=" + youtube_channel_id)
+	if err != nil { log.Println(err); return }
+
+	content, err := io.ReadAll(response.Body)
+	response.Body.Close()
+	if err != nil { log.Println(err); return }
+
+	var feed Feed
+
+	xml.Unmarshal(content, &feed)
+
+	if len(feed.Videos) > 0 {
+		video := feed.Videos[0]
+
+		if *last_video == (Video{}) {
 			*last_video = video
-		} else if video.Id.VideoId != (*last_video).Id.VideoId {
+		} else if video.Link.Href != (*last_video).Link.Href {
 			*last_video = video
-			send_youtube_video_announcement(sess, *last_video)
+			send_youtube_video_announcement(sess, *last_video, channel_id, guild_id)
 		}
 	}
 }
