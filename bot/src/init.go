@@ -155,7 +155,7 @@ func list_slash_commands(sess *discordgo.Session) {
 							Name:        "channel",
 							Description: "Channel associated to this action.",
 							Required:    true,
-							ChannelTypes:[]discordgo.ChannelType {discordgo.ChannelTypeGuildText,},
+							ChannelTypes:[]discordgo.ChannelType {discordgo.ChannelTypeGuildText, discordgo.ChannelTypeGuildNews},
 						},
 					},
 				},
